@@ -15,13 +15,16 @@ import sys
 import structural_safety
 
 
+DEMO_CASES = ("A", "B", "C", "D-behavior", "D-declaration", "D-isolation", "E0", "E-version",
+              "E-recipient", "E-purpose", "E-interface", "E-expiry", "E-issuer", "E-revoked", "E-unknown",
+              "E-task", "F-open", "F-locked")
+P15_MODELS = ("P1-5-state.json", "P1-5-rules.json", "P1-5-responsibility.json")
+
+
 def check_all(report: dict) -> None:
-    expected = ("A", "B", "C", "D-behavior", "D-declaration", "D-isolation", "E0", "E-version",
-                "E-recipient", "E-purpose", "E-interface", "E-expiry", "E-issuer", "E-revoked", "E-unknown",
-                "E-task", "F-open", "F-locked")
     if (report["scenario"] != "all" or report["protocol_verdict"] != "matched"
             or report["demo_status"] != "completed" or report["environment_errors"]
-            or tuple(c["case_id"] for c in report["cases"]) != expected):
+            or tuple(c["case_id"] for c in report["cases"]) != DEMO_CASES):
         raise RuntimeError("Installed all selection did not preserve its 18-case protocol.")
     for case in report["cases"]:
         name = case["case_id"]
@@ -168,9 +171,36 @@ def main() -> None:
         check_all(json.loads(completed.stdout))
     resources_in_wheel = list(resources.files("structural_safety").joinpath("examples").iterdir())
     models = [path for path in resources_in_wheel if path.name.endswith(".json")]
-    if len(models) != 18 or any(structural_safety.validate_json(path.read_bytes()).validation_status != "valid" for path in models):
-        raise RuntimeError("Installed package must contain 18 structurally valid expanded models.")
-    print(f"Installed wheel {installed_version}: validation/analysis/demo APIs, both CLI entries and all 18 resources passed.")
+    expected_models = {name + ".json" for name in DEMO_CASES} | set(P15_MODELS)
+    if ({path.name for path in models} != expected_models
+            or any(structural_safety.validate_json(path.read_bytes()).validation_status != "valid" for path in models)):
+        raise RuntimeError("Installed package must contain the original 18 demo models and three valid P1-5 analysis models.")
+    for filename in P15_MODELS:
+        resource = resources.files("structural_safety").joinpath("examples", filename)
+        result = structural_safety.analyze_json(resource.read_bytes()).to_dict()
+        if result["analysis_status"] != "completed_for_supported_scope" or result["truncation"]:
+            raise RuntimeError(f"Installed finite P1-5 analysis did not complete: {filename}.")
+        if any(finding["observed_effect"] != "not_tested" for finding in result["findings"]):
+            raise RuntimeError("Installed P1-5 model example falsely claims a runtime observation.")
+        if filename == "P1-5-state.json":
+            violation = next((finding for finding in result["findings"] if finding["rule_id"] == "SS001"), None)
+            if (violation is None or [step["action_id"] for step in violation["witness"]] !=
+                    ["read_s", "derive_s", "write_memory", "read_memory", "publish_derived"]):
+                raise RuntimeError("Installed state example lost its exact derived-memory path.")
+        elif filename == "P1-5-rules.json":
+            if {finding["rule_id"] for finding in result["findings"]} != {"SS002", "SS003", "SS004"}:
+                raise RuntimeError("Installed rule example lost its bounded declaration checks.")
+        elif filename == "P1-5-responsibility.json":
+            review = next((item for item in result["obligations"] if item["obligation_id"] == "review:private"), None)
+            if review is None or review["rule_id"] != "SS006" or review["obligation_status"] != "satisfied_in_model":
+                raise RuntimeError("Installed responsibility example lost its scoped review conditions.")
+        with resources.as_file(resource) as input_path:
+            for command in commands:
+                completed = subprocess.run([*command, "analyze", str(input_path)], env=environment,
+                                           capture_output=True, text=True, check=False)
+                if completed.returncode not in (0, 1) or completed.stderr or json.loads(completed.stdout) != result:
+                    raise RuntimeError("Installed P1-5 CLI and API analysis reports differ.")
+    print(f"Installed wheel {installed_version}: validation/analysis/demo APIs, both CLI entries, 18 demo models and three P1-5 analysis models passed.")
 
 
 if __name__ == "__main__":

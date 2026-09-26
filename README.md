@@ -2,7 +2,7 @@
 
 A local Python toolkit for describing AI agent execution topology, task authorization, information flows, control coverage, and intervention conditions.
 
-**Current milestone: P1-4, fixed A-F scenarios.** This development build validates deployment descriptions, analyzes finite `read`, `transfer`, and `policy_update` actions with SS001 and SS005 diagnostics, and provides 18 fixed scenarios: 15 local experiments and three analysis-only D contrasts. Analysis reports separate technical feasibility, authorization, modeled control behavior, and evidence limits. Experiment reports retain actual target observations and task outcomes for their specific runs.
+**Current milestone: P1-5, finite operations and six narrow rules.** This development build validates deployment descriptions and analyzes finite `read`, `transfer`, `derive`, `persist_write`, `persist_read`, `delegate`, `policy_update`, `revoke`, and `stop` actions with SS001 through SS006 diagnostics. It also provides 18 fixed scenarios: 15 local experiments and three analysis-only D contrasts. Analysis reports separate technical feasibility, authorization, modeled control behavior, and evidence limits. Experiment reports retain actual target observations and task outcomes for their specific runs.
 
 The runtime uses the Python standard library, without model API calls, telemetry, or network access. Input strings, links, and commands remain data. The package is under development and has no published stable release.
 
@@ -94,9 +94,49 @@ The included fixtures produce these results with the default budgets:
 
 Both reports are `completed_for_supported_scope`. A has `violated_in_model` coverage; B has `covered_in_declared_model` coverage with runtime status `not_tested`. Internal processing and the public-object publish remain allowed and unblocked in both. B's exit 1 preserves its evidence gap even though the declared gate blocks the private request.
 
-Search is bounded and deterministic. The CLI accepts `--max-states`, `--max-transition-checks`, `--max-scope-combinations`, `--max-clause-checks`, and `--max-findings`. A report records the effective limits and work consumed. A budget interruption produces `partial` and preserves existing findings. Unsupported operations and rules remain visible as unfinished scope.
+Search is bounded and deterministic. The CLI accepts `--max-states`, `--max-transition-checks`, `--max-scope-combinations`, `--max-clause-checks`, and `--max-findings`. A report records the effective limits and work consumed. A budget interruption produces `partial` and preserves existing findings. Explicit unsupported semantics and unknown property IDs remain visible as unfinished scope.
 
-The implemented property is `P-CONF-01`: within the declared task and snapshot, restricted object versions require valid task and source authorization to reach a recipient. The supported analysis covers its finite `read`/`transfer` routes. A new property ID or natural-language description does not create a new rule; other declared properties are reported as unsupported.
+The implemented property is `P-CONF-01`: within the declared task and snapshot, restricted object versions require valid task and source authorization to reach a recipient. The supported analysis follows those restrictions through derivation, exact-version storage, and explicit reads into another context. Related rules check instruction authority, delegated scope, source declarations, control conditions, and specific responsibility obligations. A new property ID or natural-language description does not create a new rule; other declared properties are reported as unsupported.
+
+| Rule | Narrow model check |
+|---|---|
+| SS001 | Technically feasible, unblocked effects violate task or source authorization. |
+| SS002 | Explicit instruction-authority promotion or a sensitive decision lacks the required authority basis. |
+| SS003 | Delegated scope exceeds complete parent clauses or valid extension authority. |
+| SS004 | Declared ancestry, restrictions, or authority conflict with required source inheritance. |
+| SS005 | Control coverage, parameter binding, timing, failure handling, or policy independence has a gap. |
+| SS006 | A concrete responsibility obligation lacks observation, validation, competence, intervention authority, or timely response. |
+
+Management actions bind exact typed targets. Empty data-object scope never grants arbitrary permission to delegate, revoke, or stop. Delegation, revocation, stopping, and policy selection affect only the modeled branch after their effects commit. A stop cannot undo an earlier disclosure. Known restricted sources remain in derived objects even when an output declaration omits them; unknown additional sources remain unresolved.
+
+Optional submitted events appear as attributed `event_reports`. Claims such as `verified=true` and `reported_event_kind="effect_observed"` remain external reports. They do not cause actions to execute or convert model deductions into direct observations. See [semantic boundaries](docs/semantics.md) for complete-clause scope checks, timing rules, and evidence limits.
+
+Three additional packaged inputs illustrate the P1-5 analysis. They are model examples, separate from the 18 fixed demo cases:
+
+| Model input | What it demonstrates |
+|---|---|
+| [P1-5-state.json](src/structural_safety/examples/P1-5-state.json) | Restricted-source derivation, an exact-version storage write, a read into another context, and an SS001 publish path with the full witness. |
+| [P1-5-rules.json](src/structural_safety/examples/P1-5-rules.json) | SS002 unapproved instruction authority, SS003 delegated scope expansion, and SS004 source-declaration loss, without an SS001 disclosure path. |
+| [P1-5-responsibility.json](src/structural_safety/examples/P1-5-responsibility.json) | A scoped responsibility obligation with timely, target-bound stop authority; declared control evidence still has its assurance limit. |
+
+Extract these resources from the installed package:
+
+```python
+from importlib.resources import files
+from pathlib import Path
+
+for name in ("P1-5-state", "P1-5-rules", "P1-5-responsibility"):
+    text = files("structural_safety").joinpath("examples", name + ".json").read_text(encoding="utf-8")
+    Path(name + ".json").write_text(text, encoding="utf-8")
+```
+
+```sh
+structural-safety analyze P1-5-state.json
+structural-safety analyze P1-5-rules.json
+structural-safety analyze P1-5-responsibility.json
+```
+
+Each command completes supported checks and returns exit 1 for its findings under default budgets. These examples execute no deployment actions. Coverage `violation_refs` includes every modeled violation of the reported property; `disclosure_path_refs` contains only SS001 modeled disclosure paths. Thus source or delegation violations can produce `violated_in_model` without claiming a disclosure path.
 
 ## Run the fixed scenarios
 
@@ -163,4 +203,4 @@ python -m unittest discover -s tests -v
 
 The runtime uses only the standard library. Build tools are pinned in `requirements-dev.txt` and `pyproject.toml`. Direct tests target specific input, evidence, and resource-limit failure modes.
 
-The six implementation steps cover input foundation, the first analysis chain, direct A/B experiments, C–F cases, remaining finite operations and rules, and release usability. See [CHANGELOG](CHANGELOG.md) for implemented capabilities. The [theory source index](docs/theory-sources.md) distinguishes source ideas from software definitions.
+P1-1 through P1-5 cover input foundation, the first analysis chain, direct A/B experiments, C-F cases, and the remaining finite operations and rules. P1-6 retains combined acceptance, the full compatibility matrix, and release usability. See [CHANGELOG](CHANGELOG.md) for implemented capabilities. The [theory source index](docs/theory-sources.md) distinguishes source ideas from software definitions.

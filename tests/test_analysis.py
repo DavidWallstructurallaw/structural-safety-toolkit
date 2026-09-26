@@ -115,20 +115,24 @@ class AnalysisIntegrationTests(unittest.TestCase):
                            "recorded_at": "2000-01-01T00:01:00Z", "details": "claimed success",
                            "verified": True, "claimed_origin": "tool_run", "evidence_refs": []}]
         result = run(data)
-        self.assertEqual(result.analysis_status, "partial")
-        self.assertTrue(any(i["affected_refs"]["value"][0]["collection"] == "events" for i in result.unsupported_items))
+        self.assertEqual(result.analysis_status, "completed_for_supported_scope")
+        self.assertEqual(len(result.event_reports), 1)
+        self.assertEqual(result.event_reports[0]["evidence_basis"], ("external_report",))
+        self.assertFalse(result.event_reports[0]["direct_observation"])
+        self.assertTrue(result.event_reports[0]["submitted_verified"])
         self.assertFalse(any(f["classification"] in ("observed_boundary_violation", "demonstrated_control_bypass")
                              for f in result.findings))
         self.assertTrue(all(f["observed_effect"] == "not_tested" for f in result.findings))
 
-    def test_source_consistency_rule_is_unchecked_but_inheritance_still_applies(self):
+    def test_source_consistency_rule_checks_loss_and_inheritance_still_applies(self):
         data = fixture()
         obj = next(o for o in data["object_versions"] if o["id"] == "P:v1")
         obj["origin_kind"] = "derived"
         obj["parents"]["value"] = ["S:v1"]
         result = run(data)
-        self.assertEqual(result.analysis_status, "partial")
-        self.assertTrue(any(i.get("rule_id") == "SS004" for i in result.unsupported_items))
+        self.assertEqual(result.analysis_status, "completed_for_supported_scope")
+        self.assertTrue(any(f["rule_id"] == "SS004" and f["classification"] == "modeled_boundary_violation"
+                            for f in result.findings))
         self.assertTrue(any(r["authorization"] == "denied" for r in results_for(result, "publish_p_main")))
 
     def test_opaque_authority_scope_qualifies_path_and_survives_reporting(self):

@@ -14,7 +14,8 @@ from .model import Limits
 from .validation import validate_json
 
 
-SUPPORTED = ("input_validation", "read", "transfer", "policy_update", "SS001", "SS005")
+OPERATIONS = ("read", "transfer", "derive", "persist_write", "persist_read", "delegate", "policy_update", "revoke", "stop")
+SUPPORTED = ("input_validation", *OPERATIONS, "event_reports", "SS001", "SS002", "SS003", "SS004", "SS005", "SS006")
 PROPERTY = "P-CONF-01"
 
 
@@ -61,15 +62,10 @@ def _unsupported(document: dict, validation_items: tuple) -> list[dict]:
 
     for action in sorted(document["actions"], key=lambda x: x["id"]):
         semantic = operations[action["operation_id"]]
-        if semantic not in ("read", "transfer", "policy_update"):
+        if semantic not in OPERATIONS:
             add("operation:" + action["id"],
                 "The current analyzer does not execute " + semantic + " effects.",
                 "actions", action["id"])
-    for relation in sorted(document["relations"], key=lambda x: x["id"]):
-        rule = {"semantic_influence": "SS002", "delegation": "SS003",
-                "observation": "SS006", "intervention": "SS006"}[relation["kind"]]
-        add("relation:" + relation["id"], "This relation's rule is not implemented in P1-2.",
-            "relations", relation["id"], rule)
     for prop in sorted(document["context"]["properties"], key=lambda x: x["id"]):
         if prop["id"] != PROPERTY:
             add("property:" + prop["id"],
@@ -79,23 +75,6 @@ def _unsupported(document: dict, validation_items: tuple) -> list[dict]:
         add("property:missing-supported-property",
             "The supported P-CONF-01 property is not declared; no protected-property check is available.",
             "tasks", document["context"]["root_task"])
-    for event in sorted(document.get("events", []), key=lambda x: x["id"]):
-        add("event:" + event["id"],
-            "Submitted event claims are retained as reports; event analysis is not implemented.",
-            "events", event["id"])
-    for obj in sorted(document["object_versions"], key=lambda x: x["id"]):
-        parents = obj["parents"]
-        if obj["origin_kind"] == "derived" or (parents["state"] == "known" and parents["value"]):
-            add("source-consistency:" + obj["id"],
-                "Declared source-consistency checking under SS004 is not implemented; known source restrictions are still inherited for SS001.",
-                "object_versions", obj["id"], "SS004")
-    for obligation in sorted(document["obligations"], key=lambda x: x["id"]):
-        applicable = obligation["applicable"]
-        if applicable["state"] == "known" and applicable["value"] is False:
-            continue
-        add("obligation:" + obligation["id"],
-            "The supplied responsibility obligation requires SS006, which is not implemented.",
-            "obligations", obligation["id"], "SS006")
     return sorted(items, key=_key)
 
 
@@ -115,6 +94,10 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
     from .controls import Controller
     from .search import explore
     from .semantics import Evaluator
+    from .source_rules import source_checks, source_check, influence_checks
+    from .delegation import delegation_checks
+    from .responsibility import inspect_responsibilities
+    from .event_reports import import_reports
 
     data = validated.model.to_dict()
     budget = Budget(validated.effective_limits)
@@ -130,6 +113,17 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
     truncation: list[dict] = []
     outcome = None
     modification_results = []
+    influence_actions = set()
+    supplied_ids = {item["id"] for item in data["obligations"]}
+    derived_ids = {}
+
+    def derived_obligation_id(identifier):
+        if identifier not in derived_ids:
+            candidate = identifier
+            while candidate in supplied_ids or candidate in derived_ids.values():
+                candidate = "derived:" + candidate
+            derived_ids[identifier] = candidate
+        return derived_ids[identifier]
 
     def add_unresolved(item: dict) -> None:
         unresolved.setdefault(_key(item), item)
@@ -141,6 +135,41 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
         budget.consume("findings")
         record["finding_id"] = _identifier(record["rule_id"], identity)
         findings[key] = record
+
+    def record_rule(item: dict) -> None:
+        record = _plain(item)
+        rule = record["rule_id"]
+        identity = record.pop("identity", {"obligation_id": record.get("obligation_id")})
+        oid = (record["obligation_id"] if rule == "SS006" else
+               derived_obligation_id(record.get("obligation_id") or _identifier(rule + "-obligation", identity)))
+        record.update(obligation_id=oid, snapshot_id=snapshot)
+        record.setdefault("origin", "derived")
+        record.setdefault("evidence_basis", ["supplied_assertion", "model_deduction"])
+        record.setdefault("environment", "declared_model")
+        record.setdefault("observed_effect", "not_tested")
+        record.setdefault("witness", [])
+        record.setdefault("unresolved_items", record.get("unresolved_reasons", []))
+        obligations[oid] = record
+        unsettled = record.get("unresolved_reasons", record.get("unresolved_items", []))
+        if record["obligation_status"] == "unresolved" or record.get("has_unresolved") or unsettled:
+            add_unresolved({"kind": "rule_obligation", "rule_id": rule, "obligation_id": oid,
+                            "task_id": record["task_id"], "reasons": unsettled or record.get("reasons", []),
+                            "affected_refs": record.get("affected_refs", [])})
+        if record["obligation_status"] in ("gap", "unresolved"):
+            finding = dict(record)
+            finding.pop("obligation_id", None)
+            finding.update(obligation_refs=[oid])
+            finding["classification"] = finding.get("classification") or (
+                "responsibility_review_gap" if rule == "SS006" else "assurance_gap")
+            finding.setdefault("affected_objects", [])
+            finding.setdefault("affected_refs", [])
+            finding.setdefault("feasibility", "not_applicable")
+            finding.setdefault("authorization", "not_applicable")
+            finding.setdefault("control_effect", "not_applicable")
+            finding.setdefault("control_assurance", "unresolved")
+            finding.setdefault("repair_locations", finding["affected_refs"])
+            finding.setdefault("suggested_verification", "Establish the missing or contradictory conditions within this obligation's scope.")
+            add_finding({"rule_id": rule, "obligation_id": oid}, finding)
 
     def on_step(step: dict) -> None:
         query = step["query"]
@@ -172,6 +201,17 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
             "witness": _plain(step["path"]),
         }
         action_results.setdefault(_key(identity), result)
+        if property_present and step.get("source_details") is not None:
+            sources = step["source_details"]
+            record_rule(source_check(data, step.get("evaluator", evaluator), budget,
+                query.object_version_id, query.task_id, sources.ancestor_ids, sources.restriction_ids,
+                sources.completeness, action_id=step["action_id"], witness=result["witness"],
+                conditional=conditional or not step["committed"], query=query))
+        if property_present:
+            for item in influence_checks(data, step.get("evaluator", evaluator), budget, (result,),
+                    action_id=step["action_id"], query=query, conditional=conditional):
+                record_rule(item)
+            influence_actions.add(step["action_id"])
         if query.policy_target is not None:
             modification_results.append({"action_id": step["action_id"], "effect_id": step["effect_id"],
                                          "committed": step["committed"], "conditional": conditional})
@@ -192,17 +232,18 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
 
         if not property_present or technical.value is False:
             return
-        if query.policy_target is not None:
+        if query.object_version_id is None:
             if authorization.value is not True and control.status != "blocked_in_model":
-                oid = _identifier("policy-boundary", identity)
+                oid = derived_obligation_id(_identifier("policy-boundary", identity))
                 obligations[oid] = {"obligation_id": oid, "rule_id": "SS005", "origin": "derived",
                                     "task_id": query.task_id, "property_id": PROPERTY, "snapshot_id": snapshot,
                                     "check_status": "checked", "obligation_status": "unresolved" if conditional or authorization.value is None else "gap"}
                 add_finding({**identity, "rule_id": "SS005"}, {
                     "rule_id": "SS005", "classification": "assurance_gap", "property_id": PROPERTY,
                     "task_id": query.task_id, "snapshot_id": snapshot, "affected_objects": [],
-                    "affected_refs": [{"collection": "controls", "id": query.policy_target[0]},
-                                      {"collection": "actions", "id": step["action_id"]}],
+                    "affected_refs": ([{"collection": "controls", "id": query.policy_target[0]}]
+                                      if query.policy_target else [{"collection": c, "id": i} for c, i in query.management_targets])
+                                      + [{"collection": "actions", "id": step["action_id"]}],
                     "obligation_refs": [oid], "necessary_conditions": result["necessary_conditions"],
                     "feasibility": feasibility, "authorization": authorization_status,
                     "control_effect": control.status, "control_assurance": "unresolved",
@@ -211,13 +252,13 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
                     "unresolved_items": tuple(sorted(reasons)), "assumptions": assumptions,
                     "witness": result["witness"], "query": result["query"],
                     "repair_locations": [{"collection": "interfaces", "id": query.interface_id}],
-                    "suggested_verification": "Bind policy selection to the exact control, version and fields; test the management boundary independently."})
+                    "suggested_verification": "Bind the management request to every exact typed target and separately verify its authorization and execution boundary."})
             return
         definite = (technical.value is True and not conditional and authorization.value is False
                     and control.status == "not_blocked_in_model")
         uncertain_boundary = (authorization.value is not True and
                               control.status != "blocked_in_model" and not definite)
-        obligation_id = _identifier("path", identity)
+        obligation_id = derived_obligation_id(_identifier("path", identity))
         obligation = {
             "obligation_id": obligation_id, "origin": "derived", "rule_id": "SS001",
             "property_id": PROPERTY, "task_id": query.task_id, "snapshot_id": snapshot,
@@ -248,7 +289,7 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
             }
             add_finding({**identity, "rule_id": "SS001", "classification": finding["classification"]}, finding)
         if authorization.value is False and control.status != "blocked_in_model":
-            control_obligation = {**obligation, "obligation_id": _identifier("control-path", identity),
+            control_obligation = {**obligation, "obligation_id": derived_obligation_id(_identifier("control-path", identity)),
                                   "rule_id": "SS005",
                                   "obligation_status": "gap" if definite else "unresolved"}
             obligations.setdefault(control_obligation["obligation_id"], control_obligation)
@@ -273,7 +314,8 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
     def record_controls():
         for item in controller.obligations():
             record = _plain(item)
-            oid = record["obligation_id"]
+            oid = derived_obligation_id(record["obligation_id"])
+            record["obligation_id"] = oid
             obligations[oid] = record
             if record.get("obligation_status") == "unresolved" or record.get("has_unresolved", False):
                 add_unresolved({"kind": "control_obligation", "obligation_id": oid,
@@ -300,6 +342,13 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
                 }
                 add_finding({"rule_id": "SS005", "obligation_id": oid}, finding)
     try:
+        if property_present:
+            for item in source_checks(data, evaluator, budget):
+                record_rule(item)
+            for item in delegation_checks(data, evaluator, budget):
+                record_rule(item)
+        for item in inspect_responsibilities(data, evaluator, budget):
+            record_rule(item)
         outcome = explore(data, evaluator, controller, budget, on_step)
         if not outcome.completed:
             truncation.append({"reason": outcome.truncation_reason, "scope": "remaining_supported_search",
@@ -307,18 +356,27 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
         controller.modification_results = modification_results
         controller.search_complete = outcome.completed
         record_controls()
+        if property_present:
+            for action_id in sorted({r["action_id"] for r in data["relations"]
+                                     if r["kind"] == "semantic_influence"} - influence_actions):
+                for item in influence_checks(data, evaluator, budget, action_id=action_id):
+                    record_rule(item)
     except BudgetExceeded as error:
         truncation.append({"reason": error.reason, "scope": "remaining_supported_checks", "check_status": "partial"})
 
     for supplied in sorted(data["obligations"], key=lambda x: x["id"]):
+        if supplied["id"] in obligations:
+            continue
         inactive = supplied["applicable"]["state"] == "known" and supplied["applicable"]["value"] is False
         obligations[supplied["id"]] = {
-            "obligation_id": supplied["id"], "origin": supplied["origin"],
+            "obligation_id": supplied["id"], "origin": supplied["origin"], "rule_id": "SS006",
             "task_id": supplied["task_id"], "property_id": supplied["property_id"],
             "check_status": "not_applicable" if inactive else "not_checked",
             "obligation_status": "not_applicable" if inactive else "unresolved",
-            "reason": "Declared inapplicable." if inactive else "SS006 responsibility analysis is not implemented.",
+            "reason": "Declared inapplicable." if inactive else "Responsibility check was not reached within the shared analysis budget.",
             "evidence_refs": supplied["evidence_refs"],
+            "evidence_basis": ["supplied_assertion"], "environment": "declared_model",
+            "observed_effect": "not_tested", "snapshot_id": snapshot,
         }
 
     operations = {x["id"]: x["semantic_kind"] for x in data["context"]["operation_definitions"]}
@@ -327,7 +385,7 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
         for effect in sorted(action["effects"], key=lambda x: x["id"]):
             if (action["id"], effect["id"]) in evaluated:
                 continue
-            unchecked = bool(truncation or unsupported or operations[action["operation_id"]] not in ("read", "transfer", "policy_update"))
+            unchecked = bool(truncation or unsupported or operations[action["operation_id"]] not in OPERATIONS)
             record = {"action_id": action["id"], "effect_id": effect["id"],
                       "feasibility": "conditional" if unchecked else "infeasible",
                       "authorization": "not_checked", "control_effect": "not_checked",
@@ -352,7 +410,10 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
                                 "collection": collection, "reasons": decision.reasons,
                                 "evidence_refs": decision.evidence_refs})
         violations = [f["finding_id"] for f in findings.values()
-                      if f["task_id"] == task["id"] and f["classification"] == "modeled_boundary_violation"]
+                      if f["task_id"] == task["id"] and f.get("property_id") == PROPERTY
+                      and f["classification"] == "modeled_boundary_violation"]
+        disclosure_paths = [f["finding_id"] for f in findings.values()
+                            if f["finding_id"] in violations and f["rule_id"] == "SS001"]
         task_unknown = any(
             task["id"] in x["task_ids"] if x.get("task_ids") else x.get("task_id", task["id"]) == task["id"]
             for x in unresolved.values())
@@ -361,6 +422,7 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
                          "model_coverage": "violated_in_model" if violations else "unresolved" if limited else "covered_in_declared_model",
                          "check_status": "partial" if truncation or unsupported else "checked",
                          "violation_refs": sorted(violations), "incomplete_collections": incomplete,
+                         "disclosure_path_refs": sorted(disclosure_paths),
                          "evidence_basis": ["supplied_assertion", "model_deduction"],
                          "environment": "declared_model", "runtime_status": "not_tested"})
 
@@ -376,4 +438,5 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
         truncation=tuple(truncation), action_results=tuple(sorted(action_results.values(), key=_key)),
         coverage=tuple(coverage), scope={key: data["context"][key] for key in
             ("snapshot_id", "as_of", "root_task", "declared_scope", "known_limits")},
+        event_reports=tuple(import_reports(data)),
     )

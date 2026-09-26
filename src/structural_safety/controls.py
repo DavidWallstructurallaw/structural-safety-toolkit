@@ -95,6 +95,8 @@ class Controller:
             return Decision(None, ("checked_parameters_" + fact["state"],), _refs(fact))
         required = ((REQUIRED_PARAMETERS - {"object_version"}) | {"policy_target"}
                     if query is not None and query.policy_target is not None else REQUIRED_PARAMETERS)
+        if query is not None and query.management_targets:
+            required = (REQUIRED_PARAMETERS - {"object_version"}) | {"management_targets"}
         missing = sorted(required.difference(fact["value"]))
         return Decision(not missing, tuple("parameter_unchecked:" + x for x in missing), _refs(fact))
 
