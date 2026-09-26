@@ -96,18 +96,18 @@ class CLITests(unittest.TestCase):
         self.assertEqual(result.stdout, b"")
         self.assertIn(b"Cannot read", result.stderr)
 
-    def test_unimplemented_commands_do_not_report_success(self):
-        for command in ("demo",):
-            with self.subTest(command=command):
-                result = self.command(command, "A")
+    def test_future_demo_cases_do_not_report_success(self):
+        for scenario in ("C", "D", "E", "F", "all"):
+            with self.subTest(scenario=scenario):
+                result = self.command("demo", scenario)
                 self.assertEqual(result.returncode, 2)
                 self.assertEqual(result.stdout, b"")
-                self.assertIn(b"validate", result.stderr)
+                self.assertIn(b"invalid choice", result.stderr)
 
     def test_help_and_version_identify_available_capability(self):
         help_result = self.command("--help")
         self.assertEqual(help_result.returncode, 0)
-        self.assertIn(b"not implemented", help_result.stdout)
+        self.assertIn(b"A/B experiments", help_result.stdout)
         version = self.command("--version")
         self.assertEqual(version.returncode, 0)
         self.assertIn(b"0.1.0.dev0", version.stdout)

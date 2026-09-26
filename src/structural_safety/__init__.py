@@ -26,6 +26,12 @@ def _version_info() -> tuple[str, str]:
 
 __version__, _version_source = _version_info()
 
-from .api import AnalysisResult, Limits, ValidationResult, analyze_json, validate_json  # noqa: E402
+from .api import (  # noqa: E402
+    AnalysisResult, DemoResult, Limits, ValidationResult, analyze_json, run_demo,
+    validate_json,
+)
 
-__all__ = ["AnalysisResult", "Limits", "ValidationResult", "analyze_json", "validate_json", "__version__"]
+__all__ = [
+    "AnalysisResult", "DemoResult", "Limits", "ValidationResult", "analyze_json",
+    "run_demo", "validate_json", "__version__",
+]

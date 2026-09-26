@@ -4,6 +4,7 @@ CI copies this script into a temporary directory and runs it with the fresh
 environment's Python in isolated mode. It is separate from unit discovery.
 """
 
+import base64
 from importlib import metadata, resources
 import json
 import os
@@ -12,6 +13,59 @@ import subprocess
 import sys
 
 import structural_safety
+
+
+def check_demo(report: dict, scenario: str) -> None:
+    if (report["result_schema_version"] != "sst.demo/0.1"
+            or report["scenario"] != scenario or report["demo_status"] != "completed"
+            or report["protocol_verdict"] != "matched" or report["environment_errors"]):
+        raise RuntimeError(f"Installed demo {scenario} did not complete its protocol.")
+    if report["scope"]["network_transmission"] is not False:
+        raise RuntimeError("Installed demo did not retain its local observation scope.")
+    if len(report["cases"]) != 1:
+        raise RuntimeError("Installed A/B demo unexpectedly expanded its scenario.")
+    case = report["cases"][0]
+    if (case["case_id"] != scenario or case["runtime_status"] != "completed"
+            or case["protocol_verdict"] != "matched"
+            or case["normal_tasks"] != {"U-internal": "success", "U-public": "success"}):
+        raise RuntimeError("Installed demo did not preserve both normal tasks.")
+    observation = case["runtime_comparison"]
+    if (observation["evidence_basis"] != ["runtime_observation"]
+            or observation["control_assurance"] != ("scoped_evidence" if scenario == "B" else "not_applicable")):
+        raise RuntimeError("Installed demo did not preserve its achieved, scoped observation evidence.")
+    runtime = case["runtime"]
+    if len(runtime["steps"]) != 5 or len(runtime["observations"]) != 6:
+        raise RuntimeError("Installed demo lost required requests or observations.")
+    private = runtime["steps"][2]
+    if private["action_id"] != "publish_s_main" or private["attempted"] is not True:
+        raise RuntimeError("Installed demo skipped the restricted request.")
+    if (private["control"]["invoked"] is not (scenario == "B")
+            or private["returned"]["status"] != ("denied" if scenario == "B" else "success")):
+        raise RuntimeError("Installed demo did not preserve the A/B control difference.")
+    private_bytes = b"SST_PRIVATE_V1_TOKEN_7C91\n"
+    public_bytes = b"SST_PUBLIC_V1_NOTICE\n"
+    expected = {"result:internal": [private_bytes],
+                "sink:main": ([private_bytes] if scenario == "A" else []) + [public_bytes]}
+    final_targets = runtime["final_observation"]["targets"]
+    if set(final_targets) != set(expected):
+        raise RuntimeError("Installed demo did not observe every enabled target.")
+    for target, payloads in expected.items():
+        observed = final_targets[target]
+        framed_bytes = b"".join(len(payload).to_bytes(4, "big") + payload for payload in payloads)
+        if (observed["status"] != "observed" or observed["parse_error"] is not None
+                or base64.b64decode(observed["raw_base64"], validate=True) != framed_bytes):
+            raise RuntimeError("Installed demo target bytes differ from the fixed protocol.")
+    violations = [effect for effect in case["actual_effects"]
+                  if effect["classification"] == "observed_boundary_violation"]
+    if bool(violations) != (scenario == "A"):
+        raise RuntimeError("Installed demo lost the observed violation distinction.")
+    if any(finding["observed_effect"] != "not_tested" for finding in case["analysis"]["findings"]):
+        raise RuntimeError("Installed demo promoted model findings to runtime observations.")
+    if scenario == "B" and not any(
+        finding["control_assurance"] == "declaration_only"
+        for finding in case["analysis"]["findings"]
+    ):
+        raise RuntimeError("Installed demo overwrote B's original declaration-only assurance.")
 
 
 def main() -> None:
@@ -43,20 +97,33 @@ def main() -> None:
                 if completed.stderr or json.loads(completed.stdout) != result.to_dict():
                     raise RuntimeError("Installed CLI and API validation reports differ.")
             analysis = structural_safety.analyze_json(resource.read_bytes())
-            if not analysis.analysis_performed or analysis.analysis_status not in {
-                "partial", "completed_for_supported_scope"
-            }:
+            if not analysis.analysis_performed or analysis.analysis_status != "completed_for_supported_scope":
                 raise RuntimeError(f"Installed analysis API did not analyze {filename}.")
             for command in commands:
                 completed = subprocess.run(
                     [*command, "analyze", str(input_path)],
                     env=environment, capture_output=True, text=True, check=False,
                 )
-                if completed.returncode not in {0, 1, 3} or completed.stderr:
+                if completed.returncode != 1 or completed.stderr:
                     raise RuntimeError("Installed analysis CLI failed operationally.")
                 if json.loads(completed.stdout) != analysis.to_dict():
                     raise RuntimeError("Installed CLI and API analysis reports differ.")
-    print(f"Installed wheel {installed_version}: validation/analysis APIs, both CLI entries and A/B resources passed.")
+        scenario = filename.removesuffix(".json")
+        demo = structural_safety.run_demo(scenario)
+        if not isinstance(demo, structural_safety.DemoResult) or demo.run_directory is not None:
+            raise RuntimeError("Installed demo API did not return its self-contained default result.")
+        check_demo(demo.to_dict(), scenario)
+        for command in commands:
+            completed = subprocess.run(
+                [*command, "demo", scenario],
+                env=environment, capture_output=True, text=True, check=False,
+            )
+            if completed.returncode != 0 or completed.stderr:
+                raise RuntimeError("Installed demo CLI did not match its expected protocol.")
+            # Separate runs have distinct timestamps and identifiers. Compare
+            # semantic outcomes and observed bytes rather than entire reports.
+            check_demo(json.loads(completed.stdout), scenario)
+    print(f"Installed wheel {installed_version}: validation/analysis/demo APIs, both CLI entries and A/B resources passed.")
 
 
 if __name__ == "__main__":

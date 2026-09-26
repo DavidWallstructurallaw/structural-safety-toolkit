@@ -1,4 +1,4 @@
-name: Linux input validation
+name: Linux validation, analysis, and experiments
 
 on:
   push:

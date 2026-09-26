@@ -131,9 +131,9 @@
         "description": "Restricted objects cannot reach prohibited recipients without valid scoped authorization."
       }
     ],
-    "declared_scope": "Finite A/B task and candidate requests; every target is a planned local simulation.",
+    "declared_scope": "Finite A/B task and candidate requests; every target is a local simulation.",
     "known_limits": [
-      "Submitted fixture premises; no runtime experiment has been performed.",
+      "Submitted fixture premises; this declaration contains no direct runtime observations.",
       "No arbitrary transformations, hidden routes, or host compromise are modeled."
     ],
     "completeness": [

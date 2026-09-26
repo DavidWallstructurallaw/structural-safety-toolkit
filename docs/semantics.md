@@ -1,6 +1,6 @@
 # Semantic boundaries
 
-P1-2 implements structural validation, bounded model-state analysis for `read`/`transfer`, and SS001/SS005 diagnostics. This document distinguishes that implemented subset from the remaining planned semantics. Analysis is local and produces model deductions from submitted premises.
+P1-3 retains structural validation, bounded model-state analysis for `read`/`transfer`, and SS001/SS005 diagnostics, and adds the fixed local A/B experiments. This document distinguishes the implemented subset from the remaining planned semantics. Analysis is local and produces model deductions from submitted premises; the demo retains its own direct observations separately.
 
 ## Facts and identity
 
@@ -14,7 +14,7 @@ Technical capabilities, task grants, approval rights, and release exceptions are
 
 Task authorization also requires every applicable source restriction to hold. For each restriction, a matching original allowance or an applicable exception can satisfy it. An exception needs explicit approval authority and complete version, action, interface, recipient, purpose, workflow, and time scope. It does not supply missing technical capability or task permission, and does not relabel the object public.
 
-Administrative effects (`select_policy`, `revoke`, `stop`, and `activate_authorizations`) retain exact typed targets and undergo structural reference checks. The mapping from those targets into authorization scope, including `scope.objects`, remains an unresolved implementation contract. An empty `objects` set cannot mean permission over every administrative target, and structural acceptance does not establish administrative authorization. P1-2 reports these effects as unsupported and leaves affected checks partial or not checked. Before policy updates in P1-4 and the remaining administrative effects in P1-5 are analyzed, their target-binding contract and direct counterexamples must be implemented; any necessary schema adjustment must be recorded explicitly.
+Administrative effects (`select_policy`, `revoke`, `stop`, and `activate_authorizations`) retain exact typed targets and undergo structural reference checks. The mapping from those targets into authorization scope, including `scope.objects`, remains an unresolved implementation contract. An empty `objects` set cannot mean permission over every administrative target, and structural acceptance does not establish administrative authorization. The analyzer reports these effects as unsupported and leaves affected checks partial or not checked. Before policy updates in P1-4 and the remaining administrative effects in P1-5 are analyzed, their target-binding contract and direct counterexamples must be implemented; any necessary schema adjustment must be recorded explicitly.
 
 Validity intervals include the start and exclude expiry. Unbounded validity and revocation state require explicit declarations. Neither missing expiry nor missing revocation evidence grants indefinite permission.
 
@@ -24,9 +24,9 @@ Actions describe finite candidates, rather than proof of past execution. Data-fl
 
 Copying retains the object version. A fixed public object can be copied from an isolated public context while the same actor separately reads a restricted object. Unknown ancestry remains unknown; a submitted label cannot establish complete ancestry or permission.
 
-Derivation and persistence are later implementation steps. Their contract requires derived objects to retain known source restrictions from explicit inputs and the generation context; a submitted output label must not delete known restricted ancestry. P1-2 does not simulate these effects as identity operations.
+Derivation and persistence are later implementation steps. Their contract requires derived objects to retain known source restrictions from explicit inputs and the generation context; a submitted output label must not delete known restricted ancestry. The analyzer does not simulate these effects as identity operations.
 
-For already-existing derived versions, P1-2 follows declared known parents and inherits their known restrictions during SS001 authorization checks. Unknown or incomplete ancestry prevents an unsupported permission conclusion. The separate SS004 check for whether a static derived-source declaration faithfully retained its sources and restrictions remains `not_checked`; inherited SS001 restrictions do not establish that consistency check.
+For already-existing derived versions, the analyzer follows declared known parents and inherits their known restrictions during SS001 authorization checks. Unknown or incomplete ancestry prevents an unsupported permission conclusion. The separate SS004 check for whether a static derived-source declaration faithfully retained its sources and restrictions remains `not_checked`; inherited SS001 restrictions do not establish that consistency check.
 
 One action can have several atomic effects. They require separate authorization and control decisions; a shared group does not promise transaction atomicity. A blocked effect does not produce output or satisfy a successful dependency. A permission denial alone does not physically block execution.
 
@@ -46,6 +46,10 @@ A declared policy may establish a modeled current block, subject to its premises
 
 `supplied_assertion`, `configuration_read`, `model_deduction`, `runtime_observation`, and `external_report` describe provenance without an automatic confidence ordering. Evidence also needs matching scope and applicability. Imported records claiming an observed effect remain reported records. A proposal does not imply an attempt, a return value does not imply a write, and an empty target without an actual attempt does not prove prevention.
 
+The A/B demo submits fixed requests through a separate simple control and reads the actual local targets after every operation. Its comparator uses fixed expectations rather than analyzer-generated answers. A match for A includes an observed boundary violation. A match for B requires the unauthorized request to reach the control, a refusal, no prohibited write at every enabled external target, and both legitimate tasks to succeed. B's resulting `scoped_evidence` applies only to that run; it leaves the input declaration and standalone analysis evidence unchanged.
+
+These observations concern exact synthetic bytes, fixed operations, and local append-only targets. They do not establish control of arbitrary encodings or semantic leakage, other routes or environments, or an operating-system security boundary. A later failure preserves earlier sufficiently observed effects. The [experiment protocol](experiments.md) describes completion and comparison status separately.
+
 ## Unknown and completion
 
 For three-valued reasoning, a definite false necessary condition makes an AND false. All necessary conditions must be true to establish true. One independent complete true alternative can establish an OR true; a false result across alternatives requires a complete relevant inventory. Remaining cases stay unknown.
@@ -58,15 +62,15 @@ The finite search explores stable action/effect order and records representative
 
 ## Rule scope
 
-`P-CONF-01` is the implemented property ID for the initial restricted-information boundary. P1-2 evaluates its supported `read`/`transfer` paths within the supplied task and snapshot. A property description remains input text. Declaring another property ID does not define executable semantics, and reports retain that property as unsupported scope.
+`P-CONF-01` is the implemented property ID for the initial restricted-information boundary. The analyzer evaluates its supported `read`/`transfer` paths within the supplied task and snapshot. A property description remains input text. Declaring another property ID does not define executable semantics, and reports retain that property as unsupported scope.
 
 Responsibility timing uses one explicit trigger. The input can provide a single end-to-end response interval, or separate detection, escalation, decision, and stop-effect intervals with explicit sequential and nonoverlapping claims. These are alternative representations. Later timing analysis may add the separate intervals only when the required ordering and nonoverlap conditions are established; it must preserve missing phase information and avoid double counting an end-to-end duration.
 
-The planned timely-intervention condition requires the response upper bound to be strictly less than the consequence-window lower bound. A response lower bound at or beyond the consequence-window upper bound is too late; overlapping or unknown bounds remain unresolved. Even a timely response does not establish the separate competence, validation, or stop-authority conditions. P1-2 checks these input shapes and duration bounds, without evaluating this SS006 timing condition.
+The planned timely-intervention condition requires the response upper bound to be strictly less than the consequence-window lower bound. A response lower bound at or beyond the consequence-window upper bound is too late; overlapping or unknown bounds remain unresolved. Even a timely response does not establish the separate competence, validation, or stop-authority conditions. The validator checks these input shapes and duration bounds, without evaluating this SS006 timing condition.
 
-Only SS001 and the current-state SS005 checks are implemented in P1-2. Policy-transition effects and the other four rules remain explicit later scope:
+Only SS001 and the current-state SS005 checks are implemented. Policy-transition effects and the other four rules remain explicit later scope:
 
-| Rule | Subject | P1-2 status |
+| Rule | Subject | Current status |
 |---|---|---|
 | SS001 | A technically feasible unblocked path violates task or source-use authorization. | Implemented for supported `read`/`transfer` effects. |
 | SS002 | Lower-authority content affects a sensitive decision or acquires unapproved authority. | Not implemented. |

@@ -1,6 +1,6 @@
 # Input format: sst.model/0.1
 
-The executable contract is the strict Python validator, with its field descriptors in [schema.py](../src/structural_safety/schema.py). This document lists every field and shape. P1-2 analyzes `read` and `transfer` with SS001/SS005. Parsing other valid fields does not mean their analysis semantics have been implemented; unsupported effects and rules remain visible in analysis reports.
+The executable contract is the strict Python validator, with its field descriptors in [schema.py](../src/structural_safety/schema.py). This document lists every field and shape. The analyzer evaluates `read` and `transfer` with SS001/SS005. Parsing other valid fields does not mean their analysis semantics have been implemented; unsupported effects and rules remain visible in analysis reports. The fixed local A/B demo is a separate execution interface and does not execute arbitrary submitted JSON models.
 
 Read the complete [A fixture](../src/structural_safety/examples/A.json) or [B fixture](../src/structural_safety/examples/B.json) for a working input. All top-level fields except `events` are required; empty lists are allowed where their minimum is zero. Every object is closed to unknown fields, including nested objects and facts. There is no catch-all metadata or custom-code field.
 
@@ -89,7 +89,7 @@ Analysis returns `sst.report/0.1`. An invalid input retains its input error stat
 | `action_results` | Candidate effect judgments, with feasibility, authorization, and modeled control decisions kept separate. |
 | `coverage` | Coverage conclusions for supported scope, retaining incomplete or unresolved checks. |
 
-P1-2 implements property `P-CONF-01` for its finite `read`/`transfer` scope. Other property labels and descriptions remain structurally valid but do not acquire executable rules from their text.
+The analyzer implements property `P-CONF-01` for its finite `read`/`transfer` scope. Other property labels and descriptions remain structurally valid but do not acquire executable rules from their text.
 
 Duplicate JSON keys, dangling references, unsupported ordinary fields, invalid timestamps, wrong endpoint types, boolean counts, and nonstandard numbers are rejected. An unrecognized input schema version receives `unsupported_schema`. No JSON or Markdown report is a safety certificate.
 
