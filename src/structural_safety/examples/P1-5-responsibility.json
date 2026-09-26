@@ -1,0 +1,3414 @@
+{
+  "context": {
+    "schema_version": "sst.model/0.1",
+    "snapshot_id": "snapshot:p1-5-responsibility",
+    "as_of": "2000-01-01T00:00:00Z",
+    "tasks": [
+      {
+        "id": "task:demo",
+        "parent_task": {
+          "state": "known",
+          "value": "not_applicable",
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      }
+    ],
+    "root_task": "task:demo",
+    "workflows": [
+      {
+        "id": "workflow:restricted",
+        "task_id": "task:demo",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      {
+        "id": "workflow:public",
+        "task_id": "task:demo",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      }
+    ],
+    "interfaces": [
+      {
+        "id": "if:read",
+        "node_id": "tool:read",
+        "operation_ids": [
+          "read"
+        ],
+        "credential_required": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      {
+        "id": "if:internal",
+        "node_id": "tool:internal",
+        "operation_ids": [
+          "transfer"
+        ],
+        "credential_required": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      {
+        "id": "if:publish",
+        "node_id": "tool:publish",
+        "operation_ids": [
+          "publish"
+        ],
+        "credential_required": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      {
+        "id": "if:stop",
+        "node_id": "tool:internal",
+        "operation_ids": [
+          "stop"
+        ],
+        "credential_required": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": []
+        },
+        "evidence_refs": []
+      }
+    ],
+    "operation_definitions": [
+      {
+        "id": "read",
+        "semantic_kind": "read",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      {
+        "id": "transfer",
+        "semantic_kind": "transfer",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      {
+        "id": "publish",
+        "semantic_kind": "transfer",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      {
+        "id": "stop",
+        "semantic_kind": "stop",
+        "evidence_refs": []
+      }
+    ],
+    "purposes": [
+      {
+        "id": "internal_review",
+        "description": "internal review"
+      },
+      {
+        "id": "external_demo",
+        "description": "external demo"
+      },
+      {
+        "id": "public_notice",
+        "description": "public notice"
+      }
+    ],
+    "properties": [
+      {
+        "id": "P-CONF-01",
+        "description": "Restricted objects cannot reach prohibited recipients without valid scoped authorization."
+      }
+    ],
+    "declared_scope": "Synthetic preventive review for one private-publication action, with a named observation path, initial stop authority, and response bounds from the same declared trigger.",
+    "known_limits": [
+      "Submitted premises only; no runtime response or personnel competence is observed.",
+      "Responsibility is scoped to publish_s_main and the declared initial authorization snapshot.",
+      "The end-to-end response already includes stop-effect latency; no additional latency is summed."
+    ],
+    "completeness": [
+      {
+        "task_id": "task:demo",
+        "collection": "nodes",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      {
+        "task_id": "task:demo",
+        "collection": "actions",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      {
+        "task_id": "task:demo",
+        "collection": "authorization",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      {
+        "task_id": "task:demo",
+        "collection": "capabilities",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      {
+        "task_id": "task:demo",
+        "collection": "task_grants",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      {
+        "task_id": "task:demo",
+        "collection": "approval_rights",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      {
+        "task_id": "task:demo",
+        "collection": "release_exceptions",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      {
+        "task_id": "task:demo",
+        "collection": "sources",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      {
+        "task_id": "task:demo",
+        "collection": "restrictions",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      {
+        "task_id": "task:demo",
+        "collection": "controls",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      {
+        "task_id": "task:demo",
+        "collection": "policy_change_paths",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      {
+        "task_id": "task:demo",
+        "collection": "relations",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      {
+        "task_id": "task:demo",
+        "collection": "execution_contexts",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      {
+        "task_id": "task:demo",
+        "collection": "object_versions",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      }
+    ],
+    "unsupported_items": [],
+    "initial_conditions": [],
+    "stopped_targets": []
+  },
+  "nodes": [
+    {
+      "id": "principal:owner",
+      "kind": "principal",
+      "owner": {
+        "state": "known",
+        "value": "principal:owner",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "principal:outsider",
+      "kind": "principal",
+      "owner": {
+        "state": "known",
+        "value": "principal:outsider",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "actor:worker",
+      "kind": "executor",
+      "owner": {
+        "state": "known",
+        "value": "principal:owner",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "source:private",
+      "kind": "resource",
+      "owner": {
+        "state": "known",
+        "value": "principal:owner",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "source:public",
+      "kind": "resource",
+      "owner": {
+        "state": "known",
+        "value": "principal:owner",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "result:internal",
+      "kind": "store",
+      "owner": {
+        "state": "known",
+        "value": "principal:owner",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "sink:main",
+      "kind": "store",
+      "owner": {
+        "state": "known",
+        "value": "principal:owner",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "tool:read",
+      "kind": "tool",
+      "owner": {
+        "state": "known",
+        "value": "principal:owner",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "tool:internal",
+      "kind": "tool",
+      "owner": {
+        "state": "known",
+        "value": "principal:owner",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "tool:publish",
+      "kind": "tool",
+      "owner": {
+        "state": "known",
+        "value": "principal:owner",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "node:gate-main",
+      "kind": "control",
+      "owner": {
+        "state": "known",
+        "value": "principal:owner",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    }
+  ],
+  "execution_contexts": [
+    {
+      "id": "ctx:restricted",
+      "actor_id": "actor:worker",
+      "task_id": "task:demo",
+      "workflow_id": "workflow:restricted",
+      "initial_visible_objects": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "input_visibility": {
+        "state": "known",
+        "value": "visible",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "retain_inputs": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "visibility_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "isolated_from": {
+        "state": "known",
+        "value": [
+          "ctx:public"
+        ],
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "ctx:public",
+      "actor_id": "actor:worker",
+      "task_id": "task:demo",
+      "workflow_id": "workflow:public",
+      "initial_visible_objects": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "input_visibility": {
+        "state": "known",
+        "value": "visible",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "retain_inputs": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "visibility_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "isolated_from": {
+        "state": "known",
+        "value": [
+          "ctx:restricted"
+        ],
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "ctx:owner",
+      "actor_id": "principal:owner",
+      "task_id": "task:demo",
+      "workflow_id": "workflow:restricted",
+      "initial_visible_objects": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": []
+      },
+      "input_visibility": {
+        "state": "known",
+        "value": "visible",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "retain_inputs": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "visibility_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "isolated_from": {
+        "state": "known",
+        "value": [
+          "ctx:public"
+        ],
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    }
+  ],
+  "object_versions": [
+    {
+      "id": "S:v1",
+      "logical_id": "S",
+      "version": "v1",
+      "origin_kind": "root",
+      "existence": "snapshot_initial",
+      "parents": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "parents_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "production": {
+        "kind": "historical",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "initial_locations": [
+        {
+          "node_id": "source:private",
+          "context_id": "not_applicable"
+        }
+      ],
+      "restriction_ids": {
+        "state": "known",
+        "value": [
+          "restriction:S-v1"
+        ],
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "restrictions_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "instruction_authority": {
+        "status": {
+          "state": "known",
+          "value": "none",
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "task_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "control_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "approval_refs": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "S:v2",
+      "logical_id": "S",
+      "version": "v2",
+      "origin_kind": "root",
+      "existence": "snapshot_initial",
+      "parents": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "parents_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "production": {
+        "kind": "historical",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "initial_locations": [
+        {
+          "node_id": "source:private",
+          "context_id": "not_applicable"
+        }
+      ],
+      "restriction_ids": {
+        "state": "known",
+        "value": [
+          "restriction:S-v2"
+        ],
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "restrictions_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "instruction_authority": {
+        "status": {
+          "state": "known",
+          "value": "none",
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "task_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "control_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "approval_refs": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "P:v1",
+      "logical_id": "P",
+      "version": "v1",
+      "origin_kind": "root",
+      "existence": "snapshot_initial",
+      "parents": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "parents_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "production": {
+        "kind": "historical",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "initial_locations": [
+        {
+          "node_id": "source:public",
+          "context_id": "not_applicable"
+        }
+      ],
+      "restriction_ids": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "restrictions_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "instruction_authority": {
+        "status": {
+          "state": "known",
+          "value": "none",
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "task_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "control_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "approval_refs": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "read_s",
+      "task_id": "task:demo",
+      "workflow_id": "workflow:restricted",
+      "context_id": "ctx:restricted",
+      "actor_id": "actor:worker",
+      "operation_id": "read",
+      "interface_id": "if:read",
+      "purpose_id": "internal_review",
+      "effect_time": {
+        "state": "known",
+        "value": "2000-01-01T00:00:10Z",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "S:v1",
+          "location_node_id": "source:private",
+          "context_id": "not_applicable"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "S:v1",
+          "location_node_id": "actor:worker",
+          "context_id": "ctx:restricted"
+        }
+      ],
+      "success_dependencies": [],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "copy_s_internal",
+      "task_id": "task:demo",
+      "workflow_id": "workflow:restricted",
+      "context_id": "ctx:restricted",
+      "actor_id": "actor:worker",
+      "operation_id": "transfer",
+      "interface_id": "if:internal",
+      "purpose_id": "internal_review",
+      "effect_time": {
+        "state": "known",
+        "value": "2000-01-01T00:00:15Z",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "S:v1",
+          "location_node_id": "actor:worker",
+          "context_id": "ctx:restricted"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "S:v1",
+          "location_node_id": "result:internal",
+          "context_id": "not_applicable"
+        }
+      ],
+      "success_dependencies": [
+        "read_s"
+      ],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "publish_s_main",
+      "task_id": "task:demo",
+      "workflow_id": "workflow:restricted",
+      "context_id": "ctx:restricted",
+      "actor_id": "actor:worker",
+      "operation_id": "publish",
+      "interface_id": "if:publish",
+      "purpose_id": "external_demo",
+      "effect_time": {
+        "state": "known",
+        "value": "2000-01-01T00:00:30Z",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "S:v1",
+          "location_node_id": "actor:worker",
+          "context_id": "ctx:restricted"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "S:v1",
+          "location_node_id": "sink:main",
+          "context_id": "not_applicable"
+        }
+      ],
+      "success_dependencies": [
+        "read_s"
+      ],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "read_p",
+      "task_id": "task:demo",
+      "workflow_id": "workflow:public",
+      "context_id": "ctx:public",
+      "actor_id": "actor:worker",
+      "operation_id": "read",
+      "interface_id": "if:read",
+      "purpose_id": "public_notice",
+      "effect_time": {
+        "state": "known",
+        "value": "2000-01-01T00:00:45Z",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "P:v1",
+          "location_node_id": "source:public",
+          "context_id": "not_applicable"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "P:v1",
+          "location_node_id": "actor:worker",
+          "context_id": "ctx:public"
+        }
+      ],
+      "success_dependencies": [],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "publish_p_main",
+      "task_id": "task:demo",
+      "workflow_id": "workflow:public",
+      "context_id": "ctx:public",
+      "actor_id": "actor:worker",
+      "operation_id": "publish",
+      "interface_id": "if:publish",
+      "purpose_id": "public_notice",
+      "effect_time": {
+        "state": "known",
+        "value": "2000-01-01T00:00:50Z",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "P:v1",
+          "location_node_id": "actor:worker",
+          "context_id": "ctx:public"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "P:v1",
+          "location_node_id": "sink:main",
+          "context_id": "not_applicable"
+        }
+      ],
+      "success_dependencies": [
+        "read_p"
+      ],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "stop:private",
+      "task_id": "task:demo",
+      "workflow_id": "workflow:restricted",
+      "context_id": "ctx:owner",
+      "actor_id": "principal:owner",
+      "operation_id": "stop",
+      "interface_id": "if:stop",
+      "purpose_id": "internal_review",
+      "effect_time": {
+        "state": "known",
+        "value": "2000-01-01T00:00:18Z",
+        "evidence_refs": []
+      },
+      "inputs": [],
+      "outputs": [],
+      "success_dependencies": [],
+      "conditions": [],
+      "effects": [
+        {
+          "id": "stop",
+          "kind": "stop",
+          "target": {
+            "collection": "actions",
+            "id": "publish_s_main"
+          }
+        }
+      ],
+      "evidence_refs": []
+    }
+  ],
+  "relations": [
+    {
+      "id": "observe",
+      "kind": "observation",
+      "source": {
+        "collection": "actions",
+        "id": "publish_s_main"
+      },
+      "observer_id": "principal:owner",
+      "event_kinds": [
+        "proposal"
+      ],
+      "channel": "review-console",
+      "conditions": [],
+      "evidence_refs": []
+    },
+    {
+      "id": "intervene",
+      "kind": "intervention",
+      "actor_id": "principal:owner",
+      "target": {
+        "collection": "actions",
+        "id": "publish_s_main"
+      },
+      "operation": "stop",
+      "capability_refs": {
+        "state": "known",
+        "value": [
+          "cap:stop"
+        ],
+        "evidence_refs": []
+      },
+      "latency": {
+        "state": "known",
+        "value": {
+          "lower": 1,
+          "upper": 2
+        },
+        "evidence_refs": []
+      },
+      "conditions": [],
+      "evidence_refs": []
+    }
+  ],
+  "authorization": {
+    "capabilities": [
+      {
+        "id": "cap:read_s",
+        "issuer": {
+          "state": "known",
+          "value": "principal:owner",
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:demo"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:worker"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "S:v1"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:read"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:worker"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "internal_review"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:restricted"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      {
+        "id": "cap:copy_s_internal",
+        "issuer": {
+          "state": "known",
+          "value": "principal:owner",
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:demo"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:worker"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "S:v1"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "transfer"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:internal"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "result:internal"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "internal_review"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:restricted"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      {
+        "id": "cap:publish_s_main",
+        "issuer": {
+          "state": "known",
+          "value": "principal:owner",
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:demo"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:worker"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "S:v1"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "publish"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:publish"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "sink:main"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "external_demo"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:restricted"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      {
+        "id": "cap:read_p",
+        "issuer": {
+          "state": "known",
+          "value": "principal:owner",
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:demo"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:worker"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "P:v1"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:read"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:worker"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "public_notice"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:public"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      {
+        "id": "cap:publish_p_main",
+        "issuer": {
+          "state": "known",
+          "value": "principal:owner",
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:demo"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:worker"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "P:v1"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "publish"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:publish"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "sink:main"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "public_notice"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:public"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      {
+        "id": "cap:stop",
+        "issuer": {
+          "state": "known",
+          "value": "principal:owner",
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:demo"
+              ],
+              "evidence_refs": []
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "principal:owner"
+              ],
+              "evidence_refs": []
+            },
+            "objects": {
+              "state": "known",
+              "value": [],
+              "evidence_refs": []
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "stop"
+              ],
+              "evidence_refs": []
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:stop"
+              ],
+              "evidence_refs": []
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "not_applicable"
+              ],
+              "evidence_refs": []
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "internal_review"
+              ],
+              "evidence_refs": []
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:restricted"
+              ],
+              "evidence_refs": []
+            },
+            "management_targets": {
+              "state": "known",
+              "value": [
+                {
+                  "collection": "actions",
+                  "id": "publish_s_main"
+                }
+              ],
+              "evidence_refs": []
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      }
+    ],
+    "task_grants": [
+      {
+        "id": "grant:read_s",
+        "issuer": {
+          "state": "known",
+          "value": "principal:owner",
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:demo"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:worker"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "S:v1"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:read"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:worker"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "internal_review"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:restricted"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:owner-task"
+          ],
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      {
+        "id": "grant:copy_s_internal",
+        "issuer": {
+          "state": "known",
+          "value": "principal:owner",
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:demo"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:worker"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "S:v1"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "transfer"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:internal"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "result:internal"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "internal_review"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:restricted"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:owner-task"
+          ],
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      {
+        "id": "grant:read_p",
+        "issuer": {
+          "state": "known",
+          "value": "principal:owner",
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:demo"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:worker"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "P:v1"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:read"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:worker"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "public_notice"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:public"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:owner-task"
+          ],
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      {
+        "id": "grant:publish_p_main",
+        "issuer": {
+          "state": "known",
+          "value": "principal:owner",
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:demo"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:worker"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "P:v1"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "publish"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:publish"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "sink:main"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "public_notice"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:public"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:owner-task"
+          ],
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      },
+      {
+        "id": "grant:stop",
+        "issuer": {
+          "state": "known",
+          "value": "principal:owner",
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:demo"
+              ],
+              "evidence_refs": []
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "principal:owner"
+              ],
+              "evidence_refs": []
+            },
+            "objects": {
+              "state": "known",
+              "value": [],
+              "evidence_refs": []
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "stop"
+              ],
+              "evidence_refs": []
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:stop"
+              ],
+              "evidence_refs": []
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "not_applicable"
+              ],
+              "evidence_refs": []
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "internal_review"
+              ],
+              "evidence_refs": []
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:restricted"
+              ],
+              "evidence_refs": []
+            },
+            "management_targets": {
+              "state": "known",
+              "value": [
+                {
+                  "collection": "actions",
+                  "id": "publish_s_main"
+                }
+              ],
+              "evidence_refs": []
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:owner-task"
+          ],
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      }
+    ],
+    "approval_rights": [
+      {
+        "id": "approval:owner-task",
+        "holder": "principal:owner",
+        "rights": [
+          "issue_task_grant"
+        ],
+        "restriction_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:demo"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:worker"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "S:v1",
+                "S:v2",
+                "P:v1"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read",
+                "transfer",
+                "publish"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:read",
+                "if:internal",
+                "if:publish"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:worker",
+                "result:internal",
+                "sink:main"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "internal_review",
+                "external_demo",
+                "public_notice"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:restricted",
+                "workflow:public"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "conditions": []
+          },
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:demo"
+              ],
+              "evidence_refs": []
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "principal:owner"
+              ],
+              "evidence_refs": []
+            },
+            "objects": {
+              "state": "known",
+              "value": [],
+              "evidence_refs": []
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "stop"
+              ],
+              "evidence_refs": []
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:stop"
+              ],
+              "evidence_refs": []
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "not_applicable"
+              ],
+              "evidence_refs": []
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "internal_review"
+              ],
+              "evidence_refs": []
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:restricted"
+              ],
+              "evidence_refs": []
+            },
+            "management_targets": {
+              "state": "known",
+              "value": [
+                {
+                  "collection": "actions",
+                  "id": "publish_s_main"
+                }
+              ],
+              "evidence_refs": []
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      {
+        "id": "approval:owner-release",
+        "holder": "principal:owner",
+        "rights": [
+          "release_restriction"
+        ],
+        "restriction_ids": {
+          "state": "known",
+          "value": [
+            "restriction:S-v1",
+            "restriction:S-v2"
+          ],
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:demo"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:worker"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "S:v1",
+                "S:v2",
+                "P:v1"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read",
+                "transfer",
+                "publish"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:read",
+                "if:internal",
+                "if:publish"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:worker",
+                "result:internal",
+                "sink:main"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "internal_review",
+                "external_demo",
+                "public_notice"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:restricted",
+                "workflow:public"
+              ],
+              "evidence_refs": [
+                "ev:fixture-declaration"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        },
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      }
+    ],
+    "release_exceptions": []
+  },
+  "restrictions": [
+    {
+      "id": "restriction:S-v1",
+      "source_object_id": "S:v1",
+      "applies_to_operations": {
+        "state": "known",
+        "value": [
+          "read",
+          "transfer",
+          "publish"
+        ],
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "allowed_clauses": [
+        {
+          "operations": {
+            "state": "known",
+            "value": [
+              "read"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "interfaces": {
+            "state": "known",
+            "value": [
+              "if:read"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "recipients": {
+            "state": "known",
+            "value": [
+              "actor:worker"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "purposes": {
+            "state": "known",
+            "value": [
+              "internal_review"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "workflows": {
+            "state": "known",
+            "value": [
+              "workflow:restricted"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "conditions": []
+        },
+        {
+          "operations": {
+            "state": "known",
+            "value": [
+              "transfer"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "interfaces": {
+            "state": "known",
+            "value": [
+              "if:internal"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "recipients": {
+            "state": "known",
+            "value": [
+              "result:internal"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "purposes": {
+            "state": "known",
+            "value": [
+              "internal_review"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "workflows": {
+            "state": "known",
+            "value": [
+              "workflow:restricted"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "conditions": []
+        }
+      ],
+      "approval_refs": {
+        "state": "known",
+        "value": [
+          "approval:owner-release"
+        ],
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    },
+    {
+      "id": "restriction:S-v2",
+      "source_object_id": "S:v2",
+      "applies_to_operations": {
+        "state": "known",
+        "value": [
+          "read",
+          "transfer",
+          "publish"
+        ],
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "allowed_clauses": [
+        {
+          "operations": {
+            "state": "known",
+            "value": [
+              "read"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "interfaces": {
+            "state": "known",
+            "value": [
+              "if:read"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "recipients": {
+            "state": "known",
+            "value": [
+              "actor:worker"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "purposes": {
+            "state": "known",
+            "value": [
+              "internal_review"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "workflows": {
+            "state": "known",
+            "value": [
+              "workflow:restricted"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "conditions": []
+        },
+        {
+          "operations": {
+            "state": "known",
+            "value": [
+              "transfer"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "interfaces": {
+            "state": "known",
+            "value": [
+              "if:internal"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "recipients": {
+            "state": "known",
+            "value": [
+              "result:internal"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "purposes": {
+            "state": "known",
+            "value": [
+              "internal_review"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "workflows": {
+            "state": "known",
+            "value": [
+              "workflow:restricted"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "conditions": []
+        }
+      ],
+      "approval_refs": {
+        "state": "known",
+        "value": [
+          "approval:owner-release"
+        ],
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    }
+  ],
+  "controls": [
+    {
+      "id": "gate:main",
+      "node_id": "node:gate-main",
+      "property_ids": [
+        "P-CONF-01"
+      ],
+      "initial_policy": {
+        "state": "known",
+        "value": "policy:strict",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "policy_versions": [
+        {
+          "id": "policy:strict",
+          "coverage": {
+            "state": "known",
+            "value": [
+              {
+                "tasks": {
+                  "state": "known",
+                  "value": [
+                    "task:demo"
+                  ],
+                  "evidence_refs": [
+                    "ev:fixture-declaration"
+                  ]
+                },
+                "actors": {
+                  "state": "known",
+                  "value": [
+                    "actor:worker"
+                  ],
+                  "evidence_refs": [
+                    "ev:fixture-declaration"
+                  ]
+                },
+                "objects": {
+                  "state": "known",
+                  "value": [
+                    "S:v1",
+                    "S:v2",
+                    "P:v1"
+                  ],
+                  "evidence_refs": [
+                    "ev:fixture-declaration"
+                  ]
+                },
+                "operations": {
+                  "state": "known",
+                  "value": [
+                    "publish"
+                  ],
+                  "evidence_refs": [
+                    "ev:fixture-declaration"
+                  ]
+                },
+                "interfaces": {
+                  "state": "known",
+                  "value": [
+                    "if:publish"
+                  ],
+                  "evidence_refs": [
+                    "ev:fixture-declaration"
+                  ]
+                },
+                "recipients": {
+                  "state": "known",
+                  "value": [
+                    "sink:main"
+                  ],
+                  "evidence_refs": [
+                    "ev:fixture-declaration"
+                  ]
+                },
+                "purposes": {
+                  "state": "known",
+                  "value": [
+                    "internal_review",
+                    "external_demo",
+                    "public_notice"
+                  ],
+                  "evidence_refs": [
+                    "ev:fixture-declaration"
+                  ]
+                },
+                "workflows": {
+                  "state": "known",
+                  "value": [
+                    "workflow:restricted",
+                    "workflow:public"
+                  ],
+                  "evidence_refs": [
+                    "ev:fixture-declaration"
+                  ]
+                },
+                "conditions": []
+              }
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "checked_parameters": {
+            "state": "known",
+            "value": [
+              "task",
+              "actor",
+              "object_version",
+              "operation",
+              "interface",
+              "recipient",
+              "purpose",
+              "effect_time",
+              "workflow_conditions"
+            ],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "binding": {
+            "state": "known",
+            "value": "bound",
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "timing": {
+            "state": "known",
+            "value": "before_effect",
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "decision_mode": {
+            "state": "known",
+            "value": "authorization",
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "deny_clauses": {
+            "state": "known",
+            "value": [],
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "failure_behavior": {
+            "state": "known",
+            "value": "deny",
+            "evidence_refs": [
+              "ev:fixture-declaration"
+            ]
+          },
+          "evidence_refs": [
+            "ev:fixture-declaration"
+          ]
+        }
+      ],
+      "modifiable_fields": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "responsible_principal": {
+        "state": "known",
+        "value": "principal:owner",
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "modification_paths_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:fixture-declaration"
+        ]
+      },
+      "evidence_refs": [
+        "ev:fixture-declaration"
+      ]
+    }
+  ],
+  "obligations": [
+    {
+      "id": "review:private",
+      "origin": "supplied",
+      "property_id": "P-CONF-01",
+      "task_id": "task:demo",
+      "applicable": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": []
+      },
+      "affected_refs": [
+        {
+          "collection": "actions",
+          "id": "publish_s_main"
+        }
+      ],
+      "source_refs": {
+        "state": "known",
+        "value": [
+          "S:v1"
+        ],
+        "evidence_refs": []
+      },
+      "influence_refs": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": []
+      },
+      "action_refs": {
+        "state": "known",
+        "value": [
+          "publish_s_main"
+        ],
+        "evidence_refs": []
+      },
+      "destination_refs": {
+        "state": "known",
+        "value": [
+          "sink:main"
+        ],
+        "evidence_refs": []
+      },
+      "persistence_refs": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": []
+      },
+      "control_refs": {
+        "state": "known",
+        "value": [
+          "gate:main"
+        ],
+        "evidence_refs": []
+      },
+      "responsibility": {
+        "principal": {
+          "state": "known",
+          "value": "principal:owner",
+          "evidence_refs": []
+        },
+        "observation_refs": {
+          "state": "known",
+          "value": [
+            "observe"
+          ],
+          "evidence_refs": []
+        },
+        "intervention_refs": {
+          "state": "known",
+          "value": [
+            "intervene"
+          ],
+          "evidence_refs": []
+        },
+        "inspectable_basis": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": []
+        },
+        "verification_reliable": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": []
+        },
+        "reviewer_capable": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": []
+        },
+        "response": {
+          "state": "known",
+          "value": {
+            "lower": 6,
+            "upper": 8
+          },
+          "evidence_refs": []
+        },
+        "consequence_window": {
+          "state": "known",
+          "value": {
+            "lower": 10,
+            "upper": 10
+          },
+          "evidence_refs": []
+        },
+        "trigger": "private-publication-proposal",
+        "evidence_refs": []
+      },
+      "unknown_items": [],
+      "evidence_refs": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev:fixture-declaration",
+      "source": "Project-maintained synthetic fixture; Phase 0 A/B protocol.",
+      "acquisition": "supplied_assertion",
+      "claim": "The shared finite task, source objects, rights, routes, and timing are declared model premises.",
+      "scope": [
+        {
+          "collection": "tasks",
+          "id": "task:demo"
+        }
+      ],
+      "snapshot_id": "snapshot:ab",
+      "recorded_at": {
+        "state": "known",
+        "value": "2000-01-01T00:00:00Z",
+        "evidence_refs": []
+      },
+      "model_involvement": {
+        "state": "known",
+        "value": "assisted",
+        "evidence_refs": []
+      },
+      "transformations": [],
+      "lineage_refs": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": []
+      },
+      "applicability": "current",
+      "limits": [
+        "Synthetic model declaration; not direct execution or target observation."
+      ]
+    }
+  ],
+  "limits": {}
+}

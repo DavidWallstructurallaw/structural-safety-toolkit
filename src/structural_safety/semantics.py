@@ -7,6 +7,7 @@ The evaluator consumes validated input and never executes supplied content.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from copy import copy
 from datetime import datetime
 
 from .analysis_types import Decision, scalar_key
@@ -102,6 +103,76 @@ class Evaluator:
             for item in document["context"]["completeness"]
         }
         self._source_cache: dict[tuple[str, str], SourceDetails] = {}
+        self._sources = {}
+        self._activated = {}
+        self._revoked = {}
+        self._record_keys = {id(record): (collection, record["id"])
+                             for collection, records in self.authorities.items() for record in records}
+
+    def with_state(self, *, activated=(), revoked=(), sources=()):
+        """Create a read-only view of branch-local authority and ancestry."""
+        if not activated and not revoked and not sources:
+            return self
+        view = copy(self)
+        def times(rows):
+            grouped = {}
+            for key, instant in rows:
+                grouped.setdefault(key, set()).add(instant)
+            return {key: tuple(sorted(values, key=lambda value: value or ""))
+                    for key, values in grouped.items()}
+        view._activated, view._revoked, view._sources = times(activated), times(revoked), dict(sources)
+        for collection, records in self.authorities.items():
+            for record in records:
+                key = (collection, record["id"])
+                if key not in view._activated:
+                    continue
+                initial = record.get("initially_active", {})
+                if initial.get("state") == "known" and initial["value"] is True:
+                    del view._activated[key]
+                elif initial.get("state") != "known":
+                    view._activated[key] = tuple({None, *view._activated[key]})
+        view._source_cache = {}
+        view.authorities = {}
+        for collection, records in self.authorities.items():
+            view.authorities[collection] = tuple(
+                dict(record, initially_active={"state": "known", "value": True, "evidence_refs": []})
+                if (collection, record["id"]) in view._activated and "initially_active" in record else record
+                for record in records)
+        view._record_keys = {id(record): (collection, record["id"])
+                             for collection, records in view.authorities.items() for record in records}
+        return view
+
+    def derive_sources(self, output_id, input_ids, visible_ids, visibility_complete, task_id):
+        """Retain actual inputs and context sources alongside output declarations."""
+        parents = sorted(set(input_ids) | set(visible_ids))
+        parts = [self.source_details(identifier, task_id) for identifier in parents]
+        declared = self.source_details(output_id, task_id)
+        ancestry = {output_id, *declared.ancestor_ids}
+        restrictions = set(declared.restriction_ids)
+        decisions = [declared.completeness]
+        for part in parts:
+            ancestry.update(part.ancestor_ids)
+            restrictions.update(part.restriction_ids)
+            decisions.append(part.completeness)
+        if not visibility_complete:
+            decisions.append(_decision(None, "generation_context_sources_incomplete"))
+        return SourceDetails(tuple(sorted(ancestry)), tuple(sorted(restrictions)), _and(*decisions))
+
+    def _state_liveness(self, record, query):
+        key = self._record_keys.get(id(record))
+        decisions = []
+        for table, is_activation in ((self._activated, True), (self._revoked, False)):
+            if key not in table:
+                continue
+            changes = []
+            for at in table[key]:
+                if at is None or query.effect_time is None:
+                    changes.append(_decision(None, f"{record['id']}: state change time unknown"))
+                else:
+                    enabled = _time(query.effect_time) >= _time(at) if is_activation else _time(query.effect_time) < _time(at)
+                    changes.append(_decision(enabled, "" if enabled else f"{record['id']}: inactive at effect time"))
+            decisions.append(_or(*changes) if is_activation else _and(*changes))
+        return _and(*decisions)
 
     def complete(self, task_id, collection):
         """Return the explicit completeness claim, including known false."""
@@ -131,7 +202,7 @@ class Evaluator:
             _fact(clause[field], lambda values, value=getattr(query, attribute): value in values,
                   f"scope {field}")
             for field, attribute in self._dimensions.items() if field in clause
-            and not (field == "objects" and query.policy_target is not None)
+            and not (field == "objects" and query.object_version_id is None)
         ]
         if query.policy_target is not None:
             # Management scopes use an explicit typed target. An empty object
@@ -144,6 +215,12 @@ class Evaluator:
                              _fact(target, lambda values: any(
                                  value["control_id"] == control and value["policy_version_id"] == policy
                                  and set(fields) <= set(value["fields"]) for value in values), "policy target"))
+        elif query.object_version_id is None:
+            target = clause.get("management_targets")
+            decisions.append(_fact(clause["objects"], lambda values: not values, "management scope objects must be empty"))
+            decisions.append(_decision(False, "management target not granted") if target is None or not query.management_targets else
+                             _fact(target, lambda values: set(query.management_targets) <= {
+                                 (item["collection"], item["id"]) for item in values}, "management targets"))
         domains = dict(query.conditions)
         for condition in clause["conditions"]:
             key = condition["key"]
@@ -190,7 +267,7 @@ class Evaluator:
                              _time(revocation["value"]["at"]) else "", _refs(revocation))
         active = (_fact(record["initially_active"], lambda value: value is True,
                         f"{label} activation") if "initially_active" in record else _decision(True))
-        return _and(valid, live, active, _decision(True, evidence=record["evidence_refs"]))
+        return _and(valid, live, active, self._state_liveness(record, query), _decision(True, evidence=record["evidence_refs"]))
 
     def capability(self, query):
         """Technical capability does not imply task or source authorization."""
@@ -207,6 +284,19 @@ class Evaluator:
     def _temporal_window(self, record, lower, upper, upper_exclusive):
         """Intersect known temporal premises without filling unknown facts."""
         decisions = [_decision(True, evidence=record["evidence_refs"])]
+        key = self._record_keys.get(id(record))
+        for table, activation in ((self._activated, True), (self._revoked, False)):
+            if key not in table:
+                continue
+            instants = table[key]
+            known = [_time(value) for value in instants if value is not None]
+            if None in instants:
+                decisions.append(_decision(None, f"{record['id']}: state change time unknown"))
+            if activation:
+                if known and None not in instants:
+                    lower = max(lower, min(known))
+            elif known and (upper is None or min(known) <= upper):
+                upper, upper_exclusive = min(known), True
         validity = record["validity"]
         if validity["state"] == "known":
             lower = max(lower, _time(validity["value"]["not_before"]))
@@ -334,6 +424,11 @@ class Evaluator:
                 continue
             visiting.add(object_id)
             ancestors.add(object_id)
+            if object_id in self._sources:
+                actual = self._sources[object_id]
+                ancestors.update(actual.ancestor_ids)
+                restriction_ids.update(actual.restriction_ids)
+                decisions.append(actual.completeness)
             item = self.objects[object_id]
             decisions.extend([
                 _complete(item["parents_complete"], f"{object_id} parents"),
@@ -391,7 +486,7 @@ class Evaluator:
         return allowed
 
     def authorization(self, query):
-        if query.policy_target is not None:
+        if query.object_version_id is None:
             # Selecting a declared policy version changes no data/source grants.
             return self.task_grant(query)
         details = self.source_details(query.object_version_id, query.task_id)

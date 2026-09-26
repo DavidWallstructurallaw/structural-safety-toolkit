@@ -276,7 +276,8 @@ class SearchTests(unittest.TestCase):
 
     def test_unexecuted_unsupported_effect_is_not_an_identity_transition(self):
         document = fixture()
-        document["context"]["operation_definitions"][0]["semantic_kind"] = "persist_read"
+        document["context"]["operation_definitions"][0]["semantic_kind"] = "unsupported"
+        document["context"]["operation_definitions"][0]["unsupported_reason"] = "Opaque read mechanism"
         outcome, steps, _ = run(document)
         self.assertEqual(("read_p", "read_s"), outcome.unsupported_actions)
         self.assertEqual((), outcome.reached_actions)

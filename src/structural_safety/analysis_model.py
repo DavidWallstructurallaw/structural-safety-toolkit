@@ -32,6 +32,7 @@ class AnalysisResult:
     action_results: tuple[Mapping[str, Any], ...] = ()
     coverage: tuple[Mapping[str, Any], ...] = ()
     scope: Mapping[str, Any] = field(default_factory=dict)
+    event_reports: tuple[Mapping[str, Any], ...] = ()
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "diagnostics", tuple(self.diagnostics))
@@ -40,7 +41,7 @@ class AnalysisResult:
         object.__setattr__(self, "scope", freeze(self.scope))
         for name in (
             "findings", "unresolved_items", "obligations", "input_completeness",
-            "unsupported_items", "truncation", "action_results", "coverage",
+            "unsupported_items", "truncation", "action_results", "coverage", "event_reports",
         ):
             object.__setattr__(self, name, tuple(freeze(item) for item in getattr(self, name)))
 

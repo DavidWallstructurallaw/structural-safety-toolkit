@@ -112,7 +112,7 @@ def analysis_to_dict(result: Any) -> dict[str, Any]:
         "analysis_status", "schema_version", "analysis_performed", "diagnostics",
         "findings", "unresolved_items", "obligations", "input_completeness",
         "supported_capabilities", "unsupported_items", "effective_limits",
-        "budget_usage", "truncation", "action_results", "coverage", "scope",
+        "budget_usage", "truncation", "action_results", "coverage", "scope", "event_reports",
     ):
         report[name] = _plain(getattr(result, name))
     return report
@@ -161,6 +161,7 @@ def analysis_to_markdown(result: Any) -> str:
         ("diagnostics", "Input diagnostics"),
         ("findings", "Findings and witnesses"),
         ("action_results", "Action results"),
+        ("event_reports", "Imported event reports (unverified claims)"),
         ("obligations", "Obligations and check status"),
         ("coverage", "Coverage"),
         ("unresolved_items", "Unresolved items"),

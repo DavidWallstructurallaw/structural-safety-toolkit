@@ -1,6 +1,6 @@
 # Input format: sst.model/0.1
 
-The executable contract is the strict Python validator, with its field descriptors in [schema.py](../src/structural_safety/schema.py). This document lists every field and shape. The analyzer evaluates `read`, `transfer`, and finite `policy_update` with SS001/SS005. Parsing other valid fields does not mean their analysis semantics have been implemented; unsupported effects and rules remain visible in analysis reports. The fixed A-F demo is a separate interface and does not execute arbitrary submitted JSON models; D performs analysis only.
+The executable contract is the strict Python validator, with its field descriptors in [schema.py](../src/structural_safety/schema.py). This document lists every field and shape. The analyzer evaluates finite `read`, `transfer`, `derive`, `persist_write`, `persist_read`, `delegate`, `policy_update`, `revoke`, and `stop` with SS001 through SS006. Explicit unsupported semantics and unknown property identifiers remain visible in analysis reports. The fixed A-F demo is a separate interface and does not execute arbitrary submitted JSON models; D performs analysis only.
 
 Read the complete [A fixture](../src/structural_safety/examples/A.json) or [B fixture](../src/structural_safety/examples/B.json) for a working input. All top-level fields except `events` are required; empty lists are allowed where their minimum is zero. Every object is closed to unknown fields, including nested objects and facts. There is no catch-all metadata or custom-code field.
 
@@ -47,7 +47,7 @@ Conflict distinctness uses the field's semantic type: reordering a set does not 
 - Supplementary relations accept only semantic influence, delegation, observation, or intervention. Data flow, execution, persistence, capability, and policy-change projections come from canonical records. Relation endpoint kinds, action references, local port references, and responsibility observation/intervention relation kinds are checked.
 - Each `activate_authorizations` effect must be covered by a delegation relation linked to the same action, naming the activated capability and grant references and the parent/child identity mapping. The relation's parent identity must match its delegate action. Structural validation does not decide whether the delegated authorization scope is permitted.
 - Ordinary events always carry `reported_event_kind`. Optional `verified` and `claimed_origin` are claims by the submitter and do not establish direct toolkit observation. Omitting `events` means no event submission; an empty event list is an explicit empty submission.
-- Empty `obligations` is legal. Later analysis derives obligations from other canonical records; validation does not conclude that there are none.
+- Empty `obligations` is legal. Analysis derives obligations from other canonical records; validation does not conclude that there are none.
 - `responsibility.response` is a Fact whose value is either one end-to-end duration or a `response_phases` record. The phase form requires detection, escalation, decision, and stop-effect durations plus explicit `sequential` and `nonoverlapping` Facts. Both forms use `responsibility.trigger` as their time origin. They cannot be mixed in one value or counted twice. Unknown phase values and false/unknown ordering assertions are structurally valid; validation does not sum them or infer timely intervention.
 
 Cycles among candidate actions, mutually exclusive conditions, absent technical capability, expired or excessive grants, and omitted source restrictions can all be structurally valid. Their reachability or authorization consequences belong to semantic analysis, so validation does not reject them merely to avoid an adverse result.
@@ -64,7 +64,7 @@ The `limits` object is required and may be empty. Missing fields use defaults. E
 | max_actions | 128 | Both candidate action count and normalized atomic execution item count. |
 | max_states | 10000 | Shared analysis state budget, including the initial state. |
 | max_transition_checks | 100000 | Shared atomic candidate-transition budget. |
-| max_scope_combinations | 20000 | Scope-comparison budget; reserved for later scope-containment checks. |
+| max_scope_combinations | 20000 | Shared finite delegation-scope combination budget. |
 | max_clause_checks | 1000000 | Shared complete clause-matching budget. |
 | max_findings | 1000 | Distinct-finding retention budget. |
 
@@ -79,7 +79,7 @@ Analysis returns `sst.report/0.1`. An invalid input retains its input error stat
 | Analysis field | Meaning |
 |---|---|
 | `scope` | Snapshot ID, as-of time, root task, declared scope, and declared known limits. |
-| `findings` | Retained SS001/SS005 findings with their model premises and representative witnesses. |
+| `findings` | Retained SS001 through SS006 findings with their model premises and representative witnesses or specific obligation conditions. |
 | `unresolved_items` | Facts or conclusions that remain unresolved. |
 | `obligations` | Per-obligation outcomes and check completion. |
 | `input_completeness` | Declared inventory completeness and its evidence limits. |
@@ -87,9 +87,12 @@ Analysis returns `sst.report/0.1`. An invalid input retains its input error stat
 | `unsupported_items` | Unimplemented operations, rules, properties, or explicit unsupported semantics and their affected scope. |
 | `effective_limits`, `budget_usage`, `truncation` | Effective resource policy, work consumed, and any stopped work. |
 | `action_results` | Candidate effect judgments, with feasibility, authorization, and modeled control decisions kept separate. |
+| `event_reports` | Attributed imported records, retaining reported kind and verification claims without establishing toolkit observations. |
 | `coverage` | Coverage conclusions for supported scope, retaining incomplete or unresolved checks. |
 
-The analyzer implements property `P-CONF-01` for its finite `read`/`transfer` scope. Other property labels and descriptions remain structurally valid but do not acquire executable rules from their text.
+Each coverage record's `violation_refs` lists all findings classified as `modeled_boundary_violation` for that task and property. Any such finding makes `model_coverage="violated_in_model"`, including authority, delegation, and source-declaration violations. `disclosure_path_refs` is the narrower set of SS001 modeled disclosure-path findings. An SS003 or SS004 violation therefore prevents a covered conclusion without inventing an SS001 data path. Unresolved or unfinished scope remains visible alongside established violations.
+
+The analyzer implements property `P-CONF-01` across its supported finite state transitions and related authority, source, and control checks. SS006 evaluates explicitly supplied responsibility obligations while retaining their declared property references. Other property labels and descriptions remain structurally valid but do not acquire new executable property rules from their text. Model analysis leaves runtime effects `not_tested`; an imported event cannot change that evidence boundary.
 
 Duplicate JSON keys, dangling references, unsupported ordinary fields, invalid timestamps, wrong endpoint types, boolean counts, and nonstandard numbers are rejected. An unrecognized input schema version receives `unsupported_schema`. No JSON or Markdown report is a safety certificate.
 
@@ -169,6 +172,7 @@ Named types below resolve to their matching section. Required means the field mu
 | `actors` | yes | Fact&lt;Set&lt;Ref&lt;nodes&gt; (principal, executor, service)&gt;; minimum 0&gt; |
 | `objects` | yes | Fact&lt;Set&lt;Ref&lt;object_versions&gt;&gt;; minimum 0&gt; |
 | `policy_targets` | no | Fact&lt;Set&lt;[policy-target](#policy-target)&gt;; minimum 0&gt;; explicit policy-management scope, added in P1-4 |
+| `management_targets` | no | Fact&lt;Set&lt;[management-target](#management-target)&gt;; minimum 0&gt;; exact activation, revocation, or stop targets, added in P1-5 |
 | `operations` | yes | Fact&lt;Set&lt;Ref&lt;operations&gt;&gt;; minimum 0&gt; |
 | `interfaces` | yes | Fact&lt;Set&lt;Ref&lt;interfaces&gt;&gt;; minimum 0&gt; |
 | `recipients` | yes | Fact&lt;Set&lt;Ref&lt;nodes&gt; (principal, executor, service, resource, tool, store, control) or `not_applicable`&gt;; minimum 0&gt; |
@@ -185,6 +189,17 @@ Named types below resolve to their matching section. Required means the field mu
 | `fields` | yes | Nonempty set of `coverage`, `decision_mode`, `deny_clauses`, `checked_parameters`, `binding`, `timing`, `failure_behavior`, `comment` |
 
 For `select_policy`, scope `objects` must be known empty and one matching policy target must cover all requested fields. An absent target is no grant, never a wildcard. Data queries still require matching data objects. This is an additive field within development schema `sst.model/0.1`; existing A/B records remain valid. See [management semantics](semantics.md#technical-ability-and-authorization).
+
+### management-target
+
+| Field | Required | Type / allowed values |
+|---|---|---|
+| `collection` | yes | `capabilities`, `task_grants`, `approval_rights`, `release_exceptions`, `actions`, `nodes`, `interfaces` |
+| `id` | yes | Exact reference to an existing record in the specified collection |
+
+For `activate_authorizations`, `revoke`, and `stop`, the normalized query has `object_version_id=null` and `recipient_id="not_applicable"`. Scope `objects` must be known empty, and all targets of that atomic effect must be contained in one complete scope clause. The collection and ID both match; a same-named action and node remain distinct. Absent or known empty `management_targets` grants nothing. Unknown targets preserve an unresolved scope match. A target list cannot be assembled from different grants. These rules apply separately to technical capability, task permission, and the issuer's approval right. Other scope dimensions, conditions, validity, and revocation checks still apply.
+
+Activation targets each referenced capability and task grant. Revocation targets the specified authorization record. Stopping targets its declared action, actor node, or interface. `policy_targets` continues to provide the distinct control/version/field binding for policy selection. A data-only clause never authorizes a management operation merely because its other dimensions match.
 
 ### task
 
@@ -513,7 +528,7 @@ For `select_policy`, scope `objects` must be known empty and one matching policy
 |---|---|---|
 | `id` | yes | string |
 | `coverage` | yes | Fact&lt;List&lt;[scope](#scope)&gt;; minimum 0&gt; |
-| `checked_parameters` | yes | Fact&lt;Set&lt;`task`, `actor`, `object_version`, `operation`, `interface`, `recipient`, `purpose`, `effect_time`, `workflow_conditions`, `policy_target`&gt;; minimum 0&gt; |
+| `checked_parameters` | yes | Fact&lt;Set&lt;`task`, `actor`, `object_version`, `operation`, `interface`, `recipient`, `purpose`, `effect_time`, `workflow_conditions`, `policy_target`, `management_targets`&gt;; minimum 0&gt; |
 | `binding` | yes | Fact&lt;`bound`, `unbound`&gt; |
 | `timing` | yes | Fact&lt;`before_effect`, `after_effect`&gt; |
 | `decision_mode` | yes | Fact&lt;`authorization`, `deny_table`, `external`, `unsupported`&gt; |
@@ -666,6 +681,10 @@ For `select_policy`, scope `objects` must be known empty and one matching policy
 | `limits` | yes | List&lt;string&gt;; minimum 0 |
 
 ### event
+
+Events are ordinary imports. Their reported kinds remain separate: a proposal does not establish an attempt, an attempt does not establish execution, and a successful return does not establish an observed effect. The analyzer retains them as `event_reports` with external-report provenance. `verified`, `claimed_origin`, environment labels, and referenced evidence remain submitted claims. They never grant authorization, mutate the candidate state, or produce direct `runtime_observation` evidence.
+
+Each report retains the event, run, action, object, observer, and time bindings. Output `submitted_verified` and `reported_environment` distinguish submitted claims from analyzer conclusions; `direct_observation=false` and `observed_effect="not_tested"` preserve that boundary. Reports compare execution/effect timestamps with the declared action time and list event objects outside that action's ports. Differences remain report/model discrepancies without treating either source as verified truth. Free-text `details` is not echoed; `details_omitted=true` records that omission.
 
 | Field | Required | Type / allowed values |
 |---|---|---|

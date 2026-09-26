@@ -88,6 +88,7 @@ class Query:
     workflow_id: str
     conditions: tuple[tuple[str, tuple[str, ...]], ...] = ()
     policy_target: tuple[str, str, tuple[str, ...]] | None = None
+    management_targets: tuple[tuple[str, str], ...] = ()
 
 
 def policy_query(action: Any, effect: Any, document: Any, conditions: Any = ()) -> Query:
@@ -97,6 +98,24 @@ def policy_query(action: Any, effect: Any, document: Any, conditions: Any = ()) 
                  action["effect_time"].get("value") if action["effect_time"]["state"] == "known" else None,
                  action["workflow_id"], conditions,
                  (effect["control_id"], effect["policy_version_id"], tuple(sorted(effect["fields"]))))
+
+
+def management_query(action: Any, effect: Any, document: Any, conditions: Any = ()) -> Query:
+    """Bind a management request to its complete exact typed target set."""
+    if effect["kind"] == "select_policy":
+        return policy_query(action, effect, document, conditions)
+    if effect["kind"] == "activate_authorizations":
+        targets = tuple(sorted((collection, identifier)
+            for collection, key in (("capabilities", "capability_ids"), ("task_grants", "task_grant_ids"))
+            for identifier in effect[key]))
+    else:
+        target = effect["authorization_ref"] if effect["kind"] == "revoke" else effect["target"]
+        targets = ((target["collection"], target["id"]),)
+    return Query(task_id=action["task_id"], actor_id=action["actor_id"], object_version_id=None,
+                 operation_id=action["operation_id"], interface_id=action["interface_id"],
+                 recipient_id="not_applicable", purpose_id=action["purpose_id"],
+                 effect_time=action["effect_time"].get("value") if action["effect_time"]["state"] == "known" else None,
+                 workflow_id=action["workflow_id"], conditions=conditions, management_targets=targets)
 
 
 class BudgetExceeded(Exception):

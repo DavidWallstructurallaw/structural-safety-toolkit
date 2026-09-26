@@ -23,7 +23,7 @@ def _walk(value: Any, spec: dict, path: str = '') -> Iterator[tuple[Any, dict, s
         if spec['name'] == 'policy_target':
             yield value, {'type': 'policy_target'}, path
             return
-        if spec['name'] == 'typed_ref':
+        if spec['name'] in ('typed_ref', 'management_target'):
             yield value, {'type':'typed_ref'}, path
             return
         yield from _walk(value, INPUT_CONTRACT['definitions'][spec['name']], path)

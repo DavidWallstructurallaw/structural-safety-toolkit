@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.0.dev0: P1-5 remaining finite operations and narrow rules
+
+- Added finite `derive`, `persist_write`, `persist_read`, `delegate`, `revoke`, and `stop` model transitions alongside existing read, transfer, and policy selection.
+- Added exact typed `scope.management_targets` and corresponding control-parameter checks for activation, revocation, and stopping; empty data-object scopes do not grant management authority.
+- Preserved known input and generation-context sources through derivation, with explicit cross-context storage reads and separate completeness for unknown sources.
+- Added branch-local authorization activation, revocation, and stopping with retained earlier effects and conditional-state assumptions.
+- Added SS002 instruction-authority checks, SS003 complete-clause delegation containment, SS004 source-declaration checks, and SS006 concrete responsibility and response-window checks.
+- Added ordinary imported event reports that retain submitted provenance and verification claims without producing direct runtime evidence.
+- Added direct semantic cases for legal, violating, and unresolved inputs, bounded delegation checks, source inheritance, and state timing.
+
+The A-F selection remains 18 fixed scenarios, comprising 15 executable local experiments and three analysis-only D contrasts. The new finite operations update declared model states; arbitrary submitted actions are not executed. Apache-2.0 and the development version remain unchanged. Full compatibility and release acceptance remain P1-6 work.
+
 ## 0.1.0.dev0: P1-4 C/D/E/F scenarios and finite policy selection
 
 - Added complete packaged C, D-behavior/declaration/isolation, E0 plus nine single-factor variants, and F-open/locked model inputs.
