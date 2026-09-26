@@ -131,7 +131,19 @@ class Evaluator:
             _fact(clause[field], lambda values, value=getattr(query, attribute): value in values,
                   f"scope {field}")
             for field, attribute in self._dimensions.items() if field in clause
+            and not (field == "objects" and query.policy_target is not None)
         ]
+        if query.policy_target is not None:
+            # Management scopes use an explicit typed target. An empty object
+            # list, a data grant, or an unlisted version never grants control.
+            control, policy, fields = query.policy_target
+            target = clause.get("policy_targets")
+            decisions.append(_fact(clause["objects"], lambda values: not values,
+                                   "management scope objects must be empty"))
+            decisions.append(_decision(False, "policy target not granted") if target is None else
+                             _fact(target, lambda values: any(
+                                 value["control_id"] == control and value["policy_version_id"] == policy
+                                 and set(fields) <= set(value["fields"]) for value in values), "policy target"))
         domains = dict(query.conditions)
         for condition in clause["conditions"]:
             key = condition["key"]
@@ -379,6 +391,9 @@ class Evaluator:
         return allowed
 
     def authorization(self, query):
+        if query.policy_target is not None:
+            # Selecting a declared policy version changes no data/source grants.
+            return self.task_grant(query)
         details = self.source_details(query.object_version_id, query.task_id)
         restrictions = [self.restriction_ok(self.restrictions[restriction_id], query)
                         for restriction_id in details.restriction_ids]

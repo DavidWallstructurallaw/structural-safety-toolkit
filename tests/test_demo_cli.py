@@ -146,8 +146,8 @@ class DemoCLITests(unittest.TestCase):
                 self.assertEqual(invalid.returncode, 2)
                 self.assertEqual(invalid.stdout, b"")
 
-    def test_future_subcases_and_arbitrary_paths_are_not_executed(self):
-        for scenario in ("D-behavior", "E-purpose", "F-open", "./custom.py"):
+    def test_invalid_subcases_and_arbitrary_paths_are_not_executed(self):
+        for scenario in ("D-other", "E-other", "F-other", "./custom.py"):
             with self.subTest(scenario=scenario):
                 result = self.command("demo", scenario)
                 self.assertEqual(result.returncode, 2)

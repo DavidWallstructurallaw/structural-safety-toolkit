@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.0.dev0: P1-4 C/D/E/F scenarios and finite policy selection
+
+- Added complete packaged C, D-behavior/declaration/isolation, E0 plus nine single-factor variants, and F-open/locked model inputs.
+- Added exact `scope.policy_targets` bindings for control, declared version, and fields, without treating empty data-object scope as management authority.
+- Added branch-local finite policy selection, historical-policy witnesses, and SS005 management-boundary and independence checks.
+- Extended independent driver, real policy/target observations, and manually fixed comparisons to C/E/F; D never runs the simulator.
+- Added all fixed CLI/API selections, group expansion with fresh per-case state and budgets, expected-unknown comparisons, and retained earlier observations on failures.
+- Added direct target-binding, exception, refusal, actual-policy-change, partial-observation, and installed A-F checks.
+
+There are 18 scenarios, with 15 executable experiments and three analysis-only contrasts. The remaining finite operations and SS002/SS003/SS004/SS006 belong to P1-5; release and the full compatibility matrix belong to P1-6. Apache-2.0 and the development version remain unchanged.
+
 ## 0.1.0.dev0: P1-3 direct A/B experiments
 
 - Added `run_demo`, `DemoResult`, and `demo A` / `demo B` with JSON/Markdown reports and the five analysis budget options.

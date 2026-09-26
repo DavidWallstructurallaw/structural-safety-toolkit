@@ -171,8 +171,8 @@ class DemoTests(unittest.TestCase):
                 finding["witness"][-1]["output_port"]["location_node_id"] = "result:internal"
         self.assertEqual(compare_analysis("A", analysis)["verdict"], "mismatched")
 
-    def test_reserved_and_invalid_names_do_not_run(self):
-        for scenario in ("C", "D", "E", "F", "all", "D-behavior", "E-unknown", "F-open", "unknown", "../A", "a"):
+    def test_invalid_names_do_not_run(self):
+        for scenario in ("D-other", "E-other", "F-other", "unknown", "../A", "a"):
             with self.subTest(scenario=scenario), patch("structural_safety.experiment_runtime.execute_case") as execute:
                 result = run_demo(scenario)
                 self.assertEqual(result.protocol_verdict, "not_tested")

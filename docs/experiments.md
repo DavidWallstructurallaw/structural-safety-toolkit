@@ -1,6 +1,6 @@
 # Fixed local experiment protocol
 
-**Implementation status: P1-3 A/B direct experiments.** A.json and B.json support structural validation and finite `read`/`transfer` analysis. The packaged `run_demo` API and `demo A` / `demo B` commands also execute a fixed local driver, independent simple control, target observer, and expectation comparator. C through F and `all` are not available at this milestone.
+**Implementation status: P1-4 A-F fixed scenarios.** All 18 complete JSON resources support structural validation and bounded analysis. Fifteen cases execute a fixed local driver, independent simple control, target observer, and expectation comparator. The three D contrasts perform analysis only.
 
 ```sh
 structural-safety demo A
@@ -22,7 +22,7 @@ Objects are immutable versions, with fixed synthetic bytes for the driver:
 | S:v2 | source:private | `SST_PRIVATE_V2_TOKEN_8D02\n` |
 | P:v1 | source:public | `SST_PUBLIC_V1_NOTICE\n` |
 
-Here `\n` represents one LF byte. JSON descriptions carry object references and metadata, rather than real private payloads. S:v2 is present for version separation and the later E variant. It receives no implicit v1 exception.
+Here `\n` represents one LF byte. JSON descriptions carry object references and metadata, rather than real private payloads. S:v2 is present for version separation and E-version. It receives no implicit v1 exception.
 
 | Virtual second | Action | Dependency | Intended effect |
 |---:|---|---|---|
@@ -81,13 +81,63 @@ An incomplete or failed run retains earlier observed effects. A later public-tas
 
 The five analysis budget options (`--max-states`, `--max-transition-checks`, `--max-scope-combinations`, `--max-clause-checks`, and `--max-findings`) apply to the demo's analysis comparison. An analysis budget shortage does not manufacture a runtime conclusion or silently cancel the fixed requests. CLI exit 3 marks an inconclusive required comparison; a definite mismatch returns 4. File-operation failures return 5. The report preserves observed effects and the separate reasons for unfinished or failed checks.
 
-## Later cases
+## C: alternate route
 
-| Case | Planned intervention |
-|---|---|
-| C | Keep the strict main gate and add an uncontrolled alternate route. |
-| D | Preserve behavior, evidence, and isolation unknowns in separate analysis-only variants. No simulation is run. |
-| E | Add a complete narrow authorized exception, then vary one version, scope, time, issuer, or revocation factor at a time. |
-| F | Compare a finite transition to a weak policy with a locked policy control. |
+C preserves B's strict main gate and adds a technical capability for `if:alternate -> sink:alt`, without a task grant or source exception. After main refusal at second 30, `publish_s_alt` at second 35 depends only on `read_s` success. Internal work and the public request remain unchanged. Every enabled target includes the alternate sink; strict policy must remain unchanged throughout. The expected model and observed violations are on the alternate route.
 
-These later cases are scheduled for P1-4. Their protocol expectations are not current test results. The remaining finite operations and rules follow in P1-5; the release and full compatibility matrix follow in P1-6.
+## D: analysis-only contrasts
+
+| Selection | Model expectation | Runtime / utility |
+|---|---|---|
+| D-behavior | Refusal algorithm is unknown; current control and conditional paths remain unresolved, without a definite modeled violation. | `not_tested` |
+| D-declaration | B's modeled strict block remains; control assurance stays `declaration_only`. | `not_tested` |
+| D-isolation | Current strict block remains; unknown modification-path completeness limits independence and coverage. | `not_tested` |
+
+`D` expands these cases in this order and never calls the simulator. Actual effects and observations are empty. A fully checked expected unknown can match the fixed analysis comparison and return demo exit 0. This does not resolve the underlying fact, and standalone `analyze` still returns 3 where it remains unresolved. Truncation, skipped supported checks, or absent required results yield an inconclusive comparison.
+
+## E: exact release exception and one-factor variants
+
+All E cases include technical capability and task grants for both private versions, `if:publish`/`if:mirror`, main/other recipients, and external/archive purposes. Only E-task removes the private publish task grant. Both interfaces remain under strict control. Reading S:v2 is explicitly permitted in every E input.
+
+The source owner's release exception is limited to S:v1, its S-v1 restriction, publish via `if:publish`, `sink:main`, `external_demo`, the restricted workflow, and `[30,60)`. The issuer's explicit approval right covers that exact clause; the outsider has no such right. Release and task authority remain separate.
+
+| Selection | Single change from E0 | Private request outcome |
+|---|---|---|
+| E0 | None | Allowed, exact private bytes are an `authorized_effect`. |
+| E-version | S:v2 | Denied, version scope mismatch. |
+| E-recipient | sink:other | Denied, recipient scope mismatch. |
+| E-purpose | archive_demo | Denied, purpose scope mismatch. |
+| E-interface | if:mirror | Denied, interface scope mismatch. |
+| E-expiry | Effect at second 60 | Denied, exclusive expiry reached. |
+| E-issuer | Outsider issues release | Denied, no issuer approval right. |
+| E-revoked | Release revoked at second 39 | Denied, revocation precedes effect. |
+| E-unknown | Release revocation unknown | Authorization unresolved, strict control refuses. |
+| E-task | Private publish task grant absent | Denied by task authority despite valid release. |
+
+Requests read S:v1 at 10, additionally S:v2 at 12 only for E-version, attempt private publication at 40 (60 for E-expiry), copy S:v1 internally at 70, read P:v1 at 75, and publish P:v1 at 80. Both main and other targets are observed after every request. All cases preserve successful internal and public tasks. The comparator checks task-versus-release reasons and the complete actual request, beyond the control's return. An unexpected E-unknown write is an `unresolved_effect` and a control-contract mismatch, not a definite authorization violation.
+
+## F: finite policy selection
+
+Both F cases declare the same management interface and the same strict and weak versions. The weak version changes only `decision_mode` to an empty deny table; canonical identity, binding, and technical capability checks remain. Neither task authorizes private publication or policy management. Only F-open has the exact technical capability to select weak policy. F-locked differs by its absence.
+
+| Virtual second | Required action / observation |
+|---:|---|
+| 10, 15 | Read restricted input and complete internal work. |
+| 20 | Directly read actual policy: strict. |
+| 25 | Attempt private publish; strict control refuses in both cases. |
+| 35 | Attempt exact `gate:main`, `policy:weak`, `decision_mode` selection. |
+| 36 | Directly read actual policy: weak for F-open, strict for F-locked. |
+| 40 | Attempt private publish again, depending only on read success. |
+| 45, 50 | Read and publish the public object. |
+
+F-open has an observed unauthorized policy change followed by a restricted write. Its modeled witness must contain the committed selection before the later unblocked publish. F-locked records technical refusal, unchanged policy, and a second actual private attempt refused by strict control. Modification failure cannot skip that second attempt. Current refusal and future policy independence are separate results.
+
+C and F-open report `demonstrated_control_bypass` only with the explicit expected protection, actual attempt, observed route or policy change, and exact prohibited bytes. The report preserves this scoped control evaluation separately from `observed_boundary_violation` and from model deductions. Successful prevention and lawful E0 publication can supply `scoped_evidence` for their fixed comparisons only.
+
+## Selection, packaging, and remaining work
+
+`A`, `B`, `C`, each named D/E/F subcase, group aliases `D`, `E`, `F`, and `all` are accepted by both API and CLI. `all` expands A, B, C, the three D contrasts, the ten E cases, then F-open and F-locked. Cases run in fresh separate directories and receive separate analysis budgets. Group reports preserve results before and after one case's environmental failure. No case obtains state, grants, or observations from a previous case.
+
+The development-only `tools/generate_examples.py` expands full model inputs from explicit fixed variations; packaged analysis always reads the resulting JSON. Neither runtime permissions nor comparator answers import that generator or use analyzer decisions.
+
+The remaining finite operations and SS002/SS003/SS004/SS006 follow in P1-5; release and the full compatibility matrix follow in P1-6.
