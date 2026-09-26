@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.0rc1: P1-6 candidate acceptance and compatibility
+
+- Added a four-environment CI matrix: Linux with CPython 3.12, 3.13, and 3.14, plus Windows with CPython 3.14.
+- Built the candidate wheel from its source distribution and checked installation in a fresh environment outside the checkout.
+- Added a reusable README check that executes its Python API snippets and CLI examples, preserving distinct validation, analysis, and demo exit meanings.
+- Rechecked active delegated scope after modeled activation and revocation, retaining historical results and conditional-state limits while evaluating the remaining validity window.
+- Made piped CLI reports use UTF-8 across platforms, preserving non-ASCII model identifiers and text on Windows.
+- Updated installation, finite-model support, experiment scope, and candidate-version documentation.
+
+The candidate retains the nine finite model operations, six narrow rules, 18 fixed demo scenarios, and three additional model examples. Model deductions, imported claims, and direct synthetic observations remain separate. This version prepares a prerelease candidate; it does not publish a stable release or claim untested platforms.
+
 ## 0.1.0.dev0: P1-5 remaining finite operations and narrow rules
 
 - Added finite `derive`, `persist_write`, `persist_read`, `delegate`, `revoke`, and `stop` model transitions alongside existing read, transfer, and policy selection.

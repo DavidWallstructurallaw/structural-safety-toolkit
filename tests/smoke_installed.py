@@ -121,7 +121,7 @@ def main() -> None:
     environment = os.environ.copy()
     environment.pop("PYTHONPATH", None)
     environment.pop("PYTHONHOME", None)
-    console = Path(sys.executable).with_name("structural-safety")
+    console = Path(sys.executable).with_name("structural-safety.exe" if os.name == "nt" else "structural-safety")
     commands = ([str(console)], [sys.executable, "-I", "-m", "structural_safety"])
     for filename in ("A.json", "B.json"):
         resource = resources.files("structural_safety").joinpath("examples", filename)
@@ -132,7 +132,7 @@ def main() -> None:
             for command in commands:
                 completed = subprocess.run(
                     [*command, "validate", str(input_path)],
-                    env=environment, capture_output=True, text=True, check=True,
+                    env=environment, capture_output=True, text=True, encoding="utf-8", check=True,
                 )
                 if completed.stderr or json.loads(completed.stdout) != result.to_dict():
                     raise RuntimeError("Installed CLI and API validation reports differ.")
@@ -142,7 +142,7 @@ def main() -> None:
             for command in commands:
                 completed = subprocess.run(
                     [*command, "analyze", str(input_path)],
-                    env=environment, capture_output=True, text=True, check=False,
+                    env=environment, capture_output=True, text=True, encoding="utf-8", check=False,
                 )
                 if completed.returncode != 1 or completed.stderr:
                     raise RuntimeError("Installed analysis CLI failed operationally.")
@@ -156,7 +156,7 @@ def main() -> None:
         for command in commands:
             completed = subprocess.run(
                 [*command, "demo", scenario],
-                env=environment, capture_output=True, text=True, check=False,
+                env=environment, capture_output=True, text=True, encoding="utf-8", check=False,
             )
             if completed.returncode != 0 or completed.stderr:
                 raise RuntimeError("Installed demo CLI did not match its expected protocol.")
@@ -165,7 +165,8 @@ def main() -> None:
             check_demo(json.loads(completed.stdout), scenario)
     check_all(structural_safety.run_demo("all").to_dict())
     for command in commands:
-        completed = subprocess.run([*command, "demo", "all"], env=environment, capture_output=True, text=True)
+        completed = subprocess.run([*command, "demo", "all"], env=environment, capture_output=True,
+                                   text=True, encoding="utf-8")
         if completed.returncode != 0 or completed.stderr:
             raise RuntimeError("Installed all CLI selection failed.")
         check_all(json.loads(completed.stdout))
@@ -197,7 +198,7 @@ def main() -> None:
         with resources.as_file(resource) as input_path:
             for command in commands:
                 completed = subprocess.run([*command, "analyze", str(input_path)], env=environment,
-                                           capture_output=True, text=True, check=False)
+                                           capture_output=True, text=True, encoding="utf-8", check=False)
                 if completed.returncode not in (0, 1) or completed.stderr or json.loads(completed.stdout) != result:
                     raise RuntimeError("Installed P1-5 CLI and API analysis reports differ.")
     print(f"Installed wheel {installed_version}: validation/analysis/demo APIs, both CLI entries, 18 demo models and three P1-5 analysis models passed.")

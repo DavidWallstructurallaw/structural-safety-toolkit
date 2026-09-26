@@ -13,7 +13,7 @@ from types import MappingProxyType, SimpleNamespace
 import unittest
 from unittest.mock import patch
 
-from structural_safety import cli
+from structural_safety import __version__, cli
 from structural_safety.model import Diagnostic, Fact, Limits
 from structural_safety.report import validation_to_dict, validation_to_markdown
 
@@ -110,7 +110,27 @@ class CLITests(unittest.TestCase):
         self.assertIn(b"A-F", help_result.stdout)
         version = self.command("--version")
         self.assertEqual(version.returncode, 0)
-        self.assertIn(b"0.1.0.dev0", version.stdout)
+        self.assertIn(__version__.encode("ascii"), version.stdout)
+
+    def test_utf8_stdin_and_redirected_markdown_ignore_legacy_stream_encoding(self):
+        model = json.loads(self.example())
+        reason = "来源范围未提供"
+        model["context"]["unsupported_items"] = [{
+            "id": "unsupported:unicode", "reason": reason,
+            "affected_refs": {"state": "known", "value": [], "evidence_refs": []},
+        }]
+        document = json.dumps(model, ensure_ascii=False).encode("utf-8")
+        source = self.root / "输入 模型.json"
+        source.write_bytes(document)
+        output = self.root / "结果 报告.md"
+        with patch.dict(os.environ, {"PYTHONIOENCODING": "ascii:strict"}):
+            piped = self.command("validate", "-", "--format", "markdown", data=document)
+            saved = self.command("validate", source, "--format", "markdown", "--output", output)
+        self.assertEqual(piped.returncode, 0, piped.stderr)
+        self.assertEqual(saved.returncode, 0, saved.stderr)
+        self.assertIn(reason, piped.stdout.decode("utf-8"))
+        self.assertEqual(piped.stdout, output.read_bytes())
+        self.assertEqual(source.read_bytes(), document)
 
     def test_markdown_output_and_atomic_replacement(self):
         source = self.source_file()

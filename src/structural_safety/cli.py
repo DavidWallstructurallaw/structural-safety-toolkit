@@ -29,7 +29,7 @@ def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="structural-safety",
         description="Validate and analyze explicit AI agent deployment models, and run local demos.",
-        epilog="P1-4 supports bounded read/transfer/policy_update analysis and fixed A-F scenarios.",
+        epilog="Supports finite model analysis with SS001-SS006 and fixed A-F scenarios.",
     )
     version_label = f"structural-safety {__version__}"
     if _version_source != "installed metadata":
@@ -189,7 +189,15 @@ def _main(argv: Sequence[str] | None) -> int:
                     + " report saved.")
     else:
         try:
-            sys.stdout.write(content)
+            # Reports use the same UTF-8 encoding on disk and through pipes,
+            # including Windows shells with a legacy text-stream encoding.
+            # Embedded callers can still redirect to a text-only stream.
+            binary_stdout = getattr(sys.stdout, "buffer", None)
+            if binary_stdout is None:
+                sys.stdout.write(content)
+            else:
+                sys.stdout.flush()
+                binary_stdout.write(content.encode("utf-8"))
             sys.stdout.flush()
         except (OSError, UnicodeError) as error:
             raise _OperationalError("Cannot write the report to stdout.") from error

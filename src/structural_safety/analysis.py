@@ -201,6 +201,15 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
             "witness": _plain(step["path"]),
         }
         action_results.setdefault(_key(identity), result)
+        if property_present and step["committed"]:
+            change = step["path"][-1]["state_changes"]
+            targets = {target for name in ("activated", "revoked") for target, _ in change[name]}
+            if targets:
+                for item in delegation_checks(data, step["post_evaluator"], budget, state_change={
+                        "targets": targets, "action_id": step["action_id"], "effect_id": step["effect_id"],
+                        "effect_time": query.effect_time, "conditional": conditional,
+                        "witness": result["witness"]}):
+                    record_rule(item)
         if property_present and step.get("source_details") is not None:
             sources = step["source_details"]
             record_rule(source_check(data, step.get("evaluator", evaluator), budget,

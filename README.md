@@ -2,13 +2,13 @@
 
 A local Python toolkit for describing AI agent execution topology, task authorization, information flows, control coverage, and intervention conditions.
 
-**Current milestone: P1-5, finite operations and six narrow rules.** This development build validates deployment descriptions and analyzes finite `read`, `transfer`, `derive`, `persist_write`, `persist_read`, `delegate`, `policy_update`, `revoke`, and `stop` actions with SS001 through SS006 diagnostics. It also provides 18 fixed scenarios: 15 local experiments and three analysis-only D contrasts. Analysis reports separate technical feasibility, authorization, modeled control behavior, and evidence limits. Experiment reports retain actual target observations and task outcomes for their specific runs.
+**Current candidate: 0.1.0rc1.** The toolkit validates deployment descriptions and analyzes finite `read`, `transfer`, `derive`, `persist_write`, `persist_read`, `delegate`, `policy_update`, `revoke`, and `stop` actions with SS001 through SS006 diagnostics. It also provides 18 fixed scenarios: 15 local experiments and three analysis-only D contrasts. Analysis reports separate technical feasibility, authorization, modeled control behavior, and evidence limits. Experiment reports retain actual target observations and task outcomes for their specific runs.
 
 The runtime uses the Python standard library, without model API calls, telemetry, or network access. Input strings, links, and commands remain data. The package is under development and has no published stable release.
 
 ## Install from a local checkout
 
-Requires CPython 3.12, 3.13, or 3.14. The initial development baseline is Linux with Python 3.12; the full target platform matrix remains a later milestone.
+Requires CPython 3.12, 3.13, or 3.14. CI exercises Linux with CPython 3.12, 3.13, and 3.14, plus Windows with CPython 3.14. Linux 3.12 builds the wheel from its sdist. Each environment runs the semantic tests and checks the same candidate wheel in a fresh installation, including README examples outside the checkout. Other operating-system and interpreter combinations are outside this matrix.
 
 From the repository root, install into your chosen virtual environment:
 
@@ -23,10 +23,10 @@ Build and install a local wheel when build dependencies are available:
 ```sh
 python -m pip install -r requirements-dev.txt
 python -m build
-python -m pip install dist/structural_safety_toolkit-0.1.0.dev0-py3-none-any.whl
+python -m pip install dist/structural_safety_toolkit-0.1.0rc1-py3-none-any.whl
 ```
 
-These commands use local source or a local wheel. They do not require the project name to be registered on PyPI. The software is licensed under [Apache-2.0](LICENSE). This license does not extend to the referenced source papers, which are not distributed with the package.
+Use the source checkout or the wheel from a candidate artifact; no PyPI release is assumed. `0.1.0rc1` is a prerelease candidate, and no stable release has been published. The software is licensed under [Apache-2.0](LICENSE). This license does not extend to the referenced source papers, which are not distributed with the package.
 
 ## Validate an included example
 
@@ -36,19 +36,21 @@ All 18 scenarios are packaged as complete JSON resources, readable from an insta
 from importlib.resources import files
 from pathlib import Path
 
-document = files("structural_safety").joinpath("examples/A.json").read_text(encoding="utf-8")
-Path("A.json").write_text(document, encoding="utf-8")
+for name in ("A", "D-behavior"):
+    document = files("structural_safety").joinpath("examples", name + ".json").read_text(encoding="utf-8")
+    Path(name + ".json").write_text(document, encoding="utf-8")
 ```
 
-Then validate it:
+Then validate them:
 
 ```sh
 structural-safety validate A.json
 python -m structural_safety validate A.json --format markdown
 structural-safety validate A.json --format json --output validation.json
+structural-safety validate D-behavior.json
 ```
 
-Use `-` as the input path for standard input. Reports go to standard output unless `--output` is set; operational errors go to standard error. An output path cannot be the input file. Successful validation has `validation_status="valid"` and `analysis_performed=false`.
+Use `-` as the input path for standard input. Reports go to standard output unless `--output` is set; operational errors go to standard error. An output path cannot be the input file. Successful validation has `validation_status="valid"` and `analysis_performed=false`. Both examples return exit 0: D-behavior's explicit unknown control behavior is valid input and remains unknown.
 
 ## Python API
 
@@ -81,6 +83,7 @@ structural-safety analyze A.json
 python -m structural_safety analyze A.json --format markdown
 structural-safety analyze A.json --format json --output analysis.json
 structural-safety analyze A.json --max-states 100 --max-transition-checks 1000
+structural-safety analyze D-behavior.json
 ```
 
 For a B comparison, copy `examples/B.json` with the same packaged-resource snippet above and analyze `B.json`. A and B share their candidate actions and permission records. A's private publish route has no control; B declares a strict gate that rejects that same unauthorized request before its effect. The analysis report retains a modeled path and the premises used for each conclusion. Running `analyze` alone does not establish a runtime observation.
@@ -92,7 +95,7 @@ The included fixtures produce these results with the default budgets:
 | A | `feasible`, `denied`, `not_blocked_in_model` | SS001 modeled violation and SS005 control gap. | 1 |
 | B | `feasible`, `denied`, `blocked_in_model` | SS005 assurance gap: control effectiveness has only model declarations. | 1 |
 
-Both reports are `completed_for_supported_scope`. A has `violated_in_model` coverage; B has `covered_in_declared_model` coverage with runtime status `not_tested`. Internal processing and the public-object publish remain allowed and unblocked in both. B's exit 1 preserves its evidence gap even though the declared gate blocks the private request.
+Both A/B reports are `completed_for_supported_scope`. A has `violated_in_model` coverage; B has `covered_in_declared_model` coverage with runtime status `not_tested`. Internal processing and the public-object publish remain allowed and unblocked in both. B's exit 1 preserves its evidence gap even though the declared gate blocks the private request. The D-behavior analysis command returns exit 3 because its unknown control behavior remains unresolved; it still returns a report.
 
 Search is bounded and deterministic. The CLI accepts `--max-states`, `--max-transition-checks`, `--max-scope-combinations`, `--max-clause-checks`, and `--max-findings`. A report records the effective limits and work consumed. A budget interruption produces `partial` and preserves existing findings. Explicit unsupported semantics and unknown property IDs remain visible as unfinished scope.
 
@@ -203,4 +206,4 @@ python -m unittest discover -s tests -v
 
 The runtime uses only the standard library. Build tools are pinned in `requirements-dev.txt` and `pyproject.toml`. Direct tests target specific input, evidence, and resource-limit failure modes.
 
-P1-1 through P1-5 cover input foundation, the first analysis chain, direct A/B experiments, C-F cases, and the remaining finite operations and rules. P1-6 retains combined acceptance, the full compatibility matrix, and release usability. See [CHANGELOG](CHANGELOG.md) for implemented capabilities. The [theory source index](docs/theory-sources.md) distinguishes source ideas from software definitions.
+The four-environment CI matrix also checks the distribution's installed API, both CLI entry points, all 18 demo scenarios, three additional finite-state model examples, and executable README examples. These checks exercise the declared finite scope and fixed local experiments; they do not certify a real deployment. See [CHANGELOG](CHANGELOG.md) for implemented capabilities. The [theory source index](docs/theory-sources.md) distinguishes source ideas from software definitions.
