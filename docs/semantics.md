@@ -1,6 +1,6 @@
 # Semantic boundaries
 
-P1-5 provides structural validation, bounded model-state analysis for all nine declared finite operation kinds, SS001 through SS006 diagnostics, ordinary imported-event reports, and fixed A-F scenarios. D is analysis-only; the other 15 cases run local synthetic experiments. Analysis produces model deductions from submitted premises; the demo retains its direct observations separately. Adding a supported model operation does not enable execution of arbitrary user actions.
+Version 0.1.0rc1 provides structural validation, bounded model-state analysis for all nine declared finite operation kinds, SS001 through SS006 diagnostics, ordinary imported-event reports, and fixed A-F scenarios. D is analysis-only; the other 15 cases run local synthetic experiments. Analysis produces model deductions from submitted premises; the demo retains its direct observations separately. Adding a supported model operation does not enable execution of arbitrary user actions.
 
 ## Facts and identity
 
@@ -47,6 +47,8 @@ A delegation effect activates only its explicitly referenced finite authorizatio
 Finite scope combinations are checked lazily under the shared `max_scope_combinations` budget. Validity coverage uses exact interval endpoints rather than sampling seconds. A definite uncovered combination can establish an SS003 counterexample when the parent inventory is complete. Unknown scope or approval facts remain unresolved; budget exhaustion retains established counterexamples and marks uncompleted work. A scope expansion can be a modeled violation even if no child data operation executes. Activating a task grant does not automatically create a technical capability.
 
 Authorization activation and revocation belong to each search branch. A revoked capability, task grant, approval right, or release exception cannot support a later effect at or after the revocation time. Other independently valid records remain available. Unknown timing or conditional activation retains its assumptions instead of producing an unconditional permission.
+
+SS003 retains its initial declaration check and rechecks active delegated scope after committed activation or revocation. A known effect time limits this branch check to the child's remaining validity window, preserving earlier results. Blocked changes add no authorization state, and conditional changes cannot establish a definite branch violation.
 
 Stopping records an exact target and effective time. A stopped action, actor, or interface suppresses applicable subsequent effects. The state remains stopped because the finite language has no restart operation. Stopping after a disclosure preserves that earlier effect; uncertain order remains conditional. Search keeps active/revoked and stopped/unstopped branches distinct.
 

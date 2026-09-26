@@ -1,4 +1,4 @@
-name: Linux validation, analysis, and experiments
+name: Validation, analysis, experiments, and installed package
 
 on:
   push:
@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   python-312:
+    name: Linux / CPython 3.12 / build and install
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -26,43 +27,86 @@ jobs:
           python -m pip install --no-build-isolation --no-deps .
 
       - name: Discover and run a nonempty unittest suite
+        shell: python
         run: |
-          python - <<'PY'
+          import platform
           import unittest
 
+          print(platform.platform(), platform.python_implementation(), platform.python_version(), flush=True)
           suite = unittest.defaultTestLoader.discover("tests", pattern="test*.py")
           if suite.countTestCases() == 0:
               raise SystemExit("No tests discovered; validation cannot pass.")
           result = unittest.TextTestRunner(verbosity=2).run(suite)
           raise SystemExit(0 if result.wasSuccessful() else 1)
-          PY
 
-      - name: Build sdist and wheel
+      # Without --wheel, build first creates an sdist, then builds the wheel
+      # from that sdist. This checks that the source distribution is complete.
+      - name: Build sdist and wheel from sdist
         run: python -m build --no-isolation
 
       - name: Install and check wheel outside the checkout
+        run: python tools/check_install.py dist
+
+      - name: Share the tested distributions with compatibility jobs
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: distributions
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 14
+
+  compatibility:
+    name: ${{ matrix.os }} / CPython ${{ matrix.python }} / shared wheel
+    needs: python-312
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            python: '3.13'
+          - os: ubuntu-latest
+            python: '3.14'
+          - os: windows-latest
+            python: '3.14'
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Download the baseline distributions
+        uses: actions/download-artifact@v8.0.1
+        with:
+          name: distributions
+          path: dist
+
+      - name: Install the baseline wheel for the complete test suite
+        shell: python
         run: |
-          python - <<'PY'
-          import os
           from pathlib import Path
           import subprocess
-          import tempfile
-          import venv
-
-          wheels = list(Path("dist").glob("*.whl"))
+          import sys
+          wheels = list(Path('dist').glob('*.whl'))
           if len(wheels) != 1:
-              raise SystemExit("Expected exactly one built wheel.")
-          wheel = wheels[0].resolve()
-          smoke = Path("tests/smoke_installed.py").read_bytes()
-          with tempfile.TemporaryDirectory(prefix="sst-wheel-", dir=os.environ["RUNNER_TEMP"]) as directory:
-              root = Path(directory)
-              venv.EnvBuilder(with_pip=True).create(root / "venv")
-              python = root / "venv" / "bin" / "python"
-              subprocess.run(
-                  [str(python), "-m", "pip", "install", "--no-index", "--no-deps", str(wheel)],
-                  cwd=root, check=True,
-              )
-              script = root / "smoke_installed.py"
-              script.write_bytes(smoke)
-              subprocess.run([str(python), "-I", str(script)], cwd=root, check=True)
-          PY
+              raise SystemExit('Expected exactly one baseline wheel.')
+          subprocess.run([sys.executable, '-m', 'pip', 'install', '--no-index', '--no-deps', str(wheels[0])], check=True)
+
+      - name: Discover and run a nonempty unittest suite
+        shell: python
+        run: |
+          import platform
+          import unittest
+
+          print(platform.platform(), platform.python_implementation(), platform.python_version(), flush=True)
+          suite = unittest.defaultTestLoader.discover("tests", pattern="test*.py")
+          if suite.countTestCases() == 0:
+              raise SystemExit("No tests discovered; validation cannot pass.")
+          result = unittest.TextTestRunner(verbosity=2).run(suite)
+          raise SystemExit(0 if result.wasSuccessful() else 1)
+
+      - name: Install and check the same wheel outside the checkout
+        run: python tools/check_install.py dist

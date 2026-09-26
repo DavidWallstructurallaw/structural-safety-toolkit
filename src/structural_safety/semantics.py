@@ -130,7 +130,8 @@ class Evaluator:
                 if initial.get("state") == "known" and initial["value"] is True:
                     del view._activated[key]
                 elif initial.get("state") != "known":
-                    view._activated[key] = tuple({None, *view._activated[key]})
+                    view._activated[key] = tuple(sorted({None, *view._activated[key]},
+                                                        key=lambda value: value or ""))
         view._source_cache = {}
         view.authorities = {}
         for collection, records in self.authorities.items():

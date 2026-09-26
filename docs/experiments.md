@@ -1,6 +1,6 @@
 # Fixed local experiment protocol
 
-**Implementation status: P1-4 A-F fixed scenarios.** All 18 complete JSON resources support structural validation and bounded analysis. Fifteen cases execute a fixed local driver, independent simple control, target observer, and expectation comparator. The three D contrasts perform analysis only.
+**Implementation status: 0.1.0rc1 A-F fixed scenarios.** All 18 complete JSON resources support structural validation and bounded analysis. Fifteen cases execute a fixed local driver, independent simple control, target observer, and expectation comparator. The three D contrasts perform analysis only.
 
 ```sh
 structural-safety demo A
@@ -134,10 +134,10 @@ F-open has an observed unauthorized policy change followed by a restricted write
 
 C and F-open report `demonstrated_control_bypass` only with the explicit expected protection, actual attempt, observed route or policy change, and exact prohibited bytes. The report preserves this scoped control evaluation separately from `observed_boundary_violation` and from model deductions. Successful prevention and lawful E0 publication can supply `scoped_evidence` for their fixed comparisons only.
 
-## Selection, packaging, and remaining work
+## Selection and packaging
 
 `A`, `B`, `C`, each named D/E/F subcase, group aliases `D`, `E`, `F`, and `all` are accepted by both API and CLI. `all` expands A, B, C, the three D contrasts, the ten E cases, then F-open and F-locked. Cases run in fresh separate directories and receive separate analysis budgets. Group reports preserve results before and after one case's environmental failure. No case obtains state, grants, or observations from a previous case.
 
 The development-only `tools/generate_examples.py` expands full model inputs from explicit fixed variations; packaged analysis always reads the resulting JSON. Neither runtime permissions nor comparator answers import that generator or use analyzer decisions.
 
-The remaining finite operations and SS002/SS003/SS004/SS006 follow in P1-5; release and the full compatibility matrix follow in P1-6.
+The analyzer also supports finite derivation, persistence, delegation, revocation, and stopping, with SS002/SS003/SS004/SS006 checks and three additional packaged model examples. These model examples do not add executable demo cases. The candidate compatibility matrix runs semantic tests and installed A-F checks on Linux with CPython 3.12, 3.13, and 3.14, and Windows with CPython 3.14. A stable release remains a separate publication decision.
