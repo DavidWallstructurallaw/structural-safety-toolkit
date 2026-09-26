@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.0: First stable release (2026-09-26)
+
+- Published the first stable version of the local Python API and CLI for strict JSON validation, bounded finite-model analysis, and fixed synthetic experiments.
+- Included nine finite model operations, SS001 through SS006 diagnostics, JSON/Markdown reports, 18 fixed scenarios, and three additional model examples.
+- Promoted the accepted 0.1.0rc1 implementation to 0.1.0 without changing its analysis or experiment semantics.
+- Updated release metadata and installation instructions for the wheel and source distribution, under Apache-2.0.
+- Retained the four-environment acceptance matrix: Linux with CPython 3.12, 3.13, and 3.14, plus Windows with CPython 3.14, using the same wheel built from the source distribution.
+
+Stable identifies this software release. Findings remain limited to supported finite declarations and fixed local experiments; they do not certify the safety of a real deployment. Model deductions, imported claims, and directly observed synthetic effects remain distinct.
+
 ## 0.1.0rc1: P1-6 candidate acceptance and compatibility
 
 - Added a four-environment CI matrix: Linux with CPython 3.12, 3.13, and 3.14, plus Windows with CPython 3.14.
