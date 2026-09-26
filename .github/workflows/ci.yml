@@ -1,0 +1,68 @@
+name: Linux input validation
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  python-312:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: Install pinned build tools and project
+        run: |
+          python -m pip install -r requirements-dev.txt
+          python -m pip install --no-build-isolation --no-deps .
+
+      - name: Discover and run a nonempty unittest suite
+        run: |
+          python - <<'PY'
+          import unittest
+
+          suite = unittest.defaultTestLoader.discover("tests", pattern="test*.py")
+          if suite.countTestCases() == 0:
+              raise SystemExit("No tests discovered; validation cannot pass.")
+          result = unittest.TextTestRunner(verbosity=2).run(suite)
+          raise SystemExit(0 if result.wasSuccessful() else 1)
+          PY
+
+      - name: Build sdist and wheel
+        run: python -m build --no-isolation
+
+      - name: Install and check wheel outside the checkout
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          import subprocess
+          import tempfile
+          import venv
+
+          wheels = list(Path("dist").glob("*.whl"))
+          if len(wheels) != 1:
+              raise SystemExit("Expected exactly one built wheel.")
+          wheel = wheels[0].resolve()
+          smoke = Path("tests/smoke_installed.py").read_bytes()
+          with tempfile.TemporaryDirectory(prefix="sst-wheel-", dir=os.environ["RUNNER_TEMP"]) as directory:
+              root = Path(directory)
+              venv.EnvBuilder(with_pip=True).create(root / "venv")
+              python = root / "venv" / "bin" / "python"
+              subprocess.run(
+                  [str(python), "-m", "pip", "install", "--no-index", "--no-deps", str(wheel)],
+                  cwd=root, check=True,
+              )
+              script = root / "smoke_installed.py"
+              script.write_bytes(smoke)
+              subprocess.run([str(python), "-I", str(script)], cwd=root, check=True)
+          PY
