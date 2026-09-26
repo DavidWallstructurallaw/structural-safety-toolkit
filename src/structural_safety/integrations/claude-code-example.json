@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "private-files": {
+      "command": "fixture-source-not-installed",
+      "args": ["--read-only"],
+      "env": {"FIXTURE_TOKEN": "${SST_EXAMPLE_TOKEN}"}
+    },
+    "shared-memory": {
+      "type": "stdio",
+      "command": "fixture-memory-not-installed",
+      "args": []
+    },
+    "publisher": {
+      "type": "http",
+      "url": "https://example.invalid/mcp",
+      "headers": {"Authorization": "Bearer ${SST_EXAMPLE_TOKEN}"}
+    }
+  }
+}

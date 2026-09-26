@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "structural-safety-toolkit"
-version = "0.1.0"
+version = "0.2.0.dev0"
 description = "Local structural safety analysis for finite AI agent deployment models."
 readme = "README.md"
 license = "Apache-2.0"
@@ -25,4 +25,4 @@ structural-safety = "structural_safety.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-structural_safety = ["examples/*.json"]
+structural_safety = ["examples/*.json", "templates/*.json", "integrations/*.json"]

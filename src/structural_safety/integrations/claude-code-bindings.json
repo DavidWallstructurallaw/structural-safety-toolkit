@@ -1,0 +1,10 @@
+{
+  "schema_version": "sst.claude-code-bindings/0.1",
+  "template": "memory-handoff",
+  "variant": "exposed",
+  "servers": {
+    "source": "private-files",
+    "memory": "shared-memory",
+    "publish": "publisher"
+  }
+}

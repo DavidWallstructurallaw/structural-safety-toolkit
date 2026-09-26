@@ -49,7 +49,9 @@ def main() -> None:
                 else:
                     continue
                 expected = 0
-                if arguments[0] == "analyze":
+                if arguments[0] == "import-claude-code" and "--bindings" not in arguments:
+                    expected = 3
+                elif arguments[0] == "analyze":
                     expected = 3 if arguments[1] == "D-behavior.json" else 1
                 run(command, directory, expected, line)
                 commands.append(line)

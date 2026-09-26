@@ -1,0 +1,3418 @@
+{
+  "context": {
+    "schema_version": "sst.model/0.1",
+    "snapshot_id": "snapshot:enterprise-report-approval",
+    "as_of": "2000-01-01T00:00:00Z",
+    "tasks": [
+      {
+        "id": "task:quarterly-report-approval",
+        "parent_task": {
+          "state": "known",
+          "value": "not_applicable",
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      }
+    ],
+    "root_task": "task:quarterly-report-approval",
+    "workflows": [
+      {
+        "id": "workflow:confidential-report-review",
+        "task_id": "task:quarterly-report-approval",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      {
+        "id": "workflow:approved-public-notice",
+        "task_id": "task:quarterly-report-approval",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      }
+    ],
+    "interfaces": [
+      {
+        "id": "if:enterprise-report-read",
+        "node_id": "tool:enterprise-document-reader",
+        "operation_ids": [
+          "read"
+        ],
+        "credential_required": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      {
+        "id": "if:internal-review-copy",
+        "node_id": "tool:finance-review-console",
+        "operation_ids": [
+          "transfer"
+        ],
+        "credential_required": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      {
+        "id": "if:investor-portal-publish",
+        "node_id": "tool:investor-portal-publisher",
+        "operation_ids": [
+          "publish"
+        ],
+        "credential_required": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      {
+        "id": "if:cancel-report-publication",
+        "node_id": "tool:finance-review-console",
+        "operation_ids": [
+          "stop"
+        ],
+        "credential_required": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": []
+        },
+        "evidence_refs": []
+      }
+    ],
+    "operation_definitions": [
+      {
+        "id": "read",
+        "semantic_kind": "read",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      {
+        "id": "transfer",
+        "semantic_kind": "transfer",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      {
+        "id": "publish",
+        "semantic_kind": "transfer",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      {
+        "id": "stop",
+        "semantic_kind": "stop",
+        "evidence_refs": []
+      }
+    ],
+    "purposes": [
+      {
+        "id": "review_confidential_report",
+        "description": "Inspect confidential quarterly financial reports inside the finance review workspace."
+      },
+      {
+        "id": "publish_unapproved_report",
+        "description": "Candidate external publication of the confidential quarterly report without a matching release exception."
+      },
+      {
+        "id": "publish_approved_notice",
+        "description": "Publish an already approved investor notice through the external investor portal."
+      }
+    ],
+    "properties": [
+      {
+        "id": "P-CONF-01",
+        "description": "Restricted objects cannot reach prohibited recipients without valid scoped authorization."
+      }
+    ],
+    "declared_scope": "Enterprise confidential quarterly-report approval. A supplied proposal trigger at 2000-01-01T00:00:20Z precedes the candidate publication effect at 2000-01-01T00:00:25Z by five seconds. The approval officer must inspect the proposal and stop that exact publication action within this window.",
+    "known_limits": [
+      "Synthetic business template. All premises are supplied assertions; no enterprise system, employee, document service, or actual human response is observed.",
+      "SS006 is scoped to publish-confidential-report and the declared initial authorization snapshot. Satisfied necessary conditions establish only satisfied_in_model for this obligation.",
+      "The same automated scoped-authorization publication gate remains enabled in both variants. This pair isolates human-response timing; it does not demonstrate a runtime leak or claim the system is safe.",
+      "Duration bounds are seconds from the supplied proposal trigger at 2000-01-01T00:00:20Z. End-to-end response includes stop-effect latency, which is not added twice.",
+      "Actions describe finite candidate model transitions. The analyzer does not operate the publication portal, deliver review alerts, or execute a real stop.",
+      "Replace synthetic actor, object versions, recipients, interfaces, scope clauses, observation channel, response bounds, consequence window, and effect times with project-specific declarations. Mark unestablished premises unknown."
+    ],
+    "completeness": [
+      {
+        "task_id": "task:quarterly-report-approval",
+        "collection": "nodes",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:quarterly-report-approval",
+        "collection": "actions",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:quarterly-report-approval",
+        "collection": "authorization",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:quarterly-report-approval",
+        "collection": "capabilities",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:quarterly-report-approval",
+        "collection": "task_grants",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:quarterly-report-approval",
+        "collection": "approval_rights",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:quarterly-report-approval",
+        "collection": "release_exceptions",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:quarterly-report-approval",
+        "collection": "sources",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:quarterly-report-approval",
+        "collection": "restrictions",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:quarterly-report-approval",
+        "collection": "controls",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:quarterly-report-approval",
+        "collection": "policy_change_paths",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:quarterly-report-approval",
+        "collection": "relations",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:quarterly-report-approval",
+        "collection": "execution_contexts",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:quarterly-report-approval",
+        "collection": "object_versions",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      }
+    ],
+    "unsupported_items": [],
+    "initial_conditions": [],
+    "stopped_targets": []
+  },
+  "nodes": [
+    {
+      "id": "principal:report-approval-officer",
+      "kind": "principal",
+      "owner": {
+        "state": "known",
+        "value": "principal:report-approval-officer",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "principal:external-recipient",
+      "kind": "principal",
+      "owner": {
+        "state": "known",
+        "value": "principal:external-recipient",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "actor:report-automation",
+      "kind": "executor",
+      "owner": {
+        "state": "known",
+        "value": "principal:report-approval-officer",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "source:confidential-financial-reports",
+      "kind": "resource",
+      "owner": {
+        "state": "known",
+        "value": "principal:report-approval-officer",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "source:approved-investor-notices",
+      "kind": "resource",
+      "owner": {
+        "state": "known",
+        "value": "principal:report-approval-officer",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "store:finance-review-workspace",
+      "kind": "store",
+      "owner": {
+        "state": "known",
+        "value": "principal:report-approval-officer",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "sink:external-investor-portal",
+      "kind": "store",
+      "owner": {
+        "state": "known",
+        "value": "principal:report-approval-officer",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "tool:enterprise-document-reader",
+      "kind": "tool",
+      "owner": {
+        "state": "known",
+        "value": "principal:report-approval-officer",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "tool:finance-review-console",
+      "kind": "tool",
+      "owner": {
+        "state": "known",
+        "value": "principal:report-approval-officer",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "tool:investor-portal-publisher",
+      "kind": "tool",
+      "owner": {
+        "state": "known",
+        "value": "principal:report-approval-officer",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "node:report-publication-authorization-gate",
+      "kind": "control",
+      "owner": {
+        "state": "known",
+        "value": "principal:report-approval-officer",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    }
+  ],
+  "execution_contexts": [
+    {
+      "id": "ctx:confidential-report-processing",
+      "actor_id": "actor:report-automation",
+      "task_id": "task:quarterly-report-approval",
+      "workflow_id": "workflow:confidential-report-review",
+      "initial_visible_objects": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "input_visibility": {
+        "state": "known",
+        "value": "visible",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "retain_inputs": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "visibility_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "isolated_from": {
+        "state": "known",
+        "value": [
+          "ctx:public-notice-processing"
+        ],
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "ctx:public-notice-processing",
+      "actor_id": "actor:report-automation",
+      "task_id": "task:quarterly-report-approval",
+      "workflow_id": "workflow:approved-public-notice",
+      "initial_visible_objects": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "input_visibility": {
+        "state": "known",
+        "value": "visible",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "retain_inputs": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "visibility_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "isolated_from": {
+        "state": "known",
+        "value": [
+          "ctx:confidential-report-processing"
+        ],
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "ctx:report-approval-officer",
+      "actor_id": "principal:report-approval-officer",
+      "task_id": "task:quarterly-report-approval",
+      "workflow_id": "workflow:confidential-report-review",
+      "initial_visible_objects": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": []
+      },
+      "input_visibility": {
+        "state": "known",
+        "value": "visible",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "retain_inputs": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "visibility_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "isolated_from": {
+        "state": "known",
+        "value": [
+          "ctx:public-notice-processing"
+        ],
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    }
+  ],
+  "object_versions": [
+    {
+      "id": "quarterly-financial-report:v1",
+      "logical_id": "quarterly-financial-report",
+      "version": "v1",
+      "origin_kind": "root",
+      "existence": "snapshot_initial",
+      "parents": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "parents_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "production": {
+        "kind": "historical",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "initial_locations": [
+        {
+          "node_id": "source:confidential-financial-reports",
+          "context_id": "not_applicable"
+        }
+      ],
+      "restriction_ids": {
+        "state": "known",
+        "value": [
+          "restriction:quarterly-report-v1"
+        ],
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "restrictions_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "instruction_authority": {
+        "status": {
+          "state": "known",
+          "value": "none",
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "task_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "control_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "approval_refs": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "quarterly-financial-report:v2",
+      "logical_id": "quarterly-financial-report",
+      "version": "v2",
+      "origin_kind": "root",
+      "existence": "snapshot_initial",
+      "parents": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "parents_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "production": {
+        "kind": "historical",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "initial_locations": [
+        {
+          "node_id": "source:confidential-financial-reports",
+          "context_id": "not_applicable"
+        }
+      ],
+      "restriction_ids": {
+        "state": "known",
+        "value": [
+          "restriction:quarterly-report-v2"
+        ],
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "restrictions_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "instruction_authority": {
+        "status": {
+          "state": "known",
+          "value": "none",
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "task_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "control_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "approval_refs": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "approved-investor-notice:v1",
+      "logical_id": "approved-investor-notice",
+      "version": "v1",
+      "origin_kind": "root",
+      "existence": "snapshot_initial",
+      "parents": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "parents_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "production": {
+        "kind": "historical",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "initial_locations": [
+        {
+          "node_id": "source:approved-investor-notices",
+          "context_id": "not_applicable"
+        }
+      ],
+      "restriction_ids": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "restrictions_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "instruction_authority": {
+        "status": {
+          "state": "known",
+          "value": "none",
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "task_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "control_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "approval_refs": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "read-confidential-report",
+      "task_id": "task:quarterly-report-approval",
+      "workflow_id": "workflow:confidential-report-review",
+      "context_id": "ctx:confidential-report-processing",
+      "actor_id": "actor:report-automation",
+      "operation_id": "read",
+      "interface_id": "if:enterprise-report-read",
+      "purpose_id": "review_confidential_report",
+      "effect_time": {
+        "state": "known",
+        "value": "2000-01-01T00:00:10Z",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "quarterly-financial-report:v1",
+          "location_node_id": "source:confidential-financial-reports",
+          "context_id": "not_applicable"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "quarterly-financial-report:v1",
+          "location_node_id": "actor:report-automation",
+          "context_id": "ctx:confidential-report-processing"
+        }
+      ],
+      "success_dependencies": [],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "copy-report-to-finance-review",
+      "task_id": "task:quarterly-report-approval",
+      "workflow_id": "workflow:confidential-report-review",
+      "context_id": "ctx:confidential-report-processing",
+      "actor_id": "actor:report-automation",
+      "operation_id": "transfer",
+      "interface_id": "if:internal-review-copy",
+      "purpose_id": "review_confidential_report",
+      "effect_time": {
+        "state": "known",
+        "value": "2000-01-01T00:00:15Z",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "quarterly-financial-report:v1",
+          "location_node_id": "actor:report-automation",
+          "context_id": "ctx:confidential-report-processing"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "quarterly-financial-report:v1",
+          "location_node_id": "store:finance-review-workspace",
+          "context_id": "not_applicable"
+        }
+      ],
+      "success_dependencies": [
+        "read-confidential-report"
+      ],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "publish-confidential-report",
+      "task_id": "task:quarterly-report-approval",
+      "workflow_id": "workflow:confidential-report-review",
+      "context_id": "ctx:confidential-report-processing",
+      "actor_id": "actor:report-automation",
+      "operation_id": "publish",
+      "interface_id": "if:investor-portal-publish",
+      "purpose_id": "publish_unapproved_report",
+      "effect_time": {
+        "state": "known",
+        "value": "2000-01-01T00:00:25Z",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "quarterly-financial-report:v1",
+          "location_node_id": "actor:report-automation",
+          "context_id": "ctx:confidential-report-processing"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "quarterly-financial-report:v1",
+          "location_node_id": "sink:external-investor-portal",
+          "context_id": "not_applicable"
+        }
+      ],
+      "success_dependencies": [
+        "read-confidential-report"
+      ],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "read-approved-investor-notice",
+      "task_id": "task:quarterly-report-approval",
+      "workflow_id": "workflow:approved-public-notice",
+      "context_id": "ctx:public-notice-processing",
+      "actor_id": "actor:report-automation",
+      "operation_id": "read",
+      "interface_id": "if:enterprise-report-read",
+      "purpose_id": "publish_approved_notice",
+      "effect_time": {
+        "state": "known",
+        "value": "2000-01-01T00:00:45Z",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "approved-investor-notice:v1",
+          "location_node_id": "source:approved-investor-notices",
+          "context_id": "not_applicable"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "approved-investor-notice:v1",
+          "location_node_id": "actor:report-automation",
+          "context_id": "ctx:public-notice-processing"
+        }
+      ],
+      "success_dependencies": [],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "publish-approved-investor-notice",
+      "task_id": "task:quarterly-report-approval",
+      "workflow_id": "workflow:approved-public-notice",
+      "context_id": "ctx:public-notice-processing",
+      "actor_id": "actor:report-automation",
+      "operation_id": "publish",
+      "interface_id": "if:investor-portal-publish",
+      "purpose_id": "publish_approved_notice",
+      "effect_time": {
+        "state": "known",
+        "value": "2000-01-01T00:00:50Z",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "approved-investor-notice:v1",
+          "location_node_id": "actor:report-automation",
+          "context_id": "ctx:public-notice-processing"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "approved-investor-notice:v1",
+          "location_node_id": "sink:external-investor-portal",
+          "context_id": "not_applicable"
+        }
+      ],
+      "success_dependencies": [
+        "read-approved-investor-notice"
+      ],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "stop:confidential-report-publication",
+      "task_id": "task:quarterly-report-approval",
+      "workflow_id": "workflow:confidential-report-review",
+      "context_id": "ctx:report-approval-officer",
+      "actor_id": "principal:report-approval-officer",
+      "operation_id": "stop",
+      "interface_id": "if:cancel-report-publication",
+      "purpose_id": "review_confidential_report",
+      "effect_time": {
+        "state": "known",
+        "value": "2000-01-01T00:00:50Z",
+        "evidence_refs": []
+      },
+      "inputs": [],
+      "outputs": [],
+      "success_dependencies": [],
+      "conditions": [],
+      "effects": [
+        {
+          "id": "stop",
+          "kind": "stop",
+          "target": {
+            "collection": "actions",
+            "id": "publish-confidential-report"
+          }
+        }
+      ],
+      "evidence_refs": []
+    }
+  ],
+  "relations": [
+    {
+      "id": "observation:report-publication-proposal",
+      "kind": "observation",
+      "source": {
+        "collection": "actions",
+        "id": "publish-confidential-report"
+      },
+      "observer_id": "principal:report-approval-officer",
+      "event_kinds": [
+        "proposal"
+      ],
+      "channel": "finance-review-console",
+      "conditions": [],
+      "evidence_refs": []
+    },
+    {
+      "id": "intervention:cancel-report-publication",
+      "kind": "intervention",
+      "actor_id": "principal:report-approval-officer",
+      "target": {
+        "collection": "actions",
+        "id": "publish-confidential-report"
+      },
+      "operation": "stop",
+      "capability_refs": {
+        "state": "known",
+        "value": [
+          "cap:cancel-report-publication"
+        ],
+        "evidence_refs": []
+      },
+      "latency": {
+        "state": "known",
+        "value": {
+          "lower": 1,
+          "upper": 2
+        },
+        "evidence_refs": []
+      },
+      "conditions": [],
+      "evidence_refs": []
+    }
+  ],
+  "authorization": {
+    "capabilities": [
+      {
+        "id": "cap:read-confidential-report",
+        "issuer": {
+          "state": "known",
+          "value": "principal:report-approval-officer",
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:quarterly-report-approval"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-automation"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "quarterly-financial-report:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:enterprise-report-read"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:report-automation"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "review_confidential_report"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:confidential-report-review"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      {
+        "id": "cap:copy-report-to-finance-review",
+        "issuer": {
+          "state": "known",
+          "value": "principal:report-approval-officer",
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:quarterly-report-approval"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-automation"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "quarterly-financial-report:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "transfer"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:internal-review-copy"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "store:finance-review-workspace"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "review_confidential_report"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:confidential-report-review"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      {
+        "id": "cap:publish-confidential-report",
+        "issuer": {
+          "state": "known",
+          "value": "principal:report-approval-officer",
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:quarterly-report-approval"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-automation"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "quarterly-financial-report:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "publish"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:investor-portal-publish"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "sink:external-investor-portal"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "publish_unapproved_report"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:confidential-report-review"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      {
+        "id": "cap:read-approved-investor-notice",
+        "issuer": {
+          "state": "known",
+          "value": "principal:report-approval-officer",
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:quarterly-report-approval"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-automation"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "approved-investor-notice:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:enterprise-report-read"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:report-automation"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "publish_approved_notice"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:approved-public-notice"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      {
+        "id": "cap:publish-approved-investor-notice",
+        "issuer": {
+          "state": "known",
+          "value": "principal:report-approval-officer",
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:quarterly-report-approval"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-automation"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "approved-investor-notice:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "publish"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:investor-portal-publish"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "sink:external-investor-portal"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "publish_approved_notice"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:approved-public-notice"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      {
+        "id": "cap:cancel-report-publication",
+        "issuer": {
+          "state": "known",
+          "value": "principal:report-approval-officer",
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:quarterly-report-approval"
+              ],
+              "evidence_refs": []
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "principal:report-approval-officer"
+              ],
+              "evidence_refs": []
+            },
+            "objects": {
+              "state": "known",
+              "value": [],
+              "evidence_refs": []
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "stop"
+              ],
+              "evidence_refs": []
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:cancel-report-publication"
+              ],
+              "evidence_refs": []
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "not_applicable"
+              ],
+              "evidence_refs": []
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "review_confidential_report"
+              ],
+              "evidence_refs": []
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:confidential-report-review"
+              ],
+              "evidence_refs": []
+            },
+            "management_targets": {
+              "state": "known",
+              "value": [
+                {
+                  "collection": "actions",
+                  "id": "publish-confidential-report"
+                }
+              ],
+              "evidence_refs": []
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      }
+    ],
+    "task_grants": [
+      {
+        "id": "grant:read-confidential-report",
+        "issuer": {
+          "state": "known",
+          "value": "principal:report-approval-officer",
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:quarterly-report-approval"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-automation"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "quarterly-financial-report:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:enterprise-report-read"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:report-automation"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "review_confidential_report"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:confidential-report-review"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:report-officer-task-scope"
+          ],
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      {
+        "id": "grant:copy-report-to-finance-review",
+        "issuer": {
+          "state": "known",
+          "value": "principal:report-approval-officer",
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:quarterly-report-approval"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-automation"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "quarterly-financial-report:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "transfer"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:internal-review-copy"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "store:finance-review-workspace"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "review_confidential_report"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:confidential-report-review"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:report-officer-task-scope"
+          ],
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      {
+        "id": "grant:read-approved-investor-notice",
+        "issuer": {
+          "state": "known",
+          "value": "principal:report-approval-officer",
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:quarterly-report-approval"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-automation"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "approved-investor-notice:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:enterprise-report-read"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:report-automation"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "publish_approved_notice"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:approved-public-notice"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:report-officer-task-scope"
+          ],
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      {
+        "id": "grant:publish-approved-investor-notice",
+        "issuer": {
+          "state": "known",
+          "value": "principal:report-approval-officer",
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:quarterly-report-approval"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-automation"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "approved-investor-notice:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "publish"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:investor-portal-publish"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "sink:external-investor-portal"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "publish_approved_notice"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:approved-public-notice"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:report-officer-task-scope"
+          ],
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      },
+      {
+        "id": "grant:cancel-report-publication",
+        "issuer": {
+          "state": "known",
+          "value": "principal:report-approval-officer",
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:quarterly-report-approval"
+              ],
+              "evidence_refs": []
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "principal:report-approval-officer"
+              ],
+              "evidence_refs": []
+            },
+            "objects": {
+              "state": "known",
+              "value": [],
+              "evidence_refs": []
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "stop"
+              ],
+              "evidence_refs": []
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:cancel-report-publication"
+              ],
+              "evidence_refs": []
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "not_applicable"
+              ],
+              "evidence_refs": []
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "review_confidential_report"
+              ],
+              "evidence_refs": []
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:confidential-report-review"
+              ],
+              "evidence_refs": []
+            },
+            "management_targets": {
+              "state": "known",
+              "value": [
+                {
+                  "collection": "actions",
+                  "id": "publish-confidential-report"
+                }
+              ],
+              "evidence_refs": []
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:report-officer-task-scope"
+          ],
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      }
+    ],
+    "approval_rights": [
+      {
+        "id": "approval:report-officer-task-scope",
+        "holder": "principal:report-approval-officer",
+        "rights": [
+          "issue_task_grant"
+        ],
+        "restriction_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:quarterly-report-approval"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-automation"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "quarterly-financial-report:v1",
+                "quarterly-financial-report:v2",
+                "approved-investor-notice:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read",
+                "transfer",
+                "publish"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:enterprise-report-read",
+                "if:internal-review-copy",
+                "if:investor-portal-publish"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:report-automation",
+                "store:finance-review-workspace",
+                "sink:external-investor-portal"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "review_confidential_report",
+                "publish_unapproved_report",
+                "publish_approved_notice"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:confidential-report-review",
+                "workflow:approved-public-notice"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "conditions": []
+          },
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:quarterly-report-approval"
+              ],
+              "evidence_refs": []
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "principal:report-approval-officer"
+              ],
+              "evidence_refs": []
+            },
+            "objects": {
+              "state": "known",
+              "value": [],
+              "evidence_refs": []
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "stop"
+              ],
+              "evidence_refs": []
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:cancel-report-publication"
+              ],
+              "evidence_refs": []
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "not_applicable"
+              ],
+              "evidence_refs": []
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "review_confidential_report"
+              ],
+              "evidence_refs": []
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:confidential-report-review"
+              ],
+              "evidence_refs": []
+            },
+            "management_targets": {
+              "state": "known",
+              "value": [
+                {
+                  "collection": "actions",
+                  "id": "publish-confidential-report"
+                }
+              ],
+              "evidence_refs": []
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      {
+        "id": "approval:report-officer-release-scope",
+        "holder": "principal:report-approval-officer",
+        "rights": [
+          "release_restriction"
+        ],
+        "restriction_ids": {
+          "state": "known",
+          "value": [
+            "restriction:quarterly-report-v1",
+            "restriction:quarterly-report-v2"
+          ],
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:quarterly-report-approval"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-automation"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "quarterly-financial-report:v1",
+                "quarterly-financial-report:v2",
+                "approved-investor-notice:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read",
+                "transfer",
+                "publish"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:enterprise-report-read",
+                "if:internal-review-copy",
+                "if:investor-portal-publish"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:report-automation",
+                "store:finance-review-workspace",
+                "sink:external-investor-portal"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "review_confidential_report",
+                "publish_unapproved_report",
+                "publish_approved_notice"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:confidential-report-review",
+                "workflow:approved-public-notice"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-review-premises"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      }
+    ],
+    "release_exceptions": []
+  },
+  "restrictions": [
+    {
+      "id": "restriction:quarterly-report-v1",
+      "source_object_id": "quarterly-financial-report:v1",
+      "applies_to_operations": {
+        "state": "known",
+        "value": [
+          "read",
+          "transfer",
+          "publish"
+        ],
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "allowed_clauses": [
+        {
+          "operations": {
+            "state": "known",
+            "value": [
+              "read"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "interfaces": {
+            "state": "known",
+            "value": [
+              "if:enterprise-report-read"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "recipients": {
+            "state": "known",
+            "value": [
+              "actor:report-automation"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "purposes": {
+            "state": "known",
+            "value": [
+              "review_confidential_report"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "workflows": {
+            "state": "known",
+            "value": [
+              "workflow:confidential-report-review"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "conditions": []
+        },
+        {
+          "operations": {
+            "state": "known",
+            "value": [
+              "transfer"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "interfaces": {
+            "state": "known",
+            "value": [
+              "if:internal-review-copy"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "recipients": {
+            "state": "known",
+            "value": [
+              "store:finance-review-workspace"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "purposes": {
+            "state": "known",
+            "value": [
+              "review_confidential_report"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "workflows": {
+            "state": "known",
+            "value": [
+              "workflow:confidential-report-review"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "conditions": []
+        }
+      ],
+      "approval_refs": {
+        "state": "known",
+        "value": [
+          "approval:report-officer-release-scope"
+        ],
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    },
+    {
+      "id": "restriction:quarterly-report-v2",
+      "source_object_id": "quarterly-financial-report:v2",
+      "applies_to_operations": {
+        "state": "known",
+        "value": [
+          "read",
+          "transfer",
+          "publish"
+        ],
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "allowed_clauses": [
+        {
+          "operations": {
+            "state": "known",
+            "value": [
+              "read"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "interfaces": {
+            "state": "known",
+            "value": [
+              "if:enterprise-report-read"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "recipients": {
+            "state": "known",
+            "value": [
+              "actor:report-automation"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "purposes": {
+            "state": "known",
+            "value": [
+              "review_confidential_report"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "workflows": {
+            "state": "known",
+            "value": [
+              "workflow:confidential-report-review"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "conditions": []
+        },
+        {
+          "operations": {
+            "state": "known",
+            "value": [
+              "transfer"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "interfaces": {
+            "state": "known",
+            "value": [
+              "if:internal-review-copy"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "recipients": {
+            "state": "known",
+            "value": [
+              "store:finance-review-workspace"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "purposes": {
+            "state": "known",
+            "value": [
+              "review_confidential_report"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "workflows": {
+            "state": "known",
+            "value": [
+              "workflow:confidential-report-review"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "conditions": []
+        }
+      ],
+      "approval_refs": {
+        "state": "known",
+        "value": [
+          "approval:report-officer-release-scope"
+        ],
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    }
+  ],
+  "controls": [
+    {
+      "id": "gate:report-publication-authorization",
+      "node_id": "node:report-publication-authorization-gate",
+      "property_ids": [
+        "P-CONF-01"
+      ],
+      "initial_policy": {
+        "state": "known",
+        "value": "policy:require-scoped-report-authorization",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "policy_versions": [
+        {
+          "id": "policy:require-scoped-report-authorization",
+          "coverage": {
+            "state": "known",
+            "value": [
+              {
+                "tasks": {
+                  "state": "known",
+                  "value": [
+                    "task:quarterly-report-approval"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-review-premises"
+                  ]
+                },
+                "actors": {
+                  "state": "known",
+                  "value": [
+                    "actor:report-automation"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-review-premises"
+                  ]
+                },
+                "objects": {
+                  "state": "known",
+                  "value": [
+                    "quarterly-financial-report:v1",
+                    "quarterly-financial-report:v2",
+                    "approved-investor-notice:v1"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-review-premises"
+                  ]
+                },
+                "operations": {
+                  "state": "known",
+                  "value": [
+                    "publish"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-review-premises"
+                  ]
+                },
+                "interfaces": {
+                  "state": "known",
+                  "value": [
+                    "if:investor-portal-publish"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-review-premises"
+                  ]
+                },
+                "recipients": {
+                  "state": "known",
+                  "value": [
+                    "sink:external-investor-portal"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-review-premises"
+                  ]
+                },
+                "purposes": {
+                  "state": "known",
+                  "value": [
+                    "review_confidential_report",
+                    "publish_unapproved_report",
+                    "publish_approved_notice"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-review-premises"
+                  ]
+                },
+                "workflows": {
+                  "state": "known",
+                  "value": [
+                    "workflow:confidential-report-review",
+                    "workflow:approved-public-notice"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-review-premises"
+                  ]
+                },
+                "conditions": []
+              }
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "checked_parameters": {
+            "state": "known",
+            "value": [
+              "task",
+              "actor",
+              "object_version",
+              "operation",
+              "interface",
+              "recipient",
+              "purpose",
+              "effect_time",
+              "workflow_conditions"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "binding": {
+            "state": "known",
+            "value": "bound",
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "timing": {
+            "state": "known",
+            "value": "before_effect",
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "decision_mode": {
+            "state": "known",
+            "value": "authorization",
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "deny_clauses": {
+            "state": "known",
+            "value": [],
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "failure_behavior": {
+            "state": "known",
+            "value": "deny",
+            "evidence_refs": [
+              "ev:enterprise-review-premises"
+            ]
+          },
+          "evidence_refs": [
+            "ev:enterprise-review-premises"
+          ]
+        }
+      ],
+      "modifiable_fields": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "responsible_principal": {
+        "state": "known",
+        "value": "principal:report-approval-officer",
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "modification_paths_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-review-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-review-premises"
+      ]
+    }
+  ],
+  "obligations": [
+    {
+      "id": "review:confidential-report-publication",
+      "origin": "supplied",
+      "property_id": "P-CONF-01",
+      "task_id": "task:quarterly-report-approval",
+      "applicable": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": []
+      },
+      "affected_refs": [
+        {
+          "collection": "actions",
+          "id": "publish-confidential-report"
+        }
+      ],
+      "source_refs": {
+        "state": "known",
+        "value": [
+          "quarterly-financial-report:v1"
+        ],
+        "evidence_refs": []
+      },
+      "influence_refs": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": []
+      },
+      "action_refs": {
+        "state": "known",
+        "value": [
+          "publish-confidential-report"
+        ],
+        "evidence_refs": []
+      },
+      "destination_refs": {
+        "state": "known",
+        "value": [
+          "sink:external-investor-portal"
+        ],
+        "evidence_refs": []
+      },
+      "persistence_refs": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": []
+      },
+      "control_refs": {
+        "state": "known",
+        "value": [
+          "gate:report-publication-authorization"
+        ],
+        "evidence_refs": []
+      },
+      "responsibility": {
+        "principal": {
+          "state": "known",
+          "value": "principal:report-approval-officer",
+          "evidence_refs": []
+        },
+        "observation_refs": {
+          "state": "known",
+          "value": [
+            "observation:report-publication-proposal"
+          ],
+          "evidence_refs": []
+        },
+        "intervention_refs": {
+          "state": "known",
+          "value": [
+            "intervention:cancel-report-publication"
+          ],
+          "evidence_refs": []
+        },
+        "inspectable_basis": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": []
+        },
+        "verification_reliable": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": []
+        },
+        "reviewer_capable": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": []
+        },
+        "response": {
+          "state": "known",
+          "value": {
+            "lower": 30,
+            "upper": 30
+          },
+          "evidence_refs": []
+        },
+        "consequence_window": {
+          "state": "known",
+          "value": {
+            "lower": 5,
+            "upper": 5
+          },
+          "evidence_refs": []
+        },
+        "trigger": "confidential-report-publication-proposal at 2000-01-01T00:00:20Z",
+        "evidence_refs": []
+      },
+      "unknown_items": [],
+      "evidence_refs": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev:enterprise-review-premises",
+      "source": "Project-maintained synthetic enterprise report-approval template.",
+      "acquisition": "supplied_assertion",
+      "claim": "Declared report versions, actors, exact scoped stop authority, automated publication gate, proposal trigger, and timing bounds are synthetic premises for a finite model comparison.",
+      "scope": [
+        {
+          "collection": "tasks",
+          "id": "task:quarterly-report-approval"
+        }
+      ],
+      "snapshot_id": "snapshot:enterprise-report-approval",
+      "recorded_at": {
+        "state": "known",
+        "value": "2000-01-01T00:00:00Z",
+        "evidence_refs": []
+      },
+      "model_involvement": {
+        "state": "known",
+        "value": "assisted",
+        "evidence_refs": []
+      },
+      "transformations": [],
+      "lineage_refs": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": []
+      },
+      "applicability": "current",
+      "limits": [
+        "Supplied model premises only; no direct execution, proposal delivery, reviewer performance, or target observation.",
+        "Response and consequence bounds require independent project evidence before practical use."
+      ]
+    }
+  ],
+  "limits": {}
+}

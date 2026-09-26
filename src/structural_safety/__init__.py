@@ -28,10 +28,11 @@ __version__, _version_source = _version_info()
 
 from .api import (  # noqa: E402
     AnalysisResult, DemoResult, Limits, ValidationResult, analyze_json, run_demo,
-    validate_json,
+    validate_json, get_template, ClaudeCodeImportResult, import_claude_code_json,
 )
 
 __all__ = [
     "AnalysisResult", "DemoResult", "Limits", "ValidationResult", "analyze_json",
-    "run_demo", "validate_json", "__version__",
+    "run_demo", "validate_json", "__version__", "get_template",
+    "ClaudeCodeImportResult", "import_claude_code_json",
 ]
