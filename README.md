@@ -2,15 +2,22 @@
 
 A local Python toolkit for describing AI agent execution topology, task authorization, information flows, control coverage, and intervention conditions.
 
-**Current candidate: 0.1.0rc1.** The toolkit validates deployment descriptions and analyzes finite `read`, `transfer`, `derive`, `persist_write`, `persist_read`, `delegate`, `policy_update`, `revoke`, and `stop` actions with SS001 through SS006 diagnostics. It also provides 18 fixed scenarios: 15 local experiments and three analysis-only D contrasts. Analysis reports separate technical feasibility, authorization, modeled control behavior, and evidence limits. Experiment reports retain actual target observations and task outcomes for their specific runs.
+**Current release: 0.1.0.** The toolkit validates deployment descriptions and analyzes finite `read`, `transfer`, `derive`, `persist_write`, `persist_read`, `delegate`, `policy_update`, `revoke`, and `stop` actions with SS001 through SS006 diagnostics. It also provides 18 fixed scenarios: 15 local experiments and three analysis-only D contrasts. Analysis reports separate technical feasibility, authorization, modeled control behavior, and evidence limits. Experiment reports retain actual target observations and task outcomes for their specific runs.
 
-The runtime uses the Python standard library, without model API calls, telemetry, or network access. Input strings, links, and commands remain data. The package is under development and has no published stable release.
+The runtime uses the Python standard library, without model API calls, telemetry, or network access. Input strings, links, and commands remain data.
 
-## Install from a local checkout
+## Install
 
-Requires CPython 3.12, 3.13, or 3.14. CI exercises Linux with CPython 3.12, 3.13, and 3.14, plus Windows with CPython 3.14. Linux 3.12 builds the wheel from its sdist. Each environment runs the semantic tests and checks the same candidate wheel in a fresh installation, including README examples outside the checkout. Other operating-system and interpreter combinations are outside this matrix.
+Requires CPython 3.12, 3.13, or 3.14. CI exercises Linux with CPython 3.12, 3.13, and 3.14, plus Windows with CPython 3.14. Linux 3.12 builds the wheel from its sdist. Each environment runs the semantic tests and checks the same wheel in a fresh installation, including README examples outside the checkout. Other operating-system and interpreter combinations are outside this matrix.
 
-From the repository root, install into your chosen virtual environment:
+Download `structural_safety_toolkit-0.1.0-py3-none-any.whl` from the [0.1.0 release](https://github.com/DavidWallstructurallaw/structural-safety-toolkit/releases/tag/v0.1.0). From its download directory, install into your chosen virtual environment:
+
+```sh
+python -m pip install structural_safety_toolkit-0.1.0-py3-none-any.whl
+structural-safety --version
+```
+
+Alternatively, from the repository root, install the local checkout:
 
 ```sh
 python -m pip install .
@@ -23,10 +30,10 @@ Build and install a local wheel when build dependencies are available:
 ```sh
 python -m pip install -r requirements-dev.txt
 python -m build
-python -m pip install dist/structural_safety_toolkit-0.1.0rc1-py3-none-any.whl
+python -m pip install dist/structural_safety_toolkit-0.1.0-py3-none-any.whl
 ```
 
-Use the source checkout or the wheel from a candidate artifact; no PyPI release is assumed. `0.1.0rc1` is a prerelease candidate, and no stable release has been published. The software is licensed under [Apache-2.0](LICENSE). This license does not extend to the referenced source papers, which are not distributed with the package.
+Release assets include the wheel and source distribution; no PyPI release is assumed. The software is licensed under [Apache-2.0](LICENSE). This license does not extend to the referenced source papers, which are not distributed with the package.
 
 ## Validate an included example
 
