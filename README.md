@@ -2,7 +2,7 @@
 
 A local Python toolkit for describing AI agent execution topology, task authorization, information flows, control coverage, and intervention conditions.
 
-**Current milestone: P1-2, the first analysis chain.** This development build validates deployment descriptions and analyzes finite `read` and `transfer` actions with SS001 and SS005 diagnostics. Analysis reports separate technical feasibility, authorization, modeled control behavior, and evidence limits. Runtime experiments and the remaining operations and rules are later milestones.
+**Current milestone: P1-3, direct A/B experiments.** This development build validates deployment descriptions, analyzes finite `read` and `transfer` actions with SS001 and SS005 diagnostics, and runs the fixed local A/B experiments. Analysis reports separate technical feasibility, authorization, modeled control behavior, and evidence limits. Experiment reports retain actual target observations and task outcomes for their specific runs.
 
 The runtime uses the Python standard library, without model API calls, telemetry, or network access. Input strings, links, and commands remain data. The package is under development and has no published stable release.
 
@@ -54,7 +54,7 @@ Use `-` as the input path for standard input. Reports go to standard output unle
 
 ```python
 from importlib.resources import files
-from structural_safety import Limits, analyze_json, validate_json
+from structural_safety import Limits, analyze_json, run_demo, validate_json
 
 document = files("structural_safety").joinpath("examples/B.json").read_bytes()
 validation = validate_json(document, limits=Limits())
@@ -62,11 +62,17 @@ print(validation.validation_status)
 result = analyze_json(document, limits=Limits())
 print(result.to_dict())
 print(result.to_markdown())
+
+demo = run_demo("B", limits=Limits())
+print(demo.to_dict())
+print(demo.to_markdown())
 ```
 
 Pass raw JSON text or bytes, preserving duplicate-key detection. A Python dictionary is not accepted. Expected input errors and hard-limit rejection are reported in the result. Unexpected internal defects remain errors.
 
-`run_demo` and the `demo` command are not implemented yet. Analysis updates model states in memory; it does not execute deployment actions or observe target bytes.
+`analyze_json` updates model states in memory without executing deployment actions. `run_demo` accepts only the packaged A and B scenarios at this milestone and executes their fixed requests against local targets containing synthetic bytes. It returns a `DemoResult`; C through F and `all` remain later work.
+
+By default, `run_demo` removes its temporary run directory after embedding the observations in the result. To retain the report and synthetic target records, pass `work_dir=Path("demo-runs")` after importing `Path` from `pathlib`. Each invocation creates a fresh run subdirectory.
 
 ## Analyze an included example
 
@@ -77,7 +83,7 @@ structural-safety analyze A.json --format json --output analysis.json
 structural-safety analyze A.json --max-states 100 --max-transition-checks 1000
 ```
 
-For a B comparison, copy `examples/B.json` with the same packaged-resource snippet above and analyze `B.json`. A and B share their candidate actions and permission records. A's private publish route has no control; B declares a strict gate that rejects that same unauthorized request before its effect. The report retains a modeled path and the premises used for each conclusion. Neither case establishes a runtime observation.
+For a B comparison, copy `examples/B.json` with the same packaged-resource snippet above and analyze `B.json`. A and B share their candidate actions and permission records. A's private publish route has no control; B declares a strict gate that rejects that same unauthorized request before its effect. The analysis report retains a modeled path and the premises used for each conclusion. Running `analyze` alone does not establish a runtime observation.
 
 The included fixtures produce these results with the default budgets:
 
@@ -92,6 +98,25 @@ Search is bounded and deterministic. The CLI accepts `--max-states`, `--max-tran
 
 The implemented property is `P-CONF-01`: within the declared task and snapshot, restricted object versions require valid task and source authorization to reach a recipient. The supported analysis covers its finite `read`/`transfer` routes. A new property ID or natural-language description does not create a new rule; other declared properties are reported as unsupported.
 
+## Run the A/B experiments
+
+```sh
+structural-safety demo A
+python -m structural_safety demo B --format markdown
+structural-safety demo B --format json --output demo-b.json --work-dir demo-runs
+```
+
+Each experiment starts fresh, submits the same five requests, and directly reads the targets after each operation. The restricted publish request is attempted in both cases. The driver continues with the public task after B refuses the restricted request.
+
+| Case | Observed restricted publish | Internal task | Public task | Protocol / CLI exit |
+|---|---|---|---|---|
+| A | Exact restricted bytes reach the main target, an observed boundary violation. | Success. | Success. | `matched` / 0 |
+| B | The control receives and refuses the request; observed external targets have no prohibited write. | Success. | Success. | `matched` / 0 |
+
+Successful runs report `runtime_status="completed"`. A's exit 0 means its expected violation was demonstrated. B adds control evidence limited to the fixed requests, objects, policy, and observed local targets. The original B analysis remains `declaration_only` with runtime status `not_tested`; the demo reports its separate observations without rewriting that model result.
+
+The five analysis budget options listed above also apply to `demo`. The report distinguishes an expected result from a mismatch or an inconclusive comparison. All targets are local simulations. No deployment, network destination, arbitrary input configuration, or operating-system sandbox is exercised. See the [experiment protocol](docs/experiments.md) for observation limits and component separation.
+
 ## What validation establishes
 
 Validation checks the schema version, required and unknown fields, strict types, fact states, references and endpoint types, timestamps, and input limits. It accepts explicit unknown facts and supported locations for declared unsupported semantics. It does not resolve those facts, prove a graph reachable, decide authorization, or verify that a control works.
@@ -100,23 +125,22 @@ Known values are submitted model premises. Empty evidence references remain supp
 
 | Exit code | Meaning |
 |---:|---|
-| 0 | `validate`: input structure accepted. `analyze`: supported checks completed without findings, unresolved items, or unchecked scope. |
+| 0 | `validate`: input structure accepted. `analyze`: supported checks completed without findings, unresolved items, or unchecked scope. `demo`: all required expectations matched. |
 | 1 | `analyze`: findings were produced, with no unresolved or unfinished scope requiring exit 3. |
 | 2 | Usage, input structure, schema version, or hard input limit problem. |
-| 3 | `analyze`: unresolved facts, unsupported or unchecked scope, or incomplete analysis. This takes precedence over exit 1. |
+| 3 | `analyze`: unresolved facts, unsupported or unchecked scope, or incomplete analysis. This takes precedence over exit 1. `demo`: a necessary expectation remains inconclusive. |
+| 4 | `demo`: a definite expectation mismatch. This takes precedence over an inconclusive comparison. |
 | 5 | Input/output file operation failed. |
 | 70 | Unexpected internal defect. |
 | 130 | User interrupt. |
 
 Zero never certifies a deployment as safe. A structurally valid `Fact.unknown` returns validation exit 0 with `analysis_performed=false`. The included A analysis returns 1 for its findings. If unresolved or unfinished scope is added, exit 3 preserves established findings alongside those limits.
 
-The later experiment command has a separate success criterion: a demo of A can return 0 when it observes exactly the expected violation. The planned D-behavior analysis returns 3 for unresolved control behavior, while a matching D analysis-only demo can return 0 with runtime status still `not_tested`. These demo and D-case examples describe the future protocol, not runnable commands in this build.
-
-## A/B fixtures and planned experiments
+## A/B fixtures and scope
 
 A and B describe the same finite task, objects, candidate actions, technical capabilities, task grants, and source restrictions. The only intervention is the presence of the main publish control in B. The private publish request lacks authorization in both; legitimate internal processing and public-object publishing remain in both descriptions.
 
-P1-2 ships complete input fixtures and analyzes their finite `read`/`transfer` paths. It does not execute their candidate actions. The [experiment protocol](docs/experiments.md) explains the synthetic objects, expected distinctions, and future observation requirements.
+P1-3 adds the independent fixed driver, simple runtime control, target observer, and human-fixed expectation comparison. The components are maintained by this project; their separation does not constitute third-party evaluation. A matching experiment establishes only its stated synthetic scope. The [experiment protocol](docs/experiments.md) records that scope and the later C through F cases.
 
 ## Development
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.0.dev0: P1-3 direct A/B experiments
+
+- Added `run_demo`, `DemoResult`, and `demo A` / `demo B` with JSON/Markdown reports and the five analysis budget options.
+- Added a fixed five-request driver and a simple control that evaluates real runtime parameters without calling analyzer authorization or reachability functions.
+- Added direct target and policy observations after each operation, with exact synthetic-byte comparisons against fixed expectations.
+- Preserved the attempted restricted request, control returns, observed effects, and separate internal/public task results.
+- Added A's observed boundary violation and B's scoped control evidence without upgrading the original model's declaration-only evidence.
+- Added fresh run directories, optional retained report and target files, and embedded observations that survive default temporary-directory cleanup.
+- Added direct protocol counterexamples and installed-wheel checks for both A/B demo entry points and the Python API.
+
+The A/B experiment success criterion includes both normal tasks. A matched result for A includes its expected violation. C through F, policy updates, the remaining finite operations and four rules, the stable release, and the full compatibility matrix remain later work. The Apache-2.0 license and development version are unchanged.
+
 ## 0.1.0.dev0: P1-2 first analysis chain
 
 - Added `analyze_json`, the `analyze` command, and JSON/Markdown analysis reports.
@@ -10,7 +22,7 @@
 - Added shared analysis budgets with explicit truncation and preserved findings; unsupported operations and rules remain visible.
 - Added the Apache-2.0 license and package license metadata, following the owner's selection.
 
-This milestone performs model analysis. A/B runtime experiments and `demo` remain P1-3 work. Policy-update support and the remaining finite operations and four rules are later steps. The stable 0.1.0 release and full compatibility matrix remain pending.
+At P1-2, runtime experiments and `demo` were still pending. P1-3 adds the A/B harness described above. Policy-update support and the remaining finite operations and four rules are later steps. The stable 0.1.0 release and full compatibility matrix remain pending.
 
 ## 0.1.0.dev0: P1-1 input and result foundation
 

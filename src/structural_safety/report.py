@@ -175,3 +175,64 @@ def analysis_to_markdown(result: Any) -> str:
         lines.append(f"| {_markdown_text(name)} | {cap} | {_markdown_value(used)} |")
     lines.extend(["", "Budget counters: " + _markdown_value(report["budget_usage"]), ""])
     return "\n".join(lines)
+
+
+def demo_to_dict(result: Any) -> dict[str, Any]:
+    """Serialize both model comparisons and the independent local observations."""
+    return {
+        "result_schema_version": result.result_schema_version,
+        **{name: _plain(getattr(result, name)) for name in (
+            "demo_status", "scenario", "protocol_verdict", "cases", "diagnostics",
+            "effective_limits", "environment_errors", "scope", "run_directory",
+        )},
+    }
+
+
+def demo_to_markdown(result: Any) -> str:
+    """Retain observed effects, comparison differences and evidence scope."""
+    report = demo_to_dict(result)
+    lines = [
+        "# Structural Safety Toolkit local experiment",
+        "",
+        f"Status: {_markdown_text(report['demo_status'])}",
+        "",
+        f"Protocol verdict: {_markdown_text(report['protocol_verdict'])}",
+        "",
+        "A matched verdict means the fixed case behaved as expected. Case A "
+        "expects an observed boundary violation. These observations concern "
+        "fictitious data in a local simulator and do not establish production "
+        "protection or satisfaction of all responsibility obligations.",
+        "",
+        "| Field | Value |",
+        "|---|---|",
+    ]
+    for name in ("result_schema_version", "scenario", "scope", "run_directory", "effective_limits"):
+        lines.append(f"| {_markdown_text(name)} | {_markdown_value(report[name])} |")
+    _record_section(lines, "Input diagnostics", report["diagnostics"])
+    _record_section(lines, "Environment errors", report["environment_errors"])
+    titles = {
+        "analysis": "Model analysis and retained findings",
+        "analysis_comparison": "Analysis expectation comparison",
+        "runtime_comparison": "Runtime expectation comparison and differences",
+        "actual_effects": "Observed effects",
+        "normal_tasks": "Normal task utility",
+        "policy_before": "Policy before execution",
+        "policy_after": "Policy after execution",
+        "environment_errors": "Case environment errors",
+        "runtime": "Independent runtime observations",
+    }
+    for case in report["cases"]:
+        case_name = _markdown_text(case.get("case_id"))
+        lines.extend(["", f"## Case {case_name}", "", "| Field | Value |", "|---|---|"])
+        for name, value in case.items():
+            if name not in titles:
+                lines.append(f"| {_markdown_text(name)} | {_markdown_value(value)} |")
+        for name, title in titles.items():
+            if name not in case:
+                continue
+            value = case[name]
+            records = value if isinstance(value, list) else [value]
+            records = [item if isinstance(item, dict) else {"value": item} for item in records]
+            _record_section(lines, f"Case {case_name}: {title}", records)
+    lines.append("")
+    return "\n".join(lines)
