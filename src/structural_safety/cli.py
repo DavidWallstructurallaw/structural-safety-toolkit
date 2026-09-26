@@ -12,6 +12,7 @@ from typing import Sequence
 
 from . import __version__, _version_source
 from .api import Limits, analyze_json, run_demo, validate_json
+from .experiment_cases import CHOICES, D_CASES
 
 
 _BUDGET_NAMES = (
@@ -28,7 +29,7 @@ def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="structural-safety",
         description="Validate and analyze explicit AI agent deployment models, and run local demos.",
-        epilog="P1-3 supports bounded read/transfer analysis and local A/B experiments.",
+        epilog="P1-4 supports bounded read/transfer/policy_update analysis and fixed A-F scenarios.",
     )
     version_label = f"structural-safety {__version__}"
     if _version_source != "installed metadata":
@@ -38,12 +39,12 @@ def _parser() -> argparse.ArgumentParser:
     for name, help_text in (
         ("validate", "Check input structure; no safety analysis is performed."),
         ("analyze", "Analyze supported paths and report findings and unresolved scope."),
-        ("demo", "Run a fixed A/B experiment using fictitious data and local targets."),
+        ("demo", "Run fixed A-F scenarios; D is analysis-only, other cases use local synthetic targets."),
     ):
         command = commands.add_parser(name, help=help_text)
         if name == "demo":
-            command.add_argument("scenario", metavar="SCENARIO", choices=("A", "B"),
-                                 help="Bundled experiment: A or B. Other cases are not yet supported.")
+            command.add_argument("scenario", metavar="SCENARIO", choices=CHOICES,
+                                 help="A, B, C, D/E/F groups or named subcases, or all; D is analysis-only.")
             command.add_argument("--work-dir", metavar="DIR", type=Path,
                                  help="Retain observations in a new run directory under DIR.")
         else:
@@ -224,7 +225,11 @@ def _demo_exit(result: object) -> int:
     if verdict == "mismatched":
         return 4
     if verdict != "matched" or not result.cases or any(
-        case.get("runtime_status") != "completed" for case in result.cases
+        case.get("runtime_status") != "completed" and not (
+            case.get("case_id") in D_CASES and case.get("runtime_status") == "not_tested"
+            and case.get("analysis_comparison", {}).get("verdict") == "matched"
+            and not case.get("actual_effects") and not case.get("runtime", {}).get("observations")
+        ) for case in result.cases
     ):
         return 3
     return 0

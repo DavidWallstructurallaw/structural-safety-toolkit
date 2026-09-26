@@ -69,9 +69,11 @@ class Controller:
         self.evaluator = evaluator
         self.controls = tuple(sorted(document["controls"], key=lambda x: x["id"]))
         self.evidence = {item["id"]: item for item in document["evidence"]}
+        self.modification_results = None
+        self.search_complete = False
 
-    def _policy(self, control: Mapping) -> Mapping | None:
-        selected = _known(control["initial_policy"])
+    def _policy(self, control: Mapping, policies: Mapping | None = None) -> Mapping | None:
+        selected = policies.get(control["id"]) if policies is not None else _known(control["initial_policy"])
         return next((p for p in control["policy_versions"] if p["id"] == selected), None)
 
     def _clauses(self, fact: Mapping, query: Query, name: str) -> Decision:
@@ -87,11 +89,13 @@ class Controller:
         return Decision(result.value, reasons, result.evidence_refs + _refs(fact))
 
     @staticmethod
-    def _parameters(policy: Mapping) -> Decision:
+    def _parameters(policy: Mapping, query: Query | None = None) -> Decision:
         fact = policy["checked_parameters"]
         if fact["state"] != "known":
             return Decision(None, ("checked_parameters_" + fact["state"],), _refs(fact))
-        missing = sorted(REQUIRED_PARAMETERS.difference(fact["value"]))
+        required = ((REQUIRED_PARAMETERS - {"object_version"}) | {"policy_target"}
+                    if query is not None and query.policy_target is not None else REQUIRED_PARAMETERS)
+        missing = sorted(required.difference(fact["value"]))
         return Decision(not missing, tuple("parameter_unchecked:" + x for x in missing), _refs(fact))
 
     @staticmethod
@@ -127,8 +131,8 @@ class Controller:
         return Decision(None, (reason,), refs)
 
     def _evaluate_control(self, control: Mapping, query: Query,
-                          authorization: Decision | None) -> tuple[Decision, dict]:
-        policy = self._policy(control)
+                          authorization: Decision | None, policies: Mapping | None = None) -> tuple[Decision, dict]:
+        policy = self._policy(control, policies)
         detail = {"control_id": control["id"], "property_ids": tuple(control["property_ids"]),
                   "policy_version_id": policy["id"] if policy else None,
                   "runtime_status": "not_tested"}
@@ -137,7 +141,7 @@ class Controller:
                               _refs(control["initial_policy"]))
         else:
             coverage = self._clauses(policy["coverage"], query, "control_coverage")
-            parameters = self._parameters(policy)
+            parameters = self._parameters(policy, query)
             binding = _field(policy["binding"], "bound", "parameter_binding")
             timing = _field(policy["timing"], "before_effect", "control_timing")
             # A control outside this query's scope or running after this effect
@@ -171,8 +175,9 @@ class Controller:
         return {True: "blocked_in_model", False: "not_blocked_in_model",
                 None: "unresolved"}[value]
 
-    def evaluate(self, query: Query, authorization: Decision | None = None) -> ControlDecision:
-        evaluated = tuple(self._evaluate_control(c, query, authorization) for c in self.controls)
+    def evaluate(self, query: Query, authorization: Decision | None = None,
+                 policies: Mapping | None = None) -> ControlDecision:
+        evaluated = tuple(self._evaluate_control(c, query, authorization, policies) for c in self.controls)
         result = decision_or(tuple(item[0] for item in evaluated))
         if result.value is False:
             complete = self.evaluator.complete(query.task_id, "controls")
@@ -182,6 +187,26 @@ class Controller:
         return ControlDecision(self._status(result.value), tuple(item[1] for item in evaluated),
                                result.reasons, result.evidence_refs)
 
+    def selection(self, effect: Mapping, policies: Mapping) -> Decision:
+        """A version selection must expose every changed policy field."""
+        control = next(c for c in self.controls if c["id"] == effect["control_id"])
+        permitted = control["modifiable_fields"]
+        fields = set(effect["fields"])
+        if permitted["state"] == "known" and not fields <= set(permitted["value"]):
+            return Decision(False, ("policy_fields_not_modifiable",), _refs(permitted))
+        before = self._policy(control, policies)
+        after = next(p for p in control["policy_versions"] if p["id"] == effect["policy_version_id"])
+        if before is None or permitted["state"] != "known":
+            return Decision(None, ("policy_selection_fields_unresolved",), _refs(permitted))
+        def facts(value):
+            if isinstance(value, Mapping):
+                return {k: facts(v) for k, v in value.items() if k != "evidence_refs"}
+            if isinstance(value, (tuple, list)):
+                return [facts(v) for v in value]
+            return value
+        changed = {key for key in SENSITIVE_FIELDS if facts(before.get(key)) != facts(after.get(key))}
+        return Decision(changed <= fields, () if changed <= fields else ("policy_change_outside_named_fields",))
+
     def _independence(self, control: Mapping) -> dict:
         fields = _known(control["modifiable_fields"])
         paths = _known(control["modification_paths_complete"])
@@ -189,9 +214,21 @@ class Controller:
             if any(effect["kind"] == "select_policy" and effect["control_id"] == control["id"]
                    and set(effect["fields"]).intersection(SENSITIVE_FIELDS)
                    for effect in action["effects"])))
+        if modification_actions and self.modification_results is not None:
+            targets = {(a["id"], e["id"]) for a in self.document["actions"] for e in a["effects"]
+                       if e["kind"] == "select_policy" and e["control_id"] == control["id"]
+                       and set(e["fields"]).intersection(SENSITIVE_FIELDS)}
+            rows = [r for r in self.modification_results if (r["action_id"], r["effect_id"]) in targets]
+            reached = any(r["committed"] and not r["conditional"] for r in rows)
+            uncertain = any(r["committed"] and r["conditional"] for r in rows)
+            complete = self.search_complete and paths is True and fields is not None
+            status = "not_met" if reached else "met" if complete and not uncertain else "unresolved"
+            reasons = ("reachable_policy_modification",) if reached else () if status == "met" else ("policy_modification_unresolved",)
+            return {"status": status, "check_status": "checked" if complete else "partial",
+                    "reasons": reasons, "modification_action_refs": modification_actions}
         if fields is not None and not set(fields).intersection(SENSITIVE_FIELDS) and paths is True:
-            # Even a declared immutable policy cannot ignore an explicit
-            # contradicting update path; P1-2 has not executed that transition.
+            # Without search results, declared immutability cannot dismiss an
+            # explicit contradicting update candidate as already checked.
             if not modification_actions:
                 return {"status": "met", "check_status": "checked", "reasons": (),
                         "modification_action_refs": ()}
@@ -320,7 +357,7 @@ class Controller:
                 elif assurance["control_assurance"] == "unresolved":
                     reasons.append("control_evidence_applicability_unresolved")
                     unresolved.append("control_evidence_applicability_unresolved")
-                if contract["status"] == "gap" or assurance["control_assurance"] == "declaration_only":
+                if contract["status"] == "gap" or independence["status"] == "not_met" or assurance["control_assurance"] == "declaration_only":
                     status = "gap"
                 elif contract["status"] == "unresolved" or independence["status"] == "unresolved" or assurance["control_assurance"] == "unresolved":
                     status = "unresolved"

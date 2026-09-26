@@ -18,6 +18,7 @@ from typing import Any
 
 from .analysis import analyze_json
 from .demo_model import DemoResult
+from .experiment_cases import CASES, CHOICES, D_CASES, GROUPS
 from .model import Diagnostic, Limits
 
 
@@ -35,11 +36,11 @@ _SCOPE = {
     "environment": "local_controlled_simulation",
     "evidence_classes": ["supplied_assertion", "model_deduction", "runtime_observation"],
     "observer_relationship": "same_project",
-    "supported_cases": ["A", "B"],
+    "supported_cases": list(CASES),
     "external_targets_are_local": True,
     "network_transmission": False,
     "limits": [
-        "Fixed synthetic bytes, five synchronous requests and append-only local targets.",
+        "Fixed synthetic bytes, finite synchronous requests and append-only local targets; D is analysis-only.",
         "Same-project fixture, driver, control and observer can share defects.",
         "No operating-system security isolation or third-party evaluation is claimed.",
         "No claim about arbitrary encodings, summaries, semantic leakage or deployment-wide protection.",
@@ -57,7 +58,7 @@ def _request(row: tuple) -> dict:
     return {"task": "task:demo", "actor": "actor:worker", "object_version": obj,
             "operation": operation, "interface": interface, "recipient": recipient,
             "purpose": purpose, "virtual_seconds": second,
-            "effect_time": f"2000-01-01T00:00:{second:02d}Z",
+            "effect_time": (datetime(2000, 1, 1, tzinfo=timezone.utc) + timedelta(seconds=second)).isoformat().replace("+00:00", "Z"),
             "workflow": "workflow:" + context, "context": "ctx:" + context,
             "payload_base64": _b64(payload)}
 
@@ -78,6 +79,9 @@ def _check(checks: list[dict], name: str, condition: bool | None, detail: str = 
 
 def compare_analysis(case: str, report: dict) -> dict:
     """Compare minimum semantic requirements against manually fixed answers."""
+    if case not in ("A", "B"):
+        from .experiment_comparison import compare_analysis_extended
+        return compare_analysis_extended(case, report)
     checks: list[dict] = []
     complete = (report.get("analysis_status") == "completed_for_supported_scope"
                 and not report.get("unresolved_items") and not report.get("truncation"))
@@ -178,6 +182,9 @@ def _observed_authorization(request: dict | None, obj: str | None, target: str) 
 
 def compare_runtime(case: str, runtime: dict) -> dict:
     """Observe all steps before judging requests, effects and independent utility."""
+    if case not in ("A", "B"):
+        from .experiment_comparison import compare_runtime_extended
+        return compare_runtime_extended(case, runtime)
     checks: list[dict] = []
     effects: list[dict] = []
     utilities = {"U-internal": "not_tested", "U-public": "not_tested"}
@@ -332,9 +339,16 @@ def _run(case: str, run_dir: Path, limits: Limits, retained: bool) -> DemoResult
                           scope=_SCOPE, run_directory=str(run_dir) if retained else None)
     analysis = analyze_json(fixture, limits=limits).to_dict()
     analysis_comparison = compare_analysis(case, analysis)
-    runtime = execute_case(case, run_dir)
-    runtime_comparison = compare_runtime(case, runtime)
-    verdict = _verdict([{"status": comparison["verdict"]} for comparison in (analysis_comparison, runtime_comparison)])
+    if case in D_CASES:
+        runtime = {"case_id": case, "runtime_status": "not_tested", "observations": [], "steps": []}
+        runtime_comparison = {"verdict": "not_tested", "checks": [], "actual_effects": [],
+                              "evidence_basis": [], "normal_tasks": {"U-internal": "not_tested", "U-public": "not_tested"},
+                              "property_observation": "not_tested", "control_assurance": "not_tested"}
+        verdict = analysis_comparison["verdict"]
+    else:
+        runtime = execute_case(case, run_dir)
+        runtime_comparison = compare_runtime(case, runtime)
+        verdict = _verdict([{"status": comparison["verdict"]} for comparison in (analysis_comparison, runtime_comparison)])
     errors = runtime.get("environment_errors", [])
     case_result = {"case_id": case, "analysis": analysis, "analysis_comparison": analysis_comparison,
                    "runtime_status": runtime.get("runtime_status", "not_tested"), "protocol_verdict": verdict,
@@ -355,13 +369,40 @@ def _run(case: str, run_dir: Path, limits: Limits, retained: bool) -> DemoResult
     return result
 
 
+def _run_selection(scenario: str, root: Path, limits: Limits, retained: bool) -> DemoResult:
+    if scenario not in GROUPS:
+        return _run(scenario, root, limits, retained)
+    results = []
+    for case in GROUPS[scenario]:
+        directory = root / case
+        try:
+            directory.mkdir()
+        except OSError as exc:
+            results.append(_environment_failure(case, limits, "create_case_directory", exc))
+            continue
+        results.append(_run(case, directory, limits, retained))
+    errors = tuple(error for result in results for error in result.environment_errors)
+    status = "error" if errors else "resource_rejected" if any(
+        r.demo_status == "resource_rejected" for r in results) else "completed"
+    result = DemoResult(status, scenario, _verdict([{"status": r.protocol_verdict} for r in results]),
+                        tuple(case for r in results for case in r.cases), effective_limits=limits,
+                        environment_errors=errors, scope=_SCOPE, run_directory=str(root) if retained else None)
+    if retained:
+        try:
+            (root / "report.json").write_text(json.dumps(result.to_dict(), indent=2) + "\n", encoding="utf-8")
+        except OSError as exc:
+            result = replace(result, demo_status="error", environment_errors=errors + (
+                {"operation": "save_group_report", "error": str(exc)},))
+    return result
+
+
 def _environment_failure(scenario: str, limits: Limits, operation: str, error: OSError) -> DemoResult:
     return DemoResult("error", scenario, "inconclusive", effective_limits=limits,
                       environment_errors=({"operation": operation, "error": str(error)},), scope=_SCOPE)
 
 
 def run_demo(scenario: str, *, work_dir: Path | None = None, limits: Limits | None = None) -> DemoResult:
-    """Run one bundled A/B case; never execute an external model or code."""
+    """Run fixed bundled cases or groups; D only analyzes declared models."""
     if not isinstance(scenario, str):
         raise TypeError("scenario must be a string")
     if work_dir is not None and not isinstance(work_dir, Path):
@@ -369,10 +410,9 @@ def run_demo(scenario: str, *, work_dir: Path | None = None, limits: Limits | No
     if limits is not None and not isinstance(limits, Limits):
         raise TypeError("limits must be a Limits instance or None")
     effective = limits or Limits()
-    if scenario not in ("A", "B"):
-        reserved = scenario == "all" or scenario.split("-", 1)[0] in ("C", "D", "E", "F")
-        status = "unsupported_scenario" if reserved else "input_invalid"
-        diagnostic = Diagnostic("demo." + status, "$.scenario", "P1-3 supports only fixed scenarios A and B.")
+    if scenario not in CHOICES:
+        status = "input_invalid"
+        diagnostic = Diagnostic("demo." + status, "$.scenario", "Choose a bundled A-F case, D/E/F group, or all.")
         return DemoResult(status, scenario, diagnostics=(diagnostic,), effective_limits=effective, scope=_SCOPE)
     if work_dir is None:
         try:
@@ -382,7 +422,7 @@ def run_demo(scenario: str, *, work_dir: Path | None = None, limits: Limits | No
         result = None
         cleanup_error = None
         try:
-            result = _run(scenario, Path(temporary.name), effective, False)
+            result = _run_selection(scenario, Path(temporary.name), effective, False)
         finally:
             try:
                 temporary.cleanup()
@@ -401,4 +441,4 @@ def run_demo(scenario: str, *, work_dir: Path | None = None, limits: Limits | No
         directory = Path(tempfile.mkdtemp(prefix="sst-demo-" + scenario + "-", dir=work_dir)).resolve()
     except OSError as exc:
         return _environment_failure(scenario, effective, "create_run_directory", exc)
-    return _run(scenario, directory, effective, True)
+    return _run_selection(scenario, directory, effective, True)

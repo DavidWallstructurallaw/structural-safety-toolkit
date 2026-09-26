@@ -44,7 +44,7 @@ class _Controller:
     def __init__(self, decisions=None):
         self.decisions = decisions or {}
 
-    def evaluate(self, query, authorization=None):
+    def evaluate(self, query, authorization=None, policies=None):
         return ControlDecision(self.decisions.get(query.recipient_id, "not_blocked_in_model"))
 
 

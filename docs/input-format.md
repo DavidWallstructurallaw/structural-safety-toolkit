@@ -1,6 +1,6 @@
 # Input format: sst.model/0.1
 
-The executable contract is the strict Python validator, with its field descriptors in [schema.py](../src/structural_safety/schema.py). This document lists every field and shape. The analyzer evaluates `read` and `transfer` with SS001/SS005. Parsing other valid fields does not mean their analysis semantics have been implemented; unsupported effects and rules remain visible in analysis reports. The fixed local A/B demo is a separate execution interface and does not execute arbitrary submitted JSON models.
+The executable contract is the strict Python validator, with its field descriptors in [schema.py](../src/structural_safety/schema.py). This document lists every field and shape. The analyzer evaluates `read`, `transfer`, and finite `policy_update` with SS001/SS005. Parsing other valid fields does not mean their analysis semantics have been implemented; unsupported effects and rules remain visible in analysis reports. The fixed A-F demo is a separate interface and does not execute arbitrary submitted JSON models; D performs analysis only.
 
 Read the complete [A fixture](../src/structural_safety/examples/A.json) or [B fixture](../src/structural_safety/examples/B.json) for a working input. All top-level fields except `events` are required; empty lists are allowed where their minimum is zero. Every object is closed to unknown fields, including nested objects and facts. There is no catch-all metadata or custom-code field.
 
@@ -168,12 +168,23 @@ Named types below resolve to their matching section. Required means the field mu
 | `tasks` | yes | Fact&lt;Set&lt;Ref&lt;tasks&gt;&gt;; minimum 0&gt; |
 | `actors` | yes | Fact&lt;Set&lt;Ref&lt;nodes&gt; (principal, executor, service)&gt;; minimum 0&gt; |
 | `objects` | yes | Fact&lt;Set&lt;Ref&lt;object_versions&gt;&gt;; minimum 0&gt; |
+| `policy_targets` | no | Fact&lt;Set&lt;[policy-target](#policy-target)&gt;; minimum 0&gt;; explicit policy-management scope, added in P1-4 |
 | `operations` | yes | Fact&lt;Set&lt;Ref&lt;operations&gt;&gt;; minimum 0&gt; |
 | `interfaces` | yes | Fact&lt;Set&lt;Ref&lt;interfaces&gt;&gt;; minimum 0&gt; |
 | `recipients` | yes | Fact&lt;Set&lt;Ref&lt;nodes&gt; (principal, executor, service, resource, tool, store, control) or `not_applicable`&gt;; minimum 0&gt; |
 | `purposes` | yes | Fact&lt;Set&lt;Ref&lt;purposes&gt;&gt;; minimum 0&gt; |
 | `workflows` | yes | Fact&lt;Set&lt;Ref&lt;workflows&gt;&gt;; minimum 0&gt; |
 | `conditions` | yes | List&lt;[condition](#condition)&gt;; minimum 0 |
+
+### policy-target
+
+| Field | Required | Type / allowed values |
+|---|---|---|
+| `control_id` | yes | Ref&lt;controls&gt; |
+| `policy_version_id` | yes | Exact declared policy version belonging to that control |
+| `fields` | yes | Nonempty set of `coverage`, `decision_mode`, `deny_clauses`, `checked_parameters`, `binding`, `timing`, `failure_behavior`, `comment` |
+
+For `select_policy`, scope `objects` must be known empty and one matching policy target must cover all requested fields. An absent target is no grant, never a wildcard. Data queries still require matching data objects. This is an additive field within development schema `sst.model/0.1`; existing A/B records remain valid. See [management semantics](semantics.md#technical-ability-and-authorization).
 
 ### task
 
@@ -502,7 +513,7 @@ Named types below resolve to their matching section. Required means the field mu
 |---|---|---|
 | `id` | yes | string |
 | `coverage` | yes | Fact&lt;List&lt;[scope](#scope)&gt;; minimum 0&gt; |
-| `checked_parameters` | yes | Fact&lt;Set&lt;`task`, `actor`, `object_version`, `operation`, `interface`, `recipient`, `purpose`, `effect_time`, `workflow_conditions`&gt;; minimum 0&gt; |
+| `checked_parameters` | yes | Fact&lt;Set&lt;`task`, `actor`, `object_version`, `operation`, `interface`, `recipient`, `purpose`, `effect_time`, `workflow_conditions`, `policy_target`&gt;; minimum 0&gt; |
 | `binding` | yes | Fact&lt;`bound`, `unbound`&gt; |
 | `timing` | yes | Fact&lt;`before_effect`, `after_effect`&gt; |
 | `decision_mode` | yes | Fact&lt;`authorization`, `deny_table`, `external`, `unsupported`&gt; |

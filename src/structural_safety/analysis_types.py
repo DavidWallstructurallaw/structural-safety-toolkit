@@ -79,7 +79,7 @@ def scalar_key(value: str | int | float | bool) -> str:
 class Query:
     task_id: str
     actor_id: str
-    object_version_id: str
+    object_version_id: str | None
     operation_id: str
     interface_id: str
     recipient_id: str
@@ -87,6 +87,16 @@ class Query:
     effect_time: str | None
     workflow_id: str
     conditions: tuple[tuple[str, tuple[str, ...]], ...] = ()
+    policy_target: tuple[str, str, tuple[str, ...]] | None = None
+
+
+def policy_query(action: Any, effect: Any, document: Any, conditions: Any = ()) -> Query:
+    control = next(c for c in document["controls"] if c["id"] == effect["control_id"])
+    return Query(action["task_id"], action["actor_id"], None, action["operation_id"],
+                 action["interface_id"], control["node_id"], action["purpose_id"],
+                 action["effect_time"].get("value") if action["effect_time"]["state"] == "known" else None,
+                 action["workflow_id"], conditions,
+                 (effect["control_id"], effect["policy_version_id"], tuple(sorted(effect["fields"]))))
 
 
 class BudgetExceeded(Exception):

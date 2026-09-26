@@ -14,7 +14,7 @@ from .model import Limits
 from .validation import validate_json
 
 
-SUPPORTED = ("input_validation", "read", "transfer", "SS001", "SS005")
+SUPPORTED = ("input_validation", "read", "transfer", "policy_update", "SS001", "SS005")
 PROPERTY = "P-CONF-01"
 
 
@@ -61,7 +61,7 @@ def _unsupported(document: dict, validation_items: tuple) -> list[dict]:
 
     for action in sorted(document["actions"], key=lambda x: x["id"]):
         semantic = operations[action["operation_id"]]
-        if semantic not in ("read", "transfer"):
+        if semantic not in ("read", "transfer", "policy_update"):
             add("operation:" + action["id"],
                 "The current analyzer does not execute " + semantic + " effects.",
                 "actions", action["id"])
@@ -100,7 +100,7 @@ def _unsupported(document: dict, validation_items: tuple) -> list[dict]:
 
 
 def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> AnalysisResult:
-    """Analyze finite read/transfer effects within the supplied model premises."""
+    """Analyze finite read/transfer/policy effects within supplied model premises."""
     validated = validate_json(document, limits=limits)
     if validated.validation_status != "valid":
         return AnalysisResult(
@@ -129,6 +129,7 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
     action_results: dict[str, dict] = {}
     truncation: list[dict] = []
     outcome = None
+    modification_results = []
 
     def add_unresolved(item: dict) -> None:
         unresolved.setdefault(_key(item), item)
@@ -171,6 +172,9 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
             "witness": _plain(step["path"]),
         }
         action_results.setdefault(_key(identity), result)
+        if query.policy_target is not None:
+            modification_results.append({"action_id": step["action_id"], "effect_id": step["effect_id"],
+                                         "committed": step["committed"], "conditional": conditional})
         reasons = set()
         if technical.value is None:
             reasons.update(technical.reasons)
@@ -187,6 +191,27 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
                             "affected_refs": [{"collection": "actions", "id": step["action_id"]}]})
 
         if not property_present or technical.value is False:
+            return
+        if query.policy_target is not None:
+            if authorization.value is not True and control.status != "blocked_in_model":
+                oid = _identifier("policy-boundary", identity)
+                obligations[oid] = {"obligation_id": oid, "rule_id": "SS005", "origin": "derived",
+                                    "task_id": query.task_id, "property_id": PROPERTY, "snapshot_id": snapshot,
+                                    "check_status": "checked", "obligation_status": "unresolved" if conditional or authorization.value is None else "gap"}
+                add_finding({**identity, "rule_id": "SS005"}, {
+                    "rule_id": "SS005", "classification": "assurance_gap", "property_id": PROPERTY,
+                    "task_id": query.task_id, "snapshot_id": snapshot, "affected_objects": [],
+                    "affected_refs": [{"collection": "controls", "id": query.policy_target[0]},
+                                      {"collection": "actions", "id": step["action_id"]}],
+                    "obligation_refs": [oid], "necessary_conditions": result["necessary_conditions"],
+                    "feasibility": feasibility, "authorization": authorization_status,
+                    "control_effect": control.status, "control_assurance": "unresolved",
+                    "evidence_basis": ["supplied_assertion", "model_deduction"], "evidence_refs": refs,
+                    "environment": "declared_model", "observed_effect": "not_tested",
+                    "unresolved_items": tuple(sorted(reasons)), "assumptions": assumptions,
+                    "witness": result["witness"], "query": result["query"],
+                    "repair_locations": [{"collection": "interfaces", "id": query.interface_id}],
+                    "suggested_verification": "Bind policy selection to the exact control, version and fields; test the management boundary independently."})
             return
         definite = (technical.value is True and not conditional and authorization.value is False
                     and control.status == "not_blocked_in_model")
@@ -245,7 +270,7 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
             }
             add_finding({**identity, "rule_id": "SS005", "classification": "assurance_gap"}, finding)
 
-    try:
+    def record_controls():
         for item in controller.obligations():
             record = _plain(item)
             oid = record["obligation_id"]
@@ -274,10 +299,14 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
                     "suggested_verification": "Establish property- and snapshot-scoped control evidence and policy-modification isolation.",
                 }
                 add_finding({"rule_id": "SS005", "obligation_id": oid}, finding)
+    try:
         outcome = explore(data, evaluator, controller, budget, on_step)
         if not outcome.completed:
             truncation.append({"reason": outcome.truncation_reason, "scope": "remaining_supported_search",
                                "check_status": "partial"})
+        controller.modification_results = modification_results
+        controller.search_complete = outcome.completed
+        record_controls()
     except BudgetExceeded as error:
         truncation.append({"reason": error.reason, "scope": "remaining_supported_checks", "check_status": "partial"})
 
@@ -298,7 +327,7 @@ def analyze_json(document: str | bytes, *, limits: Limits | None = None) -> Anal
         for effect in sorted(action["effects"], key=lambda x: x["id"]):
             if (action["id"], effect["id"]) in evaluated:
                 continue
-            unchecked = bool(truncation or unsupported or operations[action["operation_id"]] not in ("read", "transfer"))
+            unchecked = bool(truncation or unsupported or operations[action["operation_id"]] not in ("read", "transfer", "policy_update"))
             record = {"action_id": action["id"], "effect_id": effect["id"],
                       "feasibility": "conditional" if unchecked else "infeasible",
                       "authorization": "not_checked", "control_effect": "not_checked",

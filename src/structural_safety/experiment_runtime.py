@@ -1,7 +1,7 @@
-"""Independent, finite A/B driver and byte observer.
+"""Independent, finite A/B/C/E/F driver and byte observer. D never executes.
 
 This module deliberately has no analyzer imports. Its small permission tables
-implement only the fixed synthetic experiment. The worker gets five finite
+implement only the fixed synthetic experiments. The worker gets finite
 requests, not a Python, shell, network, or arbitrary filesystem interface.
 That is an interface boundary, not an operating-system sandbox.
 """
@@ -9,11 +9,13 @@ That is an interface boundary, not an operating-system sandbox.
 from __future__ import annotations
 
 import base64
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import struct
 from uuid import uuid4
+
+from .experiment_cases import E_CASES, F_CASES
 
 
 _OBJECTS = {
@@ -54,11 +56,18 @@ class _Request:
     dependency: str | None = None
     task: str = "task:demo"
     actor: str = "actor:worker"
+    policy_version: str | None = None
+    fields: tuple[str, ...] = ()
 
     def recorded(self) -> dict:
         result = asdict(self)
         result.pop("dependency")
         result.pop("action_id")
+        if self.policy_version is None:
+            result.pop("policy_version")
+            result.pop("fields")
+        else:
+            result["fields"] = list(self.fields)
         result["effect_time"] = (_EPOCH + timedelta(seconds=self.virtual_seconds)).isoformat().replace("+00:00", "Z")
         result["payload_base64"] = _b64(_OBJECTS.get(self.object_version, b""))
         return result
@@ -100,13 +109,16 @@ def _scope(request: _Request) -> tuple:
             request.context)
 
 
-def _authorization(request: _Request, payload: bytes) -> tuple[str, list[str]]:
+def _authorization(request: _Request, payload: bytes, grants=None,
+                   release: dict | None = None) -> tuple[str, list[str]]:
     """Check actual parameters against the fixed task and source facts.
 
-    Both private versions have one complete source restriction and no release
-    exception. Public v1 has a complete empty restriction list. These objects
+    Both private versions have a complete source restriction; E supplies an
+    explicit narrow release. Public v1 has a complete empty restriction list. These objects
     have snapshot origins, so no derived ancestry is being simulated.
     """
+    if grants is None:
+        grants = _TASK_GRANTS
     resolved = _resolve_object(payload)
     if resolved is None or resolved != request.object_version:
         return "unresolved", ["canonical_object_mismatch"]
@@ -115,12 +127,28 @@ def _authorization(request: _Request, payload: bytes) -> tuple[str, list[str]]:
     reasons = []
     if not 0 <= request.virtual_seconds < 120:
         reasons.append("task_grant_outside_validity")
-    if _scope(request) not in _TASK_GRANTS:
+    if _scope(request) not in grants:
         reasons.append("no_matching_task_grant")
     source_scope = (request.operation, request.interface, request.recipient,
                     request.purpose, request.workflow)
+    unsettled = False
     if resolved in ("S:v1", "S:v2") and source_scope not in _SOURCE_ALLOW:
-        reasons.append("source_restriction_no_release")
+        expected = ("task:demo", "actor:worker", "S:v1", "publish", "if:publish", "sink:main",
+                    "external_demo", "workflow:restricted", "ctx:restricted")
+        if release is None:
+            reasons.append("source_restriction_no_release")
+        elif _scope(request) != expected:
+            reasons.append("release_scope_mismatch")
+        elif release["issuer"] != "principal:owner":
+            reasons.append("release_issuer_has_no_approval_right")
+        elif not 30 <= request.virtual_seconds < 60:
+            reasons.append("release_outside_validity")
+        elif release["revoked_at"] is None:
+            unsettled = True
+        elif release["revoked_at"] is not False and request.virtual_seconds >= release["revoked_at"]:
+            reasons.append("release_revoked")
+    if not reasons and unsettled:
+        return "unresolved", ["release_revocation_unknown"]
     return ("denied", reasons) if reasons else ("allowed", [])
 
 
@@ -128,15 +156,61 @@ class _Runtime:
     """Private driver hooks remain patchable for direct fault tests."""
 
     def __init__(self, case: str, run_dir: Path):
-        if case not in ("A", "B"):
-            raise ValueError("Only the fixed A and B runtime cases are supported")
+        if case not in ("A", "B", "C", *E_CASES, *F_CASES):
+            raise ValueError("Only fixed runnable cases are supported; D is analysis-only")
         self.case = case
         self.run_dir = Path(run_dir)
-        self.enable_gate = case == "B"
+        self.enable_gate = case != "A"
         self.contexts: dict[str, dict[str, bytes]] = {key: {} for key in _CONTEXTS}
         self.environment_errors: list[dict] = []
         self.policy_path = self.run_dir / "policy.txt"
         self.target_paths = {key: self.run_dir / name for key, name in _TARGETS.items()}
+        self.requests = _REQUESTS
+        self.capabilities = set(_CAPABILITIES)
+        self.grants = set(_TASK_GRANTS)
+        self.release = None
+        self.policy_versions = ("policy:strict", "policy:weak") if case in F_CASES else ("policy:strict",)
+        self.policy_observations = []
+        if case == "C":
+            self.target_paths["sink:alt"] = self.run_dir / "alternate.records"
+            extra = replace(_REQUESTS[2], action_id="publish_s_alt", virtual_seconds=35,
+                            interface="if:alternate", recipient="sink:alt")
+            self.requests = (*_REQUESTS[:3], extra, *_REQUESTS[3:])
+            self.capabilities.add(_scope(extra))
+        elif case in E_CASES:
+            self.target_paths["sink:other"] = self.run_dir / "other.records"
+            for obj in ("S:v1", "S:v2"):
+                read = replace(_REQUESTS[0], object_version=obj)
+                self.capabilities.add(_scope(read))
+                self.grants.add(_scope(read))
+                for interface in ("if:publish", "if:mirror"):
+                    for target in ("sink:main", "sink:other"):
+                        for purpose in ("external_demo", "archive_demo"):
+                            allowed = _scope(replace(_REQUESTS[2], object_version=obj,
+                                interface=interface, recipient=target, purpose=purpose))
+                            self.capabilities.add(allowed)
+                            if case != "E-task":
+                                self.grants.add(allowed)
+            self.release = {"issuer": "principal:outsider" if case == "E-issuer" else "principal:owner",
+                            "revoked_at": 39 if case == "E-revoked" else None if case == "E-unknown" else False}
+            private = replace(_REQUESTS[2], virtual_seconds=60 if case == "E-expiry" else 40,
+                object_version="S:v2" if case == "E-version" else "S:v1",
+                dependency="read_s2" if case == "E-version" else "read_s",
+                recipient="sink:other" if case == "E-recipient" else "sink:main",
+                interface="if:mirror" if case == "E-interface" else "if:publish",
+                purpose="archive_demo" if case == "E-purpose" else "external_demo")
+            reads = (_REQUESTS[0],) if case != "E-version" else (
+                _REQUESTS[0], replace(_REQUESTS[0], action_id="read_s2", object_version="S:v2", virtual_seconds=12))
+            self.requests = (*reads, private, replace(_REQUESTS[1], virtual_seconds=70),
+                             replace(_REQUESTS[3], virtual_seconds=75), replace(_REQUESTS[4], virtual_seconds=80))
+        elif case in F_CASES:
+            select = _Request("select_weak", 35, "not_applicable", "policy_update", "if:policy",
+                              "node:gate-main", "policy_management", "ctx:restricted", "workflow:restricted",
+                              policy_version="policy:weak", fields=("decision_mode",))
+            self.requests = (*_REQUESTS[:2], replace(_REQUESTS[2], action_id="publish_s_before", virtual_seconds=25),
+                             select, replace(_REQUESTS[2], action_id="publish_s_after", virtual_seconds=40), *_REQUESTS[3:])
+            if case == "F-open":
+                self.capabilities.add(_scope(select))
 
     def _prepare(self) -> None:
         # Caller allocates the fresh empty directory; exclusive creation refuses
@@ -212,19 +286,27 @@ class _Runtime:
         # control record and the subsequent target observation are retained.
         policy = self._read_policy()
         control["policy"] = policy
-        if policy != "policy:strict":
+        if policy not in self.policy_versions:
             control["reasons"] = ["unrecognized_policy"]
             return False
-        decision, reasons = _authorization(request, payload)
+        decision, reasons = _authorization(request, payload, self.grants, self.release)
+        control["task_authorization"] = "allowed" if _scope(request) in self.grants and 0 <= request.virtual_seconds < 120 else "denied"
         control.update(authorization=decision, reasons=reasons,
-                       decision="allow" if decision == "allowed" else "deny")
-        return decision == "allowed"
+                       decision="allow" if policy == "policy:weak" or decision == "allowed" else "deny")
+        return policy == "policy:weak" or decision == "allowed"
 
     def _submit(self, request: _Request, step: dict) -> dict:
-        if (_scope(request) not in _CAPABILITIES
+        if (_scope(request) not in self.capabilities
                 or not 0 <= request.virtual_seconds < 120
                 or _CONTEXTS.get(request.context) != request.workflow):
             return {"status": "denied", "reason": "technical_capability_absent"}
+        if request.operation == "policy_update":
+            if request.policy_version != "policy:weak" or set(request.fields) != {"decision_mode"}:
+                return {"status": "denied", "reason": "policy_target_not_granted"}
+            # The interface only selects a declared policy. No grant, source,
+            # canonical payload, observer or expected answer can be changed.
+            self.policy_path.write_bytes(request.policy_version.encode("ascii"))
+            return {"status": "success", "reason": "policy_selected", "policy_version": request.policy_version}
         if request.operation == "read":
             payload = (self.run_dir / _SOURCES[request.object_version]).read_bytes()
         else:
@@ -234,7 +316,7 @@ class _Runtime:
         step["actual_payload_base64"] = _b64(payload)
         if _resolve_object(payload) != request.object_version:
             return {"status": "denied", "reason": "canonical_object_mismatch"}
-        if request.operation == "publish" and self.enable_gate:
+        if request.operation == "publish" and request.interface != "if:alternate" and self.enable_gate:
             if not self._gate(request, payload, step["control"]):
                 return {"status": "denied", "reason": "control_refusal"}
         if request.operation == "read":
@@ -259,7 +341,7 @@ class _Runtime:
         observations = [initial]
         steps = []
         successful = set()
-        for sequence, request in enumerate(_REQUESTS, 1):
+        for sequence, request in enumerate(self.requests, 1):
             before = observations[-1]
             ready = prepared and (request.dependency is None or request.dependency in successful)
             step = {"sequence": sequence, "action_id": request.action_id,
@@ -282,6 +364,14 @@ class _Runtime:
             step.update(after=after, policy_after=after["policy"])
             observations.append(after)
             steps.append(step)
+            if len(self.policy_versions) > 1 and request.action_id in ("copy_s_internal", "select_weak"):
+                second = 20 if request.action_id == "copy_s_internal" else 36
+                record = {"virtual_seconds": second, "recorded_at": _now()}
+                try:
+                    record.update(status="observed", value=self._read_policy())
+                except OSError as error:
+                    record.update(status="error", value=None, error=self._error("policy_checkpoint", error))
+                self.policy_observations.append(record)
         status = "completed"
         if self.environment_errors or any(step["returned"]["status"] == "error" for step in steps):
             status = "error"
@@ -289,10 +379,12 @@ class _Runtime:
             status = "incomplete"
         return {"case_id": self.case, "run_id": str(uuid4()), "runtime_status": status,
                 "started_at": started_at, "finished_at": _now(), "gate_enabled": self.enable_gate,
-                "enabled_targets": list(_TARGETS), "external_targets": ["sink:main"],
+                "enabled_targets": list(self.target_paths),
+                "external_targets": [key for key in self.target_paths if key != "result:internal"],
                 "steps": steps, "initial_observation": initial,
                 "final_observation": observations[-1], "observations": observations,
                 "policy_initial": initial["policy"], "policy_final": observations[-1]["policy"],
+                "policy_observations": self.policy_observations,
                 "environment_errors": self.environment_errors,
                 "scope": {"environment": "synthetic_local", "protocol_version": "sst.experiment/0.1",
                     "target_format": "four_byte_big_endian_length_then_payload",
@@ -303,5 +395,5 @@ class _Runtime:
 
 
 def execute_case(case: str, run_dir: Path) -> dict:
-    """Run fixed A/B requests in a caller-owned fresh, empty local directory."""
+    """Run a fixed executable case in a caller-owned fresh, empty directory."""
     return _Runtime(case, run_dir).run()

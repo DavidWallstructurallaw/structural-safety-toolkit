@@ -15,6 +15,43 @@ import sys
 import structural_safety
 
 
+def check_all(report: dict) -> None:
+    expected = ("A", "B", "C", "D-behavior", "D-declaration", "D-isolation", "E0", "E-version",
+                "E-recipient", "E-purpose", "E-interface", "E-expiry", "E-issuer", "E-revoked", "E-unknown",
+                "E-task", "F-open", "F-locked")
+    if (report["scenario"] != "all" or report["protocol_verdict"] != "matched"
+            or report["demo_status"] != "completed" or report["environment_errors"]
+            or tuple(c["case_id"] for c in report["cases"]) != expected):
+        raise RuntimeError("Installed all selection did not preserve its 18-case protocol.")
+    for case in report["cases"]:
+        name = case["case_id"]
+        if case["analysis_comparison"]["verdict"] != "matched":
+            raise RuntimeError("Installed case analysis did not match its expected semantics.")
+        if name.startswith("D-"):
+            if (case["runtime_status"] != "not_tested" or case["actual_effects"] or case["runtime"]["observations"]
+                    or case["normal_tasks"] != {"U-internal": "not_tested", "U-public": "not_tested"}):
+                raise RuntimeError("Installed D case falsely claimed execution or utility.")
+            continue
+        if (case["runtime_status"] != "completed" or case["runtime_comparison"]["verdict"] != "matched"
+                or case["normal_tasks"] != {"U-internal": "success", "U-public": "success"}):
+            raise RuntimeError("Installed executable case lost observations or normal work.")
+        violations = [e for e in case["actual_effects"] if e["classification"] == "observed_boundary_violation"]
+        if bool(violations) != (name in ("A", "C", "F-open")):
+            raise RuntimeError("Installed case has an incorrect observed authorization result.")
+        if name == "E0" and not any(e["object_version"] == "S:v1" and e["target"] == "sink:main"
+                                   and e["classification"] == "authorized_effect" for e in case["actual_effects"]):
+            raise RuntimeError("Installed E0 lost its lawful narrow release.")
+        if name == "E-unknown":
+            private = next(s for s in case["runtime"]["steps"] if s["action_id"] == "publish_s_main")
+            if private["control"]["authorization"] != "unresolved":
+                raise RuntimeError("Installed E-unknown collapsed missing revocation evidence.")
+        if name in ("F-open", "F-locked"):
+            policy = "policy:weak" if name == "F-open" else "policy:strict"
+            after = next(s for s in case["runtime"]["steps"] if s["action_id"] == "publish_s_after")
+            if case["policy_after"]["value"] != policy or after["attempted"] is not True:
+                raise RuntimeError("Installed F lost its actual policy state or second attempt.")
+
+
 def check_demo(report: dict, scenario: str) -> None:
     if (report["result_schema_version"] != "sst.demo/0.1"
             or report["scenario"] != scenario or report["demo_status"] != "completed"
@@ -123,7 +160,17 @@ def main() -> None:
             # Separate runs have distinct timestamps and identifiers. Compare
             # semantic outcomes and observed bytes rather than entire reports.
             check_demo(json.loads(completed.stdout), scenario)
-    print(f"Installed wheel {installed_version}: validation/analysis/demo APIs, both CLI entries and A/B resources passed.")
+    check_all(structural_safety.run_demo("all").to_dict())
+    for command in commands:
+        completed = subprocess.run([*command, "demo", "all"], env=environment, capture_output=True, text=True)
+        if completed.returncode != 0 or completed.stderr:
+            raise RuntimeError("Installed all CLI selection failed.")
+        check_all(json.loads(completed.stdout))
+    resources_in_wheel = list(resources.files("structural_safety").joinpath("examples").iterdir())
+    models = [path for path in resources_in_wheel if path.name.endswith(".json")]
+    if len(models) != 18 or any(structural_safety.validate_json(path.read_bytes()).validation_status != "valid" for path in models):
+        raise RuntimeError("Installed package must contain 18 structurally valid expanded models.")
+    print(f"Installed wheel {installed_version}: validation/analysis/demo APIs, both CLI entries and all 18 resources passed.")
 
 
 if __name__ == "__main__":

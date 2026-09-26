@@ -1,8 +1,8 @@
-"""Finite read/transfer search over exact ports and branch-local assumptions.
+"""Finite read/transfer/policy selection over exact ports and local assumptions.
 
 Only the declared candidate effects are explored. A state shares immutable
-authorization, lineage, and control input with every other state; P1-2 has no
-effect that changes these records. Witnesses use predecessor links rather than
+authorization, lineage, and control declarations with every other state; policy
+selection is branch-local and cannot rewrite those records. Witnesses use predecessor links rather than
 copying all histories into the state key.
 """
 
@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Callable
 
-from .analysis_types import BudgetExceeded, Decision, Query, scalar_key
+from .analysis_types import BudgetExceeded, Decision, Query, scalar_key, policy_query, decision_and
 
 
 @dataclass(frozen=True, slots=True)
@@ -50,6 +50,8 @@ class _State:
     # future operations; raw transfer requires an exact held input port.
     visible: frozenset[tuple[str, str]]
     visibility_unknown: frozenset[str]
+    policies: tuple[tuple[str, str | None], ...]
+    conditional_policies: tuple[tuple[tuple[str, str], tuple], ...]
 
 
 @dataclass(slots=True)
@@ -160,7 +162,9 @@ def _temporal(state: _State, action: Any, stops: Any):
     return (floor, tuple(windows[key] for key in sorted(windows)), order, reasons, refs)
 
 
-def _query(action: Any, effect: Any, conditions: Any) -> Query:
+def _query(action: Any, effect: Any, conditions: Any, document: Any = None) -> Query:
+    if effect["kind"] == "select_policy":
+        return policy_query(action, effect, document, conditions)
     output = next(port for port in action["outputs"] if port["port_id"] == effect["output_port_id"])
     return Query(task_id=action["task_id"], actor_id=action["actor_id"],
                  object_version_id=output["object_version_id"], operation_id=action["operation_id"],
@@ -173,7 +177,7 @@ def _query(action: Any, effect: Any, conditions: Any) -> Query:
 
 def _consistent_history(state: _State, execution_id: tuple[str, str], conditions: Any,
                         windows: tuple[_Window, ...], order: frozenset[tuple[str, str]],
-                        candidates: dict, evaluator: Any, controller: Any):
+                        candidates: dict, evaluator: Any, controller: Any, document: Any):
     """Intersect earlier conditional premises with the new branch constraints.
 
     Lower bounds are the earliest *possible* times, not observations or chosen
@@ -190,7 +194,7 @@ def _consistent_history(state: _State, execution_id: tuple[str, str], conditions
             action, effect = candidates[key]
             window = bounds[key[0]]
             decision, earliest = evaluator.capability_window(
-                _query(action, effect, conditions), window.lower, window.upper, window.upper_exclusive)
+                _query(action, effect, conditions, document), window.lower, window.upper, window.upper_exclusive)
             if decision.value is False or earliest is None:
                 return None
             if earliest > window.lower:
@@ -206,10 +210,11 @@ def _consistent_history(state: _State, execution_id: tuple[str, str], conditions
             return None
     for key in sorted(state.conditional_effects):
         action, effect = candidates[key]
-        query = _query(action, effect, conditions)
+        query = _query(action, effect, conditions, document)
         if key[0] not in bounds and evaluator.capability(query).value is False:
             return None
-        if controller.evaluate(query, evaluator.authorization(query)).status == "blocked_in_model":
+        historical = dict(dict(state.conditional_policies).get(key, state.policies))
+        if controller.evaluate(query, evaluator.authorization(query), historical).status == "blocked_in_model":
             return None
     return tuple(bounds[key] for key in sorted(bounds))
 
@@ -251,7 +256,7 @@ def _unsupported_assumptions(document: Any, action: Any, query: Query) -> set[st
                    query.task_id in clause["tasks"]["value"] for clause in record["clauses"]):
                 relevant.add((collection, record["id"]))
     objects = {item["id"]: item for item in document["object_versions"]}
-    pending = [query.object_version_id]
+    pending = [query.object_version_id] if query.object_version_id is not None else []
     visited = set()
     while pending:
         identifier = pending.pop()
@@ -291,7 +296,7 @@ def explore(document: Any, evaluator: Any, controller: Any, budget: Any,
                   for item in document["context"]["operation_definitions"]}
     actions = sorted(document["actions"], key=lambda item: item["id"])
     supported = [action for action in actions if
-                 operations[action["operation_id"]] in ("read", "transfer")]
+                 operations[action["operation_id"]] in ("read", "transfer", "policy_update")]
     unsupported = tuple(action["id"] for action in actions if action not in supported)
     candidates = [(action, effect) for action in supported
                   for effect in sorted(action["effects"], key=lambda item: item["id"])]
@@ -322,7 +327,9 @@ def explore(document: Any, evaluator: Any, controller: Any, budget: Any,
             initial_known.add(binding["key"])
     state = _State(held, frozenset(), tuple(sorted(initial_domains.items())), (),
                    _time(document["context"]["as_of"]), (), frozenset(), frozenset(),
-                   frozenset(visible), frozenset(visibility_unknown))
+                   frozenset(visible), frozenset(visibility_unknown),
+                   tuple((c["id"], c["initial_policy"].get("value") if c["initial_policy"]["state"] == "known" else None)
+                         for c in sorted(document["controls"], key=lambda c: c["id"])), ())
     nodes: list[_Node] = []
     reached: set[str] = set()
     evaluated: set[tuple[str, str]] = set()
@@ -344,7 +351,7 @@ def explore(document: Any, evaluator: Any, controller: Any, budget: Any,
                 if not set(action["success_dependencies"]) <= complete:
                     continue
                 inputs = tuple(port for port in action["inputs"]
-                               if port["port_id"] in effect["input_port_ids"])
+                               if port["port_id"] in effect.get("input_port_ids", ()))
                 if any((port["object_version_id"], port["location_node_id"], port["context_id"])
                        not in state.held for port in inputs):
                     continue
@@ -357,13 +364,16 @@ def explore(document: Any, evaluator: Any, controller: Any, budget: Any,
                     continue
                 floor, windows, order, time_assumptions, time_refs = temporal
                 windows = _consistent_history(state, execution_id, conditions, windows, order,
-                                              candidate_index, evaluator, controller)
+                                              candidate_index, evaluator, controller, document)
                 if windows is None:
                     continue
-                output = next(port for port in action["outputs"]
+                management = effect["kind"] == "select_policy"
+                output = None if management else next(port for port in action["outputs"]
                               if port["port_id"] == effect["output_port_id"])
-                query = _query(action, effect, conditions)
+                query = _query(action, effect, conditions, document)
                 capability = evaluator.capability(query)
+                if management:
+                    capability = decision_and(capability, controller.selection(effect, dict(state.policies)))
                 assumptions = set(state.assumptions) | condition_assumptions | time_assumptions
                 assumptions.update(_unsupported_assumptions(document, action, query))
                 if capability.value is None:
@@ -376,7 +386,7 @@ def explore(document: Any, evaluator: Any, controller: Any, budget: Any,
                                      None if assumptions else True,
                                      tuple(sorted(assumptions | set(capability.reasons))), tuple(sorted(evidence)))
                 authorization = evaluator.authorization(query)
-                control = controller.evaluate(query, authorization)
+                control = controller.evaluate(query, authorization, dict(state.policies))
                 if control.status == "unresolved":
                     assumptions.add("control_not_blocking_assumed:" + action["id"] + ":" + effect["id"])
                     assumptions.update(control.reasons)
@@ -384,11 +394,16 @@ def explore(document: Any, evaluator: Any, controller: Any, budget: Any,
                 evidence.update(control.evidence_refs)
                 assumptions_tuple = tuple(sorted(assumptions))
                 committed = capability.value is not False and control.status != "blocked_in_model"
+                next_policies = dict(state.policies)
+                if management and committed:
+                    next_policies[effect["control_id"]] = effect["policy_version_id"]
                 witness = {
                     "action_id": action["id"], "effect_id": effect["id"],
                     "task_id": action["task_id"], "context_id": action["context_id"],
                     "input_ports": tuple(dict(port) for port in inputs),
-                    "output_port": dict(output), "effect_time": query.effect_time,
+                    "output_port": dict(output) if output is not None else None, "effect_time": query.effect_time,
+                    "policy_before": state.policies, "policy_after": tuple(sorted(next_policies.items())),
+                    "policy_target": query.policy_target,
                     "conditions": conditions, "control_status": control.status,
                     "time_constraints": _time_constraints(windows, order),
                     "control_details": control.details,
@@ -417,11 +432,15 @@ def explore(document: Any, evaluator: Any, controller: Any, budget: Any,
                 elif visibility["state"] != "known" or retention["state"] != "known":
                     new_visibility_unknown.add(context["id"])
                 successor = _State(
-                    state.held | {(output["object_version_id"], output["location_node_id"], output["context_id"])},
+                    state.held | ({(output["object_version_id"], output["location_node_id"], output["context_id"])}
+                                  if output is not None else set()),
                     state.committed | {execution_id}, conditions, assumptions_tuple,
                     floor, windows, order,
                     state.conditional_effects | ({execution_id} if assumptions_tuple else set()),
-                    frozenset(new_visible), frozenset(new_visibility_unknown))
+                    frozenset(new_visible), frozenset(new_visibility_unknown),
+                    tuple(sorted(next_policies.items())),
+                    state.conditional_policies if not assumptions_tuple else
+                    tuple(sorted((*state.conditional_policies, (execution_id, state.policies)))))
                 if requirements[action["id"]] <= successor.committed:
                     reached.add(action["id"])
                 if successor not in seen:

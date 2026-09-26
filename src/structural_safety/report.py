@@ -199,7 +199,8 @@ def demo_to_markdown(result: Any) -> str:
         f"Protocol verdict: {_markdown_text(report['protocol_verdict'])}",
         "",
         "A matched verdict means the fixed case behaved as expected. Case A "
-        "expects an observed boundary violation. These observations concern "
+        "expects an observed boundary violation. D only analyzes models and "
+        "retains not_tested runtime and utility results. Direct observations concern "
         "fictitious data in a local simulator and do not establish production "
         "protection or satisfaction of all responsibility obligations.",
         "",

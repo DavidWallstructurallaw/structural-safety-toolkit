@@ -20,6 +20,9 @@ def _fact_values(value: dict) -> list:
 
 def _walk(value: Any, spec: dict, path: str = '') -> Iterator[tuple[Any, dict, str]]:
     if spec['type'] == 'definition':
+        if spec['name'] == 'policy_target':
+            yield value, {'type': 'policy_target'}, path
+            return
         if spec['name'] == 'typed_ref':
             yield value, {'type':'typed_ref'}, path
             return
@@ -107,6 +110,11 @@ def validate_references(document: dict) -> list[Diagnostic]:
         initial_keys.add(binding['key'])
 
     for value,spec,path in _walk(document,INPUT_CONTRACT['root']):
+        if spec['type']=='policy_target':
+            control=indexes['controls'].get(value['control_id'])
+            if control is None or not any(p['id']==value['policy_version_id'] for p in control['policy_versions']):
+                issue('dangling_reference',path,'Policy target must name a declared version of that exact control.')
+            continue
         if spec['type']=='typed_ref':
             collection=value['collection'];identifier=value['id']
             destination=pointer(path,'id')
