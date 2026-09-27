@@ -1,10 +1,34 @@
 # Structural Safety Toolkit
 
-A local Python toolkit for describing AI agent execution topology, task authorization, information flows, control coverage, and intervention conditions.
+Check whether an AI agent workflow can leak restricted data, weaken its own safeguards, or act before a human can intervene, using an explicit model of its permissions and data paths.
 
-**Latest stable release: 0.1.0. Current development version: 0.2.0.dev0 (unreleased).** The toolkit validates deployment descriptions and analyzes finite `read`, `transfer`, `derive`, `persist_write`, `persist_read`, `delegate`, `policy_update`, `revoke`, and `stop` actions with SS001 through SS006 diagnostics. It also provides 18 fixed scenarios: 15 local experiments and three analysis-only D contrasts. Analysis reports separate technical feasibility, authorization, modeled control behavior, and evidence limits. Experiment reports retain actual target observations and task outcomes for their specific runs.
+For developers and security reviewers working with tool-using agents, shared memory, and MCP integrations.
 
-The runtime uses the Python standard library, without model API calls, telemetry, or network access. Input strings, links, and commands remain data.
+| Question you can investigate | Starter model |
+|---|---|
+| Can a confidential summary pass through shared memory into a customer-facing response? | `memory-handoff` |
+| Can the agent weaken the policy that checks its own output? | `policy-self-modification` |
+| Does the human reviewer have the authority and time to stop a consequential action? | `human-oversight` |
+
+**Input:** a JSON model of the task, data, permissions, controls, and candidate actions. Start with one of six editable templates, or import Claude Code project MCP declarations and supply explicit scenario-role bindings.
+
+**Output:** JSON or Markdown findings with modeled violation paths when found, permission and control decisions, and unresolved facts or evidence gaps. Compare an exposed model with its controlled counterpart before changing your deployment.
+
+Analysis is local and bounded by the supplied model. Deployment behavior and control effectiveness require separate evidence. The Python runtime uses only the standard library, with no model API calls, telemetry, or network access.
+
+## Try a data-leak scenario
+
+Requires CPython 3.12, 3.13, or 3.14. These starter templates and the Claude Code importer are available in the **0.2.0.dev0 development checkout**. The latest stable release is **0.1.0**.
+
+```sh
+git clone https://github.com/DavidWallstructurallaw/structural-safety-toolkit.git
+cd structural-safety-toolkit
+python -m pip install .
+structural-safety template memory-handoff --output memory-exposed.json
+structural-safety analyze memory-exposed.json --format markdown
+```
+
+The sample reveals a restricted CRM summary reaching customer-facing publication through shared memory. Its report includes the modeled path and returns exit **1** because findings were produced. No CRM, memory service, or publication endpoint is contacted. See [the controlled comparison](#start-with-a-business-scenario) below to check the same workflow with an outbound gate.
 
 ## Install
 
@@ -17,7 +41,7 @@ python -m pip install structural_safety_toolkit-0.1.0-py3-none-any.whl
 structural-safety --version
 ```
 
-The business templates and Claude Code importer described below require this development checkout; they are not in the 0.1.0 release wheel. From the repository root, install it:
+The business templates and Claude Code importer require the development checkout. The 0.1.0 release wheel provides the earlier analysis and demo commands. From the repository root, install the checkout:
 
 ```sh
 python -m pip install .
@@ -37,13 +61,7 @@ Release assets include the wheel and source distribution; no PyPI release is ass
 
 ## Start with a business scenario
 
-Three editable model pairs provide a smaller starting point than writing a complete deployment description:
-
-| Template | Business question | Controlled comparison |
-|---|---|---|
-| `memory-handoff` | Can a restricted customer summary pass through shared memory into a public response? | Gate the outbound route while preserving internal handoff and public content. |
-| `policy-self-modification` | Can the publishing agent weaken the policy that checks its own output? | Restrict policy changes while retaining ordinary publishing work. |
-| `human-oversight` | Can an assigned reviewer intervene before a disclosure becomes irreversible? | Compare a 30-second response with a response within a 5-second window. |
+Each starter listed above has an `exposed` and a `controlled` variant. The memory pair adds an outbound authorization gate while preserving legitimate internal handoff and public content. The policy pair restricts the agent's ability to change its own output policy. The oversight pair compares a 30-second response with a 3-second response inside a 5-second consequence window.
 
 ```sh
 structural-safety template memory-handoff --output memory-exposed.json
@@ -79,6 +97,10 @@ structural-safety analyze imported-memory.json --output imported-memory-report.j
 ```
 
 For your project, substitute its configuration path and map the three `source`, `memory`, and `publish` roles to your server names. This first adapter binds only the memory-handoff scenario. Model creation returns 0 for successful import, not a safety verdict. The role assignments, task permissions, data restrictions, actions, and control behavior remain supplied scenario assumptions that you must check and edit. Only the presence of a server declaration is configuration-read evidence. The output does not discover tool schemas, prove a connection or permission, inspect other configuration scopes, or cover built-in tools. See [supported fields, mappings, and limits](docs/claude-code-import.md).
+
+## Analysis capabilities
+
+The toolkit validates deployment descriptions and analyzes finite `read`, `transfer`, `derive`, `persist_write`, `persist_read`, `delegate`, `policy_update`, `revoke`, and `stop` actions with SS001 through SS006 diagnostics. It also provides 18 fixed scenarios: 15 local experiments and three analysis-only D contrasts. Analysis reports separate technical feasibility, authorization, modeled control behavior, and evidence limits. Experiment reports retain actual target observations and task outcomes for their specific runs. Input strings, links, and commands remain data.
 
 ## Validate an included example
 
