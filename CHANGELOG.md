@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0.dev0: Business scenarios and configuration import (unreleased)
+
+- Added six editable finite models: exposed/controlled pairs for shared-memory handoff, agent policy modification, and human intervention timing.
+- Added the `get_template` API and `template` CLI to export complete models from an installed package.
+- Added a read-only Claude Code project `.mcp.json` importer with redacted inventories and explicit memory-handoff role bindings. Inventory alone produces no model or safety conclusion.
+- Kept configuration presence evidence separate from supplied role, authorization, and control assumptions. No server execution, environment expansion, network connection, or runtime enforcement is performed.
+- Added model comparisons, import/CLI boundary checks, and installed-wheel coverage for the new entry points and resources. The nine analysis operations, SS001-SS006 rules, and 18 fixed demo protocols are unchanged.
+
 ## 0.1.0: First stable release (2026-09-26)
 
 - Published the first stable version of the local Python API and CLI for strict JSON validation, bounded finite-model analysis, and fixed synthetic experiments.

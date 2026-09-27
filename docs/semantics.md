@@ -1,6 +1,6 @@
 # Semantic boundaries
 
-Version 0.1.0rc1 provides structural validation, bounded model-state analysis for all nine declared finite operation kinds, SS001 through SS006 diagnostics, ordinary imported-event reports, and fixed A-F scenarios. D is analysis-only; the other 15 cases run local synthetic experiments. Analysis produces model deductions from submitted premises; the demo retains its direct observations separately. Adding a supported model operation does not enable execution of arbitrary user actions.
+The analysis core introduced in version 0.1.0 provides structural validation, bounded model-state analysis for all nine declared finite operation kinds, SS001 through SS006 diagnostics, ordinary imported-event reports, and fixed A-F scenarios. D is analysis-only; the other 15 cases run local synthetic experiments. Analysis produces model deductions from submitted premises; the demo retains its direct observations separately. Adding a supported model operation does not enable execution of arbitrary user actions.
 
 ## Facts and identity
 

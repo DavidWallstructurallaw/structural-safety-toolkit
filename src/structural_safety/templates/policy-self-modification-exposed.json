@@ -1,0 +1,3280 @@
+{
+  "context": {
+    "schema_version": "sst.model/0.1",
+    "snapshot_id": "snapshot:quarterly-report-publishing",
+    "as_of": "2026-09-01T00:00:00Z",
+    "tasks": [
+      {
+        "id": "task:publish-quarterly-report",
+        "parent_task": {
+          "state": "known",
+          "value": "not_applicable",
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      }
+    ],
+    "root_task": "task:publish-quarterly-report",
+    "workflows": [
+      {
+        "id": "workflow:finance-review",
+        "task_id": "task:publish-quarterly-report",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      {
+        "id": "workflow:public-report-publication",
+        "task_id": "task:publish-quarterly-report",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      }
+    ],
+    "interfaces": [
+      {
+        "id": "if:report-source-read",
+        "node_id": "tool:report-source-reader",
+        "operation_ids": [
+          "read"
+        ],
+        "credential_required": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      {
+        "id": "if:finance-archive-write",
+        "node_id": "tool:finance-archive-writer",
+        "operation_ids": [
+          "transfer"
+        ],
+        "credential_required": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      {
+        "id": "if:public-report-upload",
+        "node_id": "tool:public-report-uploader",
+        "operation_ids": [
+          "publish"
+        ],
+        "credential_required": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      {
+        "id": "if:publishing-policy-admin",
+        "node_id": "tool:publishing-policy-admin",
+        "operation_ids": [
+          "policy_update"
+        ],
+        "credential_required": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      }
+    ],
+    "operation_definitions": [
+      {
+        "id": "read",
+        "semantic_kind": "read",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      {
+        "id": "transfer",
+        "semantic_kind": "transfer",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      {
+        "id": "publish",
+        "semantic_kind": "transfer",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      {
+        "id": "policy_update",
+        "semantic_kind": "policy_update",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      }
+    ],
+    "purposes": [
+      {
+        "id": "finance_review",
+        "description": "Review confidential quarterly forecasts within the finance team."
+      },
+      {
+        "id": "external_report_distribution",
+        "description": "Distribute report material to external readers through the public portal."
+      },
+      {
+        "id": "approved_results_publication",
+        "description": "Publish the approved public results document."
+      },
+      {
+        "id": "publishing_policy_management",
+        "description": "Select a predeclared policy for the report publication gate."
+      }
+    ],
+    "properties": [
+      {
+        "id": "P-CONF-01",
+        "description": "Restricted objects cannot reach prohibited recipients without valid scoped authorization."
+      }
+    ],
+    "declared_scope": "An enterprise report-publishing agent reads a confidential forecast for finance review and publishes an approved public results document. Candidate actions include uploading the confidential forecast before and after selecting a permissive output policy. The exposed and controlled templates differ only in the exact technical capability to select that policy; neither template grants the agent task authorization for that change.",
+    "known_limits": [
+      "Illustrative finite model premises require replacement with deployment-specific evidence.",
+      "All node names describe modeled components; analysis does not connect to repositories, portals, or administrative APIs.",
+      "The model covers only declared object versions, interfaces, policy versions, actions, and timestamps.",
+      "Completeness is asserted within this small example. Review it before applying the template to a deployment."
+    ],
+    "completeness": [
+      {
+        "task_id": "task:publish-quarterly-report",
+        "collection": "nodes",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      },
+      {
+        "task_id": "task:publish-quarterly-report",
+        "collection": "actions",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      },
+      {
+        "task_id": "task:publish-quarterly-report",
+        "collection": "authorization",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      },
+      {
+        "task_id": "task:publish-quarterly-report",
+        "collection": "capabilities",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      },
+      {
+        "task_id": "task:publish-quarterly-report",
+        "collection": "task_grants",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      },
+      {
+        "task_id": "task:publish-quarterly-report",
+        "collection": "approval_rights",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      },
+      {
+        "task_id": "task:publish-quarterly-report",
+        "collection": "release_exceptions",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      },
+      {
+        "task_id": "task:publish-quarterly-report",
+        "collection": "sources",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      },
+      {
+        "task_id": "task:publish-quarterly-report",
+        "collection": "restrictions",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      },
+      {
+        "task_id": "task:publish-quarterly-report",
+        "collection": "controls",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      },
+      {
+        "task_id": "task:publish-quarterly-report",
+        "collection": "policy_change_paths",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      },
+      {
+        "task_id": "task:publish-quarterly-report",
+        "collection": "relations",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      },
+      {
+        "task_id": "task:publish-quarterly-report",
+        "collection": "execution_contexts",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      },
+      {
+        "task_id": "task:publish-quarterly-report",
+        "collection": "object_versions",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      }
+    ],
+    "unsupported_items": [],
+    "initial_conditions": [],
+    "stopped_targets": []
+  },
+  "nodes": [
+    {
+      "id": "principal:finance-owner",
+      "kind": "principal",
+      "owner": {
+        "state": "known",
+        "value": "principal:finance-owner",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "id": "principal:external-reader",
+      "kind": "principal",
+      "owner": {
+        "state": "known",
+        "value": "principal:external-reader",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "id": "actor:report-publisher",
+      "kind": "executor",
+      "owner": {
+        "state": "known",
+        "value": "principal:finance-owner",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "id": "source:confidential-forecast-repository",
+      "kind": "resource",
+      "owner": {
+        "state": "known",
+        "value": "principal:finance-owner",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "id": "source:approved-results-repository",
+      "kind": "resource",
+      "owner": {
+        "state": "known",
+        "value": "principal:finance-owner",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "id": "store:finance-review-archive",
+      "kind": "store",
+      "owner": {
+        "state": "known",
+        "value": "principal:finance-owner",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "id": "store:public-report-portal",
+      "kind": "store",
+      "owner": {
+        "state": "known",
+        "value": "principal:finance-owner",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "id": "tool:report-source-reader",
+      "kind": "tool",
+      "owner": {
+        "state": "known",
+        "value": "principal:finance-owner",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "id": "tool:finance-archive-writer",
+      "kind": "tool",
+      "owner": {
+        "state": "known",
+        "value": "principal:finance-owner",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "id": "tool:public-report-uploader",
+      "kind": "tool",
+      "owner": {
+        "state": "known",
+        "value": "principal:finance-owner",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "id": "node:report-publication-gate",
+      "kind": "control",
+      "owner": {
+        "state": "known",
+        "value": "principal:finance-owner",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "id": "tool:publishing-policy-admin",
+      "kind": "tool",
+      "owner": {
+        "state": "known",
+        "value": "principal:finance-owner",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    }
+  ],
+  "execution_contexts": [
+    {
+      "id": "ctx:confidential-finance-review",
+      "actor_id": "actor:report-publisher",
+      "task_id": "task:publish-quarterly-report",
+      "workflow_id": "workflow:finance-review",
+      "initial_visible_objects": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "input_visibility": {
+        "state": "known",
+        "value": "visible",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "retain_inputs": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "visibility_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "isolated_from": {
+        "state": "known",
+        "value": [
+          "ctx:approved-results-publication"
+        ],
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "id": "ctx:approved-results-publication",
+      "actor_id": "actor:report-publisher",
+      "task_id": "task:publish-quarterly-report",
+      "workflow_id": "workflow:public-report-publication",
+      "initial_visible_objects": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "input_visibility": {
+        "state": "known",
+        "value": "visible",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "retain_inputs": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "visibility_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "isolated_from": {
+        "state": "known",
+        "value": [
+          "ctx:confidential-finance-review"
+        ],
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    }
+  ],
+  "object_versions": [
+    {
+      "id": "confidential-forecast:v1",
+      "logical_id": "confidential-forecast",
+      "version": "v1",
+      "origin_kind": "root",
+      "existence": "snapshot_initial",
+      "parents": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "parents_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "production": {
+        "kind": "historical",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "initial_locations": [
+        {
+          "node_id": "source:confidential-forecast-repository",
+          "context_id": "not_applicable"
+        }
+      ],
+      "restriction_ids": {
+        "state": "known",
+        "value": [
+          "restriction:confidential-forecast-v1"
+        ],
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "restrictions_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "instruction_authority": {
+        "status": {
+          "state": "known",
+          "value": "none",
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "task_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "control_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "approval_refs": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "id": "confidential-forecast:v2",
+      "logical_id": "confidential-forecast",
+      "version": "v2",
+      "origin_kind": "root",
+      "existence": "snapshot_initial",
+      "parents": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "parents_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "production": {
+        "kind": "historical",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "initial_locations": [
+        {
+          "node_id": "source:confidential-forecast-repository",
+          "context_id": "not_applicable"
+        }
+      ],
+      "restriction_ids": {
+        "state": "known",
+        "value": [
+          "restriction:confidential-forecast-v2"
+        ],
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "restrictions_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "instruction_authority": {
+        "status": {
+          "state": "known",
+          "value": "none",
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "task_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "control_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "approval_refs": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "id": "approved-public-results:v1",
+      "logical_id": "approved-public-results",
+      "version": "v1",
+      "origin_kind": "root",
+      "existence": "snapshot_initial",
+      "parents": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "parents_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "production": {
+        "kind": "historical",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "initial_locations": [
+        {
+          "node_id": "source:approved-results-repository",
+          "context_id": "not_applicable"
+        }
+      ],
+      "restriction_ids": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "restrictions_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "instruction_authority": {
+        "status": {
+          "state": "known",
+          "value": "none",
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "task_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "control_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "approval_refs": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "read-confidential-forecast",
+      "task_id": "task:publish-quarterly-report",
+      "workflow_id": "workflow:finance-review",
+      "context_id": "ctx:confidential-finance-review",
+      "actor_id": "actor:report-publisher",
+      "operation_id": "read",
+      "interface_id": "if:report-source-read",
+      "purpose_id": "finance_review",
+      "effect_time": {
+        "state": "known",
+        "value": "2026-09-01T00:00:10Z",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "confidential-forecast:v1",
+          "location_node_id": "source:confidential-forecast-repository",
+          "context_id": "not_applicable"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "confidential-forecast:v1",
+          "location_node_id": "actor:report-publisher",
+          "context_id": "ctx:confidential-finance-review"
+        }
+      ],
+      "success_dependencies": [],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "id": "archive-forecast-for-finance-review",
+      "task_id": "task:publish-quarterly-report",
+      "workflow_id": "workflow:finance-review",
+      "context_id": "ctx:confidential-finance-review",
+      "actor_id": "actor:report-publisher",
+      "operation_id": "transfer",
+      "interface_id": "if:finance-archive-write",
+      "purpose_id": "finance_review",
+      "effect_time": {
+        "state": "known",
+        "value": "2026-09-01T00:00:15Z",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "confidential-forecast:v1",
+          "location_node_id": "actor:report-publisher",
+          "context_id": "ctx:confidential-finance-review"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "confidential-forecast:v1",
+          "location_node_id": "store:finance-review-archive",
+          "context_id": "not_applicable"
+        }
+      ],
+      "success_dependencies": [
+        "read-confidential-forecast"
+      ],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "id": "upload-forecast-before-policy-change",
+      "task_id": "task:publish-quarterly-report",
+      "workflow_id": "workflow:finance-review",
+      "context_id": "ctx:confidential-finance-review",
+      "actor_id": "actor:report-publisher",
+      "operation_id": "publish",
+      "interface_id": "if:public-report-upload",
+      "purpose_id": "external_report_distribution",
+      "effect_time": {
+        "state": "known",
+        "value": "2026-09-01T00:00:25Z",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "confidential-forecast:v1",
+          "location_node_id": "actor:report-publisher",
+          "context_id": "ctx:confidential-finance-review"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "confidential-forecast:v1",
+          "location_node_id": "store:public-report-portal",
+          "context_id": "not_applicable"
+        }
+      ],
+      "success_dependencies": [
+        "read-confidential-forecast"
+      ],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "task_id": "task:publish-quarterly-report",
+      "workflow_id": "workflow:finance-review",
+      "context_id": "ctx:confidential-finance-review",
+      "actor_id": "actor:report-publisher",
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ],
+      "id": "select-permissive-publishing-policy",
+      "operation_id": "policy_update",
+      "interface_id": "if:publishing-policy-admin",
+      "purpose_id": "publishing_policy_management",
+      "effect_time": {
+        "state": "known",
+        "value": "2026-09-01T00:00:35Z",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "inputs": [],
+      "outputs": [],
+      "success_dependencies": [],
+      "conditions": [],
+      "effects": [
+        {
+          "id": "select",
+          "kind": "select_policy",
+          "control_id": "gate:report-publication",
+          "policy_version_id": "policy:empty-deny-table",
+          "fields": [
+            "decision_mode"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "upload-forecast-after-policy-change",
+      "task_id": "task:publish-quarterly-report",
+      "workflow_id": "workflow:finance-review",
+      "context_id": "ctx:confidential-finance-review",
+      "actor_id": "actor:report-publisher",
+      "operation_id": "publish",
+      "interface_id": "if:public-report-upload",
+      "purpose_id": "external_report_distribution",
+      "effect_time": {
+        "state": "known",
+        "value": "2026-09-01T00:00:40Z",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "confidential-forecast:v1",
+          "location_node_id": "actor:report-publisher",
+          "context_id": "ctx:confidential-finance-review"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "confidential-forecast:v1",
+          "location_node_id": "store:public-report-portal",
+          "context_id": "not_applicable"
+        }
+      ],
+      "success_dependencies": [
+        "read-confidential-forecast"
+      ],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "id": "read-approved-public-results",
+      "task_id": "task:publish-quarterly-report",
+      "workflow_id": "workflow:public-report-publication",
+      "context_id": "ctx:approved-results-publication",
+      "actor_id": "actor:report-publisher",
+      "operation_id": "read",
+      "interface_id": "if:report-source-read",
+      "purpose_id": "approved_results_publication",
+      "effect_time": {
+        "state": "known",
+        "value": "2026-09-01T00:00:45Z",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "approved-public-results:v1",
+          "location_node_id": "source:approved-results-repository",
+          "context_id": "not_applicable"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "approved-public-results:v1",
+          "location_node_id": "actor:report-publisher",
+          "context_id": "ctx:approved-results-publication"
+        }
+      ],
+      "success_dependencies": [],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "id": "publish-approved-public-results",
+      "task_id": "task:publish-quarterly-report",
+      "workflow_id": "workflow:public-report-publication",
+      "context_id": "ctx:approved-results-publication",
+      "actor_id": "actor:report-publisher",
+      "operation_id": "publish",
+      "interface_id": "if:public-report-upload",
+      "purpose_id": "approved_results_publication",
+      "effect_time": {
+        "state": "known",
+        "value": "2026-09-01T00:00:50Z",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "approved-public-results:v1",
+          "location_node_id": "actor:report-publisher",
+          "context_id": "ctx:approved-results-publication"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "approved-public-results:v1",
+          "location_node_id": "store:public-report-portal",
+          "context_id": "not_applicable"
+        }
+      ],
+      "success_dependencies": [
+        "read-approved-public-results"
+      ],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    }
+  ],
+  "relations": [],
+  "authorization": {
+    "capabilities": [
+      {
+        "id": "cap:read-confidential-forecast",
+        "issuer": {
+          "state": "known",
+          "value": "principal:finance-owner",
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:publish-quarterly-report"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-publisher"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "confidential-forecast:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:report-source-read"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:report-publisher"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "finance_review"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:finance-review"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2026-09-01T00:00:00Z",
+            "expires_at": "2026-09-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      {
+        "id": "cap:archive-forecast-for-finance-review",
+        "issuer": {
+          "state": "known",
+          "value": "principal:finance-owner",
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:publish-quarterly-report"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-publisher"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "confidential-forecast:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "transfer"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:finance-archive-write"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "store:finance-review-archive"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "finance_review"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:finance-review"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2026-09-01T00:00:00Z",
+            "expires_at": "2026-09-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      {
+        "id": "cap:upload-confidential-forecast",
+        "issuer": {
+          "state": "known",
+          "value": "principal:finance-owner",
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:publish-quarterly-report"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-publisher"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "confidential-forecast:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "publish"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:public-report-upload"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "store:public-report-portal"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "external_report_distribution"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:finance-review"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2026-09-01T00:00:00Z",
+            "expires_at": "2026-09-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      {
+        "id": "cap:read-approved-public-results",
+        "issuer": {
+          "state": "known",
+          "value": "principal:finance-owner",
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:publish-quarterly-report"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-publisher"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "approved-public-results:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:report-source-read"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:report-publisher"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "approved_results_publication"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:public-report-publication"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2026-09-01T00:00:00Z",
+            "expires_at": "2026-09-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      {
+        "id": "cap:publish-approved-public-results",
+        "issuer": {
+          "state": "known",
+          "value": "principal:finance-owner",
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:publish-quarterly-report"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-publisher"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "approved-public-results:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "publish"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:public-report-upload"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "store:public-report-portal"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "approved_results_publication"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:public-report-publication"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2026-09-01T00:00:00Z",
+            "expires_at": "2026-09-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      {
+        "id": "cap:select-permissive-publishing-policy",
+        "issuer": {
+          "state": "known",
+          "value": "principal:finance-owner",
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:publish-quarterly-report"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-publisher"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "policy_update"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:publishing-policy-admin"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "node:report-publication-gate"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "publishing_policy_management"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:finance-review"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "conditions": [],
+            "policy_targets": {
+              "state": "known",
+              "value": [
+                {
+                  "control_id": "gate:report-publication",
+                  "policy_version_id": "policy:empty-deny-table",
+                  "fields": [
+                    "decision_mode"
+                  ]
+                }
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            }
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2026-09-01T00:00:00Z",
+            "expires_at": "2026-09-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      }
+    ],
+    "task_grants": [
+      {
+        "id": "grant:read-confidential-forecast",
+        "issuer": {
+          "state": "known",
+          "value": "principal:finance-owner",
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:publish-quarterly-report"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-publisher"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "confidential-forecast:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:report-source-read"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:report-publisher"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "finance_review"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:finance-review"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2026-09-01T00:00:00Z",
+            "expires_at": "2026-09-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:finance-owner-task"
+          ],
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      },
+      {
+        "id": "grant:archive-forecast-for-finance-review",
+        "issuer": {
+          "state": "known",
+          "value": "principal:finance-owner",
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:publish-quarterly-report"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-publisher"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "confidential-forecast:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "transfer"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:finance-archive-write"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "store:finance-review-archive"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "finance_review"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:finance-review"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2026-09-01T00:00:00Z",
+            "expires_at": "2026-09-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:finance-owner-task"
+          ],
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      },
+      {
+        "id": "grant:read-approved-public-results",
+        "issuer": {
+          "state": "known",
+          "value": "principal:finance-owner",
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:publish-quarterly-report"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-publisher"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "approved-public-results:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:report-source-read"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:report-publisher"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "approved_results_publication"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:public-report-publication"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2026-09-01T00:00:00Z",
+            "expires_at": "2026-09-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:finance-owner-task"
+          ],
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      },
+      {
+        "id": "grant:publish-approved-public-results",
+        "issuer": {
+          "state": "known",
+          "value": "principal:finance-owner",
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:publish-quarterly-report"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-publisher"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "approved-public-results:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "publish"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:public-report-upload"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "store:public-report-portal"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "approved_results_publication"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:public-report-publication"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2026-09-01T00:00:00Z",
+            "expires_at": "2026-09-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:finance-owner-task"
+          ],
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      }
+    ],
+    "approval_rights": [
+      {
+        "id": "approval:finance-owner-task",
+        "holder": "principal:finance-owner",
+        "rights": [
+          "issue_task_grant"
+        ],
+        "restriction_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:publish-quarterly-report"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-publisher"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "confidential-forecast:v1",
+                "confidential-forecast:v2",
+                "approved-public-results:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read",
+                "transfer",
+                "publish"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:report-source-read",
+                "if:finance-archive-write",
+                "if:public-report-upload"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:report-publisher",
+                "store:finance-review-archive",
+                "store:public-report-portal"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "finance_review",
+                "external_report_distribution",
+                "approved_results_publication"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:finance-review",
+                "workflow:public-report-publication"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2026-09-01T00:00:00Z",
+            "expires_at": "2026-09-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      {
+        "id": "approval:finance-owner-release",
+        "holder": "principal:finance-owner",
+        "rights": [
+          "release_restriction"
+        ],
+        "restriction_ids": {
+          "state": "known",
+          "value": [
+            "restriction:confidential-forecast-v1",
+            "restriction:confidential-forecast-v2"
+          ],
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:publish-quarterly-report"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:report-publisher"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "confidential-forecast:v1",
+                "confidential-forecast:v2",
+                "approved-public-results:v1"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read",
+                "transfer",
+                "publish"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:report-source-read",
+                "if:finance-archive-write",
+                "if:public-report-upload"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:report-publisher",
+                "store:finance-review-archive",
+                "store:public-report-portal"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "finance_review",
+                "external_report_distribution",
+                "approved_results_publication"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:finance-review",
+                "workflow:public-report-publication"
+              ],
+              "evidence_refs": [
+                "ev:enterprise-publishing-model"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2026-09-01T00:00:00Z",
+            "expires_at": "2026-09-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      }
+    ],
+    "release_exceptions": []
+  },
+  "restrictions": [
+    {
+      "id": "restriction:confidential-forecast-v1",
+      "source_object_id": "confidential-forecast:v1",
+      "applies_to_operations": {
+        "state": "known",
+        "value": [
+          "read",
+          "transfer",
+          "publish"
+        ],
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "allowed_clauses": [
+        {
+          "operations": {
+            "state": "known",
+            "value": [
+              "read"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "interfaces": {
+            "state": "known",
+            "value": [
+              "if:report-source-read"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "recipients": {
+            "state": "known",
+            "value": [
+              "actor:report-publisher"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "purposes": {
+            "state": "known",
+            "value": [
+              "finance_review"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "workflows": {
+            "state": "known",
+            "value": [
+              "workflow:finance-review"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "conditions": []
+        },
+        {
+          "operations": {
+            "state": "known",
+            "value": [
+              "transfer"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "interfaces": {
+            "state": "known",
+            "value": [
+              "if:finance-archive-write"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "recipients": {
+            "state": "known",
+            "value": [
+              "store:finance-review-archive"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "purposes": {
+            "state": "known",
+            "value": [
+              "finance_review"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "workflows": {
+            "state": "known",
+            "value": [
+              "workflow:finance-review"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "conditions": []
+        }
+      ],
+      "approval_refs": {
+        "state": "known",
+        "value": [
+          "approval:finance-owner-release"
+        ],
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    },
+    {
+      "id": "restriction:confidential-forecast-v2",
+      "source_object_id": "confidential-forecast:v2",
+      "applies_to_operations": {
+        "state": "known",
+        "value": [
+          "read",
+          "transfer",
+          "publish"
+        ],
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "allowed_clauses": [
+        {
+          "operations": {
+            "state": "known",
+            "value": [
+              "read"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "interfaces": {
+            "state": "known",
+            "value": [
+              "if:report-source-read"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "recipients": {
+            "state": "known",
+            "value": [
+              "actor:report-publisher"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "purposes": {
+            "state": "known",
+            "value": [
+              "finance_review"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "workflows": {
+            "state": "known",
+            "value": [
+              "workflow:finance-review"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "conditions": []
+        },
+        {
+          "operations": {
+            "state": "known",
+            "value": [
+              "transfer"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "interfaces": {
+            "state": "known",
+            "value": [
+              "if:finance-archive-write"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "recipients": {
+            "state": "known",
+            "value": [
+              "store:finance-review-archive"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "purposes": {
+            "state": "known",
+            "value": [
+              "finance_review"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "workflows": {
+            "state": "known",
+            "value": [
+              "workflow:finance-review"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "conditions": []
+        }
+      ],
+      "approval_refs": {
+        "state": "known",
+        "value": [
+          "approval:finance-owner-release"
+        ],
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    }
+  ],
+  "controls": [
+    {
+      "id": "gate:report-publication",
+      "node_id": "node:report-publication-gate",
+      "property_ids": [
+        "P-CONF-01"
+      ],
+      "initial_policy": {
+        "state": "known",
+        "value": "policy:authorization-required",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "policy_versions": [
+        {
+          "id": "policy:authorization-required",
+          "coverage": {
+            "state": "known",
+            "value": [
+              {
+                "tasks": {
+                  "state": "known",
+                  "value": [
+                    "task:publish-quarterly-report"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-publishing-model"
+                  ]
+                },
+                "actors": {
+                  "state": "known",
+                  "value": [
+                    "actor:report-publisher"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-publishing-model"
+                  ]
+                },
+                "objects": {
+                  "state": "known",
+                  "value": [
+                    "confidential-forecast:v1",
+                    "confidential-forecast:v2",
+                    "approved-public-results:v1"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-publishing-model"
+                  ]
+                },
+                "operations": {
+                  "state": "known",
+                  "value": [
+                    "publish"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-publishing-model"
+                  ]
+                },
+                "interfaces": {
+                  "state": "known",
+                  "value": [
+                    "if:public-report-upload"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-publishing-model"
+                  ]
+                },
+                "recipients": {
+                  "state": "known",
+                  "value": [
+                    "store:public-report-portal"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-publishing-model"
+                  ]
+                },
+                "purposes": {
+                  "state": "known",
+                  "value": [
+                    "finance_review",
+                    "external_report_distribution",
+                    "approved_results_publication"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-publishing-model"
+                  ]
+                },
+                "workflows": {
+                  "state": "known",
+                  "value": [
+                    "workflow:finance-review",
+                    "workflow:public-report-publication"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-publishing-model"
+                  ]
+                },
+                "conditions": []
+              }
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "checked_parameters": {
+            "state": "known",
+            "value": [
+              "task",
+              "actor",
+              "object_version",
+              "operation",
+              "interface",
+              "recipient",
+              "purpose",
+              "effect_time",
+              "workflow_conditions"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "binding": {
+            "state": "known",
+            "value": "bound",
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "timing": {
+            "state": "known",
+            "value": "before_effect",
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "decision_mode": {
+            "state": "known",
+            "value": "authorization",
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "deny_clauses": {
+            "state": "known",
+            "value": [],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "failure_behavior": {
+            "state": "known",
+            "value": "deny",
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        },
+        {
+          "id": "policy:empty-deny-table",
+          "coverage": {
+            "state": "known",
+            "value": [
+              {
+                "tasks": {
+                  "state": "known",
+                  "value": [
+                    "task:publish-quarterly-report"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-publishing-model"
+                  ]
+                },
+                "actors": {
+                  "state": "known",
+                  "value": [
+                    "actor:report-publisher"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-publishing-model"
+                  ]
+                },
+                "objects": {
+                  "state": "known",
+                  "value": [
+                    "confidential-forecast:v1",
+                    "confidential-forecast:v2",
+                    "approved-public-results:v1"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-publishing-model"
+                  ]
+                },
+                "operations": {
+                  "state": "known",
+                  "value": [
+                    "publish"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-publishing-model"
+                  ]
+                },
+                "interfaces": {
+                  "state": "known",
+                  "value": [
+                    "if:public-report-upload"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-publishing-model"
+                  ]
+                },
+                "recipients": {
+                  "state": "known",
+                  "value": [
+                    "store:public-report-portal"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-publishing-model"
+                  ]
+                },
+                "purposes": {
+                  "state": "known",
+                  "value": [
+                    "finance_review",
+                    "external_report_distribution",
+                    "approved_results_publication"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-publishing-model"
+                  ]
+                },
+                "workflows": {
+                  "state": "known",
+                  "value": [
+                    "workflow:finance-review",
+                    "workflow:public-report-publication"
+                  ],
+                  "evidence_refs": [
+                    "ev:enterprise-publishing-model"
+                  ]
+                },
+                "conditions": []
+              }
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "checked_parameters": {
+            "state": "known",
+            "value": [
+              "task",
+              "actor",
+              "object_version",
+              "operation",
+              "interface",
+              "recipient",
+              "purpose",
+              "effect_time",
+              "workflow_conditions"
+            ],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "binding": {
+            "state": "known",
+            "value": "bound",
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "timing": {
+            "state": "known",
+            "value": "before_effect",
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "decision_mode": {
+            "state": "known",
+            "value": "deny_table",
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "deny_clauses": {
+            "state": "known",
+            "value": [],
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "failure_behavior": {
+            "state": "known",
+            "value": "deny",
+            "evidence_refs": [
+              "ev:enterprise-publishing-model"
+            ]
+          },
+          "evidence_refs": [
+            "ev:enterprise-publishing-model"
+          ]
+        }
+      ],
+      "modifiable_fields": {
+        "state": "known",
+        "value": [
+          "decision_mode"
+        ],
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "responsible_principal": {
+        "state": "known",
+        "value": "principal:finance-owner",
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "modification_paths_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:enterprise-publishing-model"
+        ]
+      },
+      "evidence_refs": [
+        "ev:enterprise-publishing-model"
+      ]
+    }
+  ],
+  "obligations": [],
+  "evidence": [
+    {
+      "id": "ev:enterprise-publishing-model",
+      "source": "Packaged enterprise report-publishing starter template.",
+      "acquisition": "supplied_assertion",
+      "claim": "The finance owner, reporting agent, document versions, capabilities, task grants, confidentiality restrictions, publication gate, policy selection path, and timing are supplied premises of this illustrative model.",
+      "scope": [
+        {
+          "collection": "tasks",
+          "id": "task:publish-quarterly-report"
+        }
+      ],
+      "snapshot_id": "snapshot:quarterly-report-publishing",
+      "recorded_at": {
+        "state": "known",
+        "value": "2026-09-01T00:00:00Z",
+        "evidence_refs": []
+      },
+      "model_involvement": {
+        "state": "known",
+        "value": "assisted",
+        "evidence_refs": []
+      },
+      "transformations": [],
+      "lineage_refs": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": []
+      },
+      "applicability": "current",
+      "limits": [
+        "Synthetic deployment description; supplies no direct observation of execution or external effects.",
+        "Replace this declaration with evidence scoped to the actual deployment before drawing deployment-specific conclusions."
+      ]
+    }
+  ],
+  "limits": {}
+}

@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import tempfile
 
 import structural_safety
 
@@ -19,6 +20,71 @@ DEMO_CASES = ("A", "B", "C", "D-behavior", "D-declaration", "D-isolation", "E0",
               "E-recipient", "E-purpose", "E-interface", "E-expiry", "E-issuer", "E-revoked", "E-unknown",
               "E-task", "F-open", "F-locked")
 P15_MODELS = ("P1-5-state.json", "P1-5-rules.json", "P1-5-responsibility.json")
+TEMPLATE_NAMES = ("memory-handoff", "policy-self-modification", "human-oversight")
+TEMPLATE_VARIANTS = ("exposed", "controlled")
+
+
+def check_onboarding(commands: tuple, environment: dict) -> None:
+    package = resources.files("structural_safety")
+    template_files = {path.name for path in package.joinpath("templates").iterdir()
+                      if path.name.endswith(".json")}
+    expected = {f"{name}-{variant}.json" for name in TEMPLATE_NAMES for variant in TEMPLATE_VARIANTS}
+    if template_files != expected:
+        raise RuntimeError("Installed package lost one of the six editable business templates.")
+    for name in TEMPLATE_NAMES:
+        for variant in TEMPLATE_VARIANTS:
+            model = structural_safety.get_template(name, variant=variant)
+            document = json.dumps(model)
+            if structural_safety.validate_json(document).validation_status != "valid":
+                raise RuntimeError(f"Installed business template is invalid: {name}/{variant}.")
+            analysis = structural_safety.analyze_json(document).to_dict()
+            if analysis["analysis_status"] != "completed_for_supported_scope" or analysis["truncation"]:
+                raise RuntimeError(f"Installed business template analysis did not complete: {name}/{variant}.")
+            if any(finding["observed_effect"] != "not_tested" for finding in analysis["findings"]):
+                raise RuntimeError("Business template analysis falsely claimed runtime observations.")
+            for command in commands:
+                completed = subprocess.run([*command, "template", name, "--variant", variant],
+                                           env=environment, capture_output=True, text=True,
+                                           encoding="utf-8", check=False)
+                if completed.returncode != 0 or completed.stderr or json.loads(completed.stdout) != model:
+                    raise RuntimeError("Installed template CLI and API exports differ.")
+
+    integrations = package.joinpath("integrations")
+    expected_integrations = {"claude-code-example.json", "claude-code-bindings.json"}
+    if {path.name for path in integrations.iterdir() if path.name.endswith(".json")} != expected_integrations:
+        raise RuntimeError("Installed package lost the Claude Code configuration and binding examples.")
+    configuration = integrations.joinpath("claude-code-example.json").read_bytes()
+    bindings = integrations.joinpath("claude-code-bindings.json").read_bytes()
+    inventory = structural_safety.import_claude_code_json(configuration)
+    generated = structural_safety.import_claude_code_json(configuration, bindings_document=bindings)
+    if (not isinstance(inventory, structural_safety.ClaudeCodeImportResult)
+            or inventory.import_status != "inventory_only" or inventory.model is not None
+            or inventory.to_dict()["analysis_performed"] is not False
+            or inventory.to_dict()["execution_performed"] is not False):
+        raise RuntimeError("Installed unbound import falsely created a deployment model.")
+    generated_report = generated.to_dict()
+    if (generated.import_status != "model_created" or generated.model is None
+            or generated_report["analysis_performed"] is not False
+            or generated_report["execution_performed"] is not False
+            or "analysis_status" in generated_report or "safe" in generated_report
+            or structural_safety.validate_json(json.dumps(generated_report["model"])).validation_status != "valid"):
+        raise RuntimeError("Installed bound import did not preserve its declaration-only result.")
+    with tempfile.TemporaryDirectory(prefix="sst-onboarding-") as directory:
+        root = Path(directory)
+        config_path, bindings_path, model_path = root / ".mcp.json", root / "bindings.json", root / "model.json"
+        config_path.write_bytes(configuration)
+        bindings_path.write_bytes(bindings)
+        for command in commands:
+            unbound = subprocess.run([*command, "import-claude-code", str(config_path)],
+                                     env=environment, capture_output=True, text=True, encoding="utf-8", check=False)
+            if unbound.returncode != 3 or unbound.stderr or json.loads(unbound.stdout) != inventory.to_dict():
+                raise RuntimeError("Installed import CLI failed to preserve an unresolved server inventory.")
+            bound = subprocess.run([*command, "import-claude-code", str(config_path),
+                                    "--bindings", str(bindings_path), "--model-output", str(model_path)],
+                                   env=environment, capture_output=True, text=True, encoding="utf-8", check=False)
+            if (bound.returncode != 0 or json.loads(bound.stdout) != generated_report
+                    or json.loads(model_path.read_bytes()) != generated_report["model"]):
+                raise RuntimeError("Installed import CLI and API generated different declared models.")
 
 
 def check_all(report: dict) -> None:
@@ -201,7 +267,9 @@ def main() -> None:
                                            capture_output=True, text=True, encoding="utf-8", check=False)
                 if completed.returncode not in (0, 1) or completed.stderr or json.loads(completed.stdout) != result:
                     raise RuntimeError("Installed P1-5 CLI and API analysis reports differ.")
-    print(f"Installed wheel {installed_version}: validation/analysis/demo APIs, both CLI entries, 18 demo models and three P1-5 analysis models passed.")
+    check_onboarding(commands, environment)
+    print(f"Installed wheel {installed_version}: validation/analysis/demo/template/import APIs, both CLI entries, "
+          "18 demo models, three P1-5 analysis models, six business templates, and Claude Code import examples passed.")
 
 
 if __name__ == "__main__":

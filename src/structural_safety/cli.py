@@ -11,7 +11,9 @@ import tempfile
 from typing import Sequence
 
 from . import __version__, _version_source
-from .api import Limits, analyze_json, run_demo, validate_json
+from .api import (Limits, analyze_json, run_demo, validate_json, get_template,
+                  import_claude_code_json)
+from .business_templates import TEMPLATE_NAMES, TEMPLATE_VARIANTS
 from .experiment_cases import CHOICES, D_CASES
 
 
@@ -59,6 +61,15 @@ def _parser() -> argparse.ArgumentParser:
                     default=getattr(defaults, budget), metavar="N",
                     help=f"Positive caller budget (default: {getattr(defaults, budget)}).",
                 )
+    template = commands.add_parser("template", help="Export an editable finite business model.")
+    template.add_argument("name", choices=TEMPLATE_NAMES)
+    template.add_argument("--variant", choices=TEMPLATE_VARIANTS, default="exposed")
+    template.add_argument("--output", metavar="PATH", help="Save the model as JSON.")
+    importer = commands.add_parser("import-claude-code", help="Read project MCP declarations and optional scenario bindings.")
+    importer.add_argument("input", metavar="INPUT", help="Project .mcp.json file, or - for stdin.")
+    importer.add_argument("--bindings", metavar="PATH", help="Explicit scenario role bindings as JSON.")
+    importer.add_argument("--output", metavar="PATH", help="Save the JSON import report.")
+    importer.add_argument("--model-output", metavar="PATH", help="Save the generated model when bindings are valid.")
     return parser
 
 
@@ -156,6 +167,12 @@ def _diagnostic(message: str) -> None:
 
 def _main(argv: Sequence[str] | None) -> int:
     arguments = _parser().parse_args(argv)
+    if arguments.command == "template":
+        content = _json_content(get_template(arguments.name, variant=arguments.variant))
+        _emit_content(content, arguments.output)
+        return 0
+    if arguments.command == "import-claude-code":
+        return _import_command(arguments)
     protected_roots: tuple[Path, ...] = ()
     if arguments.command == "demo":
         result = run_demo(arguments.scenario, work_dir=arguments.work_dir,
@@ -179,8 +196,7 @@ def _main(argv: Sequence[str] | None) -> int:
         result = analyze_json(document, limits=limits)
         exit_code = _analysis_exit(result)
     if arguments.format == "json":
-        content = json.dumps(result.to_dict(), ensure_ascii=True, sort_keys=True,
-                             indent=2, allow_nan=False) + "\n"
+        content = _json_content(result.to_dict())
     else:
         content = result.to_markdown()
     if arguments.output is not None:
@@ -188,20 +204,71 @@ def _main(argv: Sequence[str] | None) -> int:
         _diagnostic({"validate": "Validation", "analyze": "Analysis", "demo": "Demo"}[arguments.command]
                     + " report saved.")
     else:
-        try:
-            # Reports use the same UTF-8 encoding on disk and through pipes,
-            # including Windows shells with a legacy text-stream encoding.
-            # Embedded callers can still redirect to a text-only stream.
-            binary_stdout = getattr(sys.stdout, "buffer", None)
-            if binary_stdout is None:
-                sys.stdout.write(content)
-            else:
-                sys.stdout.flush()
-                binary_stdout.write(content.encode("utf-8"))
-            sys.stdout.flush()
-        except (OSError, UnicodeError) as error:
-            raise _OperationalError("Cannot write the report to stdout.") from error
+        _emit_content(content)
     return exit_code
+
+
+def _json_content(value: object) -> str:
+    return json.dumps(value, ensure_ascii=True, sort_keys=True, indent=2, allow_nan=False) + "\n"
+
+
+def _emit_content(content: str, output: str | None = None) -> None:
+    if output is not None:
+        _write_output(Path(output), content)
+        _diagnostic("JSON saved.")
+        return
+    try:
+        binary_stdout = getattr(sys.stdout, "buffer", None)
+        if binary_stdout is None:
+            sys.stdout.write(content)
+        else:
+            sys.stdout.flush()
+            binary_stdout.write(content.encode("utf-8"))
+        sys.stdout.flush()
+    except (OSError, UnicodeError) as error:
+        raise _OperationalError("Cannot write the report to stdout.") from error
+
+
+def _import_command(arguments: argparse.Namespace) -> int:
+    if arguments.input == "-" and arguments.bindings == "-":
+        _diagnostic("Configuration and bindings cannot both consume stdin.")
+        return 2
+    if arguments.model_output is not None and arguments.bindings is None:
+        _diagnostic("--model-output requires --bindings; a server inventory alone is not a model.")
+        return 2
+    sources = [arguments.input]
+    if arguments.bindings is not None:
+        sources.append(arguments.bindings)
+    outputs = [Path(name) for name in (arguments.output, arguments.model_output) if name is not None]
+
+    def check_boundaries() -> None:
+        for output in outputs:
+            for source in sources:
+                _refuse_input_alias(source, output)
+        if len(outputs) == 2:
+            try:
+                if outputs[0].resolve() == outputs[1].resolve() or (
+                    outputs[0].exists() and outputs[1].exists() and os.path.samefile(*outputs)
+                ):
+                    raise _OperationalError("Import report and model must use different output files.")
+            except (OSError, RuntimeError, ValueError) as error:
+                raise _OperationalError("Cannot verify the import output boundary.") from error
+
+    check_boundaries()
+    document = _read_document(arguments.input, Limits().max_input_bytes)
+    bindings = None if arguments.bindings is None else _read_document(arguments.bindings, Limits().max_input_bytes)
+    result = import_claude_code_json(document, bindings_document=bindings)
+    exit_codes = {"inventory_only": 3, "model_created": 0, "input_invalid": 2, "resource_rejected": 2}
+    if result.import_status not in exit_codes:
+        raise RuntimeError("Unrecognized configuration import status")
+    report = result.to_dict()
+    check_boundaries()
+    if arguments.model_output is not None and result.import_status == "model_created":
+        _write_output(Path(arguments.model_output), _json_content(report["model"]), arguments.input)
+        _diagnostic("Declared model saved; deployment behavior remains unverified.")
+    check_boundaries()
+    _emit_content(_json_content(report), arguments.output)
+    return exit_codes[result.import_status]
 
 
 def _demo_roots(result: object, work_dir: Path | None) -> tuple[Path, ...]:

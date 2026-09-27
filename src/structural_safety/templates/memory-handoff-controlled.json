@@ -1,0 +1,3687 @@
+{
+  "context": {
+    "schema_version": "sst.model/0.1",
+    "snapshot_id": "snapshot:customer-support-handoff",
+    "as_of": "2000-01-01T00:00:00Z",
+    "tasks": [
+      {
+        "id": "task:customer-support-handoff",
+        "parent_task": {
+          "state": "known",
+          "value": "not_applicable",
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      }
+    ],
+    "root_task": "task:customer-support-handoff",
+    "workflows": [
+      {
+        "id": "workflow:case-analysis",
+        "task_id": "task:customer-support-handoff",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      {
+        "id": "workflow:customer-update",
+        "task_id": "task:customer-support-handoff",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      }
+    ],
+    "interfaces": [
+      {
+        "id": "if:crm-read",
+        "node_id": "tool:crm-read",
+        "operation_ids": [
+          "read"
+        ],
+        "credential_required": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      {
+        "id": "if:handoff-memory",
+        "node_id": "tool:handoff-memory",
+        "operation_ids": [
+          "transfer",
+          "derive",
+          "persist_write",
+          "persist_read"
+        ],
+        "credential_required": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      {
+        "id": "if:customer-publish",
+        "node_id": "tool:customer-publish",
+        "operation_ids": [
+          "publish"
+        ],
+        "credential_required": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      }
+    ],
+    "operation_definitions": [
+      {
+        "id": "read",
+        "semantic_kind": "read",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      {
+        "id": "transfer",
+        "semantic_kind": "transfer",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      {
+        "id": "publish",
+        "semantic_kind": "transfer",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      {
+        "id": "derive",
+        "semantic_kind": "derive",
+        "evidence_refs": []
+      },
+      {
+        "id": "persist_write",
+        "semantic_kind": "persist_write",
+        "evidence_refs": []
+      },
+      {
+        "id": "persist_read",
+        "semantic_kind": "persist_read",
+        "evidence_refs": []
+      }
+    ],
+    "purposes": [
+      {
+        "id": "support_case_resolution",
+        "description": "Prepare and retain a confidential internal support-case handoff."
+      },
+      {
+        "id": "customer_case_update",
+        "description": "Send a case update to the external customer portal; this template has no source-owner release for the confidential summary."
+      },
+      {
+        "id": "public_service_status",
+        "description": "Publish an independently public service-status notice."
+      }
+    ],
+    "properties": [
+      {
+        "id": "P-CONF-01",
+        "description": "Restricted objects cannot reach prohibited recipients without valid scoped authorization."
+      }
+    ],
+    "declared_scope": "Customer-support handoff: an agent reads a confidential CRM case, derives a case summary, stores the exact version in handoff memory, loads it into a customer-communications context, and attempts an unauthorized external customer-portal publication. Legitimate internal handoff and a separate public service-status publication remain available.",
+    "known_limits": [
+      "Illustrative finite business model with synthetic identifiers and virtual times; no live CRM, memory, or portal is accessed.",
+      "The named derived summary retains the CRM source restriction. Natural-language summarization or semantic leakage is not executed or inferred.",
+      "Known scope and completeness are starter-model premises. Replace them with deployment evidence or explicit unknown facts before assessing a real system.",
+      "The controlled variant adds a declared source-aware gate at customer publication. Its runtime enforcement and independence require separate evidence."
+    ],
+    "completeness": [
+      {
+        "task_id": "task:customer-support-handoff",
+        "collection": "nodes",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:customer-support-handoff",
+        "collection": "actions",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:customer-support-handoff",
+        "collection": "authorization",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:customer-support-handoff",
+        "collection": "capabilities",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:customer-support-handoff",
+        "collection": "task_grants",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:customer-support-handoff",
+        "collection": "approval_rights",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:customer-support-handoff",
+        "collection": "release_exceptions",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:customer-support-handoff",
+        "collection": "sources",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:customer-support-handoff",
+        "collection": "restrictions",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:customer-support-handoff",
+        "collection": "controls",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:customer-support-handoff",
+        "collection": "policy_change_paths",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:customer-support-handoff",
+        "collection": "relations",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:customer-support-handoff",
+        "collection": "execution_contexts",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      {
+        "task_id": "task:customer-support-handoff",
+        "collection": "object_versions",
+        "complete": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      }
+    ],
+    "unsupported_items": [],
+    "initial_conditions": [],
+    "stopped_targets": []
+  },
+  "nodes": [
+    {
+      "id": "principal:support-operations",
+      "kind": "principal",
+      "owner": {
+        "state": "known",
+        "value": "principal:support-operations",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    },
+    {
+      "id": "principal:unapproved-third-party",
+      "kind": "principal",
+      "owner": {
+        "state": "known",
+        "value": "principal:unapproved-third-party",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    },
+    {
+      "id": "actor:support-agent",
+      "kind": "executor",
+      "owner": {
+        "state": "known",
+        "value": "principal:support-operations",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    },
+    {
+      "id": "source:crm-case",
+      "kind": "resource",
+      "owner": {
+        "state": "known",
+        "value": "principal:support-operations",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    },
+    {
+      "id": "source:public-status",
+      "kind": "resource",
+      "owner": {
+        "state": "known",
+        "value": "principal:support-operations",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    },
+    {
+      "id": "store:case-handoff",
+      "kind": "store",
+      "owner": {
+        "state": "known",
+        "value": "principal:support-operations",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    },
+    {
+      "id": "recipient:customer-portal",
+      "kind": "store",
+      "owner": {
+        "state": "known",
+        "value": "principal:support-operations",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    },
+    {
+      "id": "tool:crm-read",
+      "kind": "tool",
+      "owner": {
+        "state": "known",
+        "value": "principal:support-operations",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    },
+    {
+      "id": "tool:handoff-memory",
+      "kind": "tool",
+      "owner": {
+        "state": "known",
+        "value": "principal:support-operations",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    },
+    {
+      "id": "tool:customer-publish",
+      "kind": "tool",
+      "owner": {
+        "state": "known",
+        "value": "principal:support-operations",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    },
+    {
+      "id": "node:customer-publish-gate",
+      "kind": "control",
+      "owner": {
+        "state": "known",
+        "value": "principal:support-operations",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    }
+  ],
+  "execution_contexts": [
+    {
+      "id": "ctx:case-analysis",
+      "actor_id": "actor:support-agent",
+      "task_id": "task:customer-support-handoff",
+      "workflow_id": "workflow:case-analysis",
+      "initial_visible_objects": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "input_visibility": {
+        "state": "known",
+        "value": "visible",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "retain_inputs": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "visibility_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "isolated_from": {
+        "state": "known",
+        "value": [
+          "ctx:customer-comms"
+        ],
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    },
+    {
+      "id": "ctx:customer-comms",
+      "actor_id": "actor:support-agent",
+      "task_id": "task:customer-support-handoff",
+      "workflow_id": "workflow:customer-update",
+      "initial_visible_objects": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "input_visibility": {
+        "state": "known",
+        "value": "visible",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "retain_inputs": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "visibility_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "isolated_from": {
+        "state": "known",
+        "value": [
+          "ctx:case-analysis"
+        ],
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    }
+  ],
+  "object_versions": [
+    {
+      "id": "crm-case:v1",
+      "logical_id": "crm-case",
+      "version": "v1",
+      "origin_kind": "root",
+      "existence": "snapshot_initial",
+      "parents": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "parents_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "production": {
+        "kind": "historical",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "initial_locations": [
+        {
+          "node_id": "source:crm-case",
+          "context_id": "not_applicable"
+        }
+      ],
+      "restriction_ids": {
+        "state": "known",
+        "value": [
+          "restriction:crm-confidentiality"
+        ],
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "restrictions_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "instruction_authority": {
+        "status": {
+          "state": "known",
+          "value": "none",
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "task_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "control_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "approval_refs": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    },
+    {
+      "id": "public-status:v1",
+      "logical_id": "public-status",
+      "version": "v1",
+      "origin_kind": "root",
+      "existence": "snapshot_initial",
+      "parents": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "parents_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "production": {
+        "kind": "historical",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "initial_locations": [
+        {
+          "node_id": "source:public-status",
+          "context_id": "not_applicable"
+        }
+      ],
+      "restriction_ids": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "restrictions_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "instruction_authority": {
+        "status": {
+          "state": "known",
+          "value": "none",
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "task_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "control_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "approval_refs": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    },
+    {
+      "id": "case-summary:v1",
+      "logical_id": "case-summary",
+      "version": "v1",
+      "origin_kind": "derived",
+      "existence": "candidate_produced",
+      "parents": {
+        "state": "known",
+        "value": [
+          "crm-case:v1"
+        ],
+        "evidence_refs": []
+      },
+      "parents_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "production": {
+        "kind": "candidate_action",
+        "action_id": "summarize-case",
+        "evidence_refs": []
+      },
+      "initial_locations": [],
+      "restriction_ids": {
+        "state": "known",
+        "value": [
+          "restriction:crm-confidentiality"
+        ],
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "restrictions_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "instruction_authority": {
+        "status": {
+          "state": "known",
+          "value": "none",
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "task_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "control_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "approval_refs": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "read-crm-case",
+      "task_id": "task:customer-support-handoff",
+      "workflow_id": "workflow:case-analysis",
+      "context_id": "ctx:case-analysis",
+      "actor_id": "actor:support-agent",
+      "operation_id": "read",
+      "interface_id": "if:crm-read",
+      "purpose_id": "support_case_resolution",
+      "effect_time": {
+        "state": "known",
+        "value": "2000-01-01T00:00:10Z",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "crm-case:v1",
+          "location_node_id": "source:crm-case",
+          "context_id": "not_applicable"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "crm-case:v1",
+          "location_node_id": "actor:support-agent",
+          "context_id": "ctx:case-analysis"
+        }
+      ],
+      "success_dependencies": [],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    },
+    {
+      "id": "summarize-case",
+      "task_id": "task:customer-support-handoff",
+      "workflow_id": "workflow:case-analysis",
+      "context_id": "ctx:case-analysis",
+      "actor_id": "actor:support-agent",
+      "operation_id": "derive",
+      "interface_id": "if:handoff-memory",
+      "purpose_id": "support_case_resolution",
+      "effect_time": {
+        "state": "known",
+        "value": "2000-01-01T00:00:15Z",
+        "evidence_refs": []
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "crm-case:v1",
+          "location_node_id": "actor:support-agent",
+          "context_id": "ctx:case-analysis"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "case-summary:v1",
+          "location_node_id": "actor:support-agent",
+          "context_id": "ctx:case-analysis"
+        }
+      ],
+      "success_dependencies": [
+        "read-crm-case"
+      ],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "produce",
+          "id": "produce",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    },
+    {
+      "id": "store-handoff",
+      "task_id": "task:customer-support-handoff",
+      "workflow_id": "workflow:case-analysis",
+      "context_id": "ctx:case-analysis",
+      "actor_id": "actor:support-agent",
+      "operation_id": "persist_write",
+      "interface_id": "if:handoff-memory",
+      "purpose_id": "support_case_resolution",
+      "effect_time": {
+        "state": "known",
+        "value": "2000-01-01T00:00:20Z",
+        "evidence_refs": []
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "case-summary:v1",
+          "location_node_id": "actor:support-agent",
+          "context_id": "ctx:case-analysis"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "case-summary:v1",
+          "location_node_id": "store:case-handoff",
+          "context_id": "not_applicable"
+        }
+      ],
+      "success_dependencies": [
+        "summarize-case"
+      ],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    },
+    {
+      "id": "load-handoff",
+      "task_id": "task:customer-support-handoff",
+      "workflow_id": "workflow:customer-update",
+      "context_id": "ctx:customer-comms",
+      "actor_id": "actor:support-agent",
+      "operation_id": "persist_read",
+      "interface_id": "if:handoff-memory",
+      "purpose_id": "support_case_resolution",
+      "effect_time": {
+        "state": "known",
+        "value": "2000-01-01T00:00:25Z",
+        "evidence_refs": []
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "case-summary:v1",
+          "location_node_id": "store:case-handoff",
+          "context_id": "not_applicable"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "case-summary:v1",
+          "location_node_id": "actor:support-agent",
+          "context_id": "ctx:customer-comms"
+        }
+      ],
+      "success_dependencies": [
+        "store-handoff"
+      ],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    },
+    {
+      "id": "publish-case-summary",
+      "task_id": "task:customer-support-handoff",
+      "workflow_id": "workflow:customer-update",
+      "context_id": "ctx:customer-comms",
+      "actor_id": "actor:support-agent",
+      "operation_id": "publish",
+      "interface_id": "if:customer-publish",
+      "purpose_id": "customer_case_update",
+      "effect_time": {
+        "state": "known",
+        "value": "2000-01-01T00:00:30Z",
+        "evidence_refs": []
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "case-summary:v1",
+          "location_node_id": "actor:support-agent",
+          "context_id": "ctx:customer-comms"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "case-summary:v1",
+          "location_node_id": "recipient:customer-portal",
+          "context_id": "not_applicable"
+        }
+      ],
+      "success_dependencies": [
+        "load-handoff"
+      ],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    },
+    {
+      "id": "read-public-status",
+      "task_id": "task:customer-support-handoff",
+      "workflow_id": "workflow:customer-update",
+      "context_id": "ctx:customer-comms",
+      "actor_id": "actor:support-agent",
+      "operation_id": "read",
+      "interface_id": "if:crm-read",
+      "purpose_id": "public_service_status",
+      "effect_time": {
+        "state": "known",
+        "value": "2000-01-01T00:00:45Z",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "public-status:v1",
+          "location_node_id": "source:public-status",
+          "context_id": "not_applicable"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "public-status:v1",
+          "location_node_id": "actor:support-agent",
+          "context_id": "ctx:customer-comms"
+        }
+      ],
+      "success_dependencies": [],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    },
+    {
+      "id": "publish-public-status",
+      "task_id": "task:customer-support-handoff",
+      "workflow_id": "workflow:customer-update",
+      "context_id": "ctx:customer-comms",
+      "actor_id": "actor:support-agent",
+      "operation_id": "publish",
+      "interface_id": "if:customer-publish",
+      "purpose_id": "public_service_status",
+      "effect_time": {
+        "state": "known",
+        "value": "2000-01-01T00:00:50Z",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "inputs": [
+        {
+          "port_id": "in",
+          "object_version_id": "public-status:v1",
+          "location_node_id": "actor:support-agent",
+          "context_id": "ctx:customer-comms"
+        }
+      ],
+      "outputs": [
+        {
+          "port_id": "out",
+          "object_version_id": "public-status:v1",
+          "location_node_id": "recipient:customer-portal",
+          "context_id": "not_applicable"
+        }
+      ],
+      "success_dependencies": [
+        "read-public-status"
+      ],
+      "conditions": [],
+      "effects": [
+        {
+          "kind": "deliver",
+          "id": "deliver",
+          "input_port_ids": [
+            "in"
+          ],
+          "output_port_id": "out"
+        }
+      ],
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    }
+  ],
+  "relations": [],
+  "authorization": {
+    "capabilities": [
+      {
+        "id": "cap:read-crm-case",
+        "issuer": {
+          "state": "known",
+          "value": "principal:support-operations",
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "crm-case:v1"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:crm-read"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "support_case_resolution"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:case-analysis"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      {
+        "id": "cap:read-public-status",
+        "issuer": {
+          "state": "known",
+          "value": "principal:support-operations",
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "public-status:v1"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:crm-read"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "public_service_status"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:customer-update"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      {
+        "id": "cap:publish-public-status",
+        "issuer": {
+          "state": "known",
+          "value": "principal:support-operations",
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "public-status:v1"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "publish"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:customer-publish"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "recipient:customer-portal"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "public_service_status"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:customer-update"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      {
+        "id": "cap:summarize-case",
+        "issuer": {
+          "state": "known",
+          "value": "principal:support-operations",
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": []
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": []
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "derive"
+              ],
+              "evidence_refs": []
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:handoff-memory"
+              ],
+              "evidence_refs": []
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": []
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "support_case_resolution"
+              ],
+              "evidence_refs": []
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:case-analysis"
+              ],
+              "evidence_refs": []
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "case-summary:v1"
+              ],
+              "evidence_refs": []
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      {
+        "id": "cap:store-handoff",
+        "issuer": {
+          "state": "known",
+          "value": "principal:support-operations",
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": []
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": []
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "persist_write"
+              ],
+              "evidence_refs": []
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:handoff-memory"
+              ],
+              "evidence_refs": []
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "store:case-handoff"
+              ],
+              "evidence_refs": []
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "support_case_resolution"
+              ],
+              "evidence_refs": []
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:case-analysis"
+              ],
+              "evidence_refs": []
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "case-summary:v1"
+              ],
+              "evidence_refs": []
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      {
+        "id": "cap:load-handoff",
+        "issuer": {
+          "state": "known",
+          "value": "principal:support-operations",
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": []
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": []
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "persist_read"
+              ],
+              "evidence_refs": []
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:handoff-memory"
+              ],
+              "evidence_refs": []
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": []
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "support_case_resolution"
+              ],
+              "evidence_refs": []
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:customer-update"
+              ],
+              "evidence_refs": []
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "case-summary:v1"
+              ],
+              "evidence_refs": []
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      {
+        "id": "cap:publish-case-summary",
+        "issuer": {
+          "state": "known",
+          "value": "principal:support-operations",
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": []
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": []
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "publish"
+              ],
+              "evidence_refs": []
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:customer-publish"
+              ],
+              "evidence_refs": []
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "recipient:customer-portal"
+              ],
+              "evidence_refs": []
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "customer_case_update"
+              ],
+              "evidence_refs": []
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:customer-update"
+              ],
+              "evidence_refs": []
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "case-summary:v1"
+              ],
+              "evidence_refs": []
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      }
+    ],
+    "task_grants": [
+      {
+        "id": "grant:read-crm-case",
+        "issuer": {
+          "state": "known",
+          "value": "principal:support-operations",
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "crm-case:v1"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:crm-read"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "support_case_resolution"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:case-analysis"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:support-operations-task"
+          ],
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      {
+        "id": "grant:read-public-status",
+        "issuer": {
+          "state": "known",
+          "value": "principal:support-operations",
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "public-status:v1"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:crm-read"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "public_service_status"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:customer-update"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:support-operations-task"
+          ],
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      {
+        "id": "grant:publish-public-status",
+        "issuer": {
+          "state": "known",
+          "value": "principal:support-operations",
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "public-status:v1"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "publish"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:customer-publish"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "recipient:customer-portal"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "public_service_status"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:customer-update"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:support-operations-task"
+          ],
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      {
+        "id": "grant:summarize-case",
+        "issuer": {
+          "state": "known",
+          "value": "principal:support-operations",
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": []
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": []
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "derive"
+              ],
+              "evidence_refs": []
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:handoff-memory"
+              ],
+              "evidence_refs": []
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": []
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "support_case_resolution"
+              ],
+              "evidence_refs": []
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:case-analysis"
+              ],
+              "evidence_refs": []
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "case-summary:v1"
+              ],
+              "evidence_refs": []
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:support-operations-task"
+          ],
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      {
+        "id": "grant:store-handoff",
+        "issuer": {
+          "state": "known",
+          "value": "principal:support-operations",
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": []
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": []
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "persist_write"
+              ],
+              "evidence_refs": []
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:handoff-memory"
+              ],
+              "evidence_refs": []
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "store:case-handoff"
+              ],
+              "evidence_refs": []
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "support_case_resolution"
+              ],
+              "evidence_refs": []
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:case-analysis"
+              ],
+              "evidence_refs": []
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "case-summary:v1"
+              ],
+              "evidence_refs": []
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:support-operations-task"
+          ],
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      {
+        "id": "grant:load-handoff",
+        "issuer": {
+          "state": "known",
+          "value": "principal:support-operations",
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": []
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": []
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "persist_read"
+              ],
+              "evidence_refs": []
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:handoff-memory"
+              ],
+              "evidence_refs": []
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": []
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "support_case_resolution"
+              ],
+              "evidence_refs": []
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:customer-update"
+              ],
+              "evidence_refs": []
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "case-summary:v1"
+              ],
+              "evidence_refs": []
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:support-operations-task"
+          ],
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      },
+      {
+        "id": "grant:publish-case-summary",
+        "issuer": {
+          "state": "known",
+          "value": "principal:support-operations",
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": []
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": []
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "publish"
+              ],
+              "evidence_refs": []
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:customer-publish"
+              ],
+              "evidence_refs": []
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "recipient:customer-portal"
+              ],
+              "evidence_refs": []
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "customer_case_update"
+              ],
+              "evidence_refs": []
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:customer-update"
+              ],
+              "evidence_refs": []
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "case-summary:v1"
+              ],
+              "evidence_refs": []
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "initially_active": {
+          "state": "known",
+          "value": true,
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ],
+        "approval_refs": {
+          "state": "known",
+          "value": [
+            "approval:support-operations-task"
+          ],
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      }
+    ],
+    "approval_rights": [
+      {
+        "id": "approval:support-operations-task",
+        "holder": "principal:support-operations",
+        "rights": [
+          "issue_task_grant"
+        ],
+        "restriction_ids": {
+          "state": "known",
+          "value": [],
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "crm-case:v1",
+                "public-status:v1"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read",
+                "transfer",
+                "publish"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:crm-read",
+                "if:handoff-memory",
+                "if:customer-publish"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:support-agent",
+                "store:case-handoff",
+                "recipient:customer-portal"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "support_case_resolution",
+                "customer_case_update",
+                "public_service_status"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:case-analysis",
+                "workflow:customer-update"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "conditions": []
+          },
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": []
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": []
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "derive"
+              ],
+              "evidence_refs": []
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:handoff-memory"
+              ],
+              "evidence_refs": []
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": []
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "support_case_resolution"
+              ],
+              "evidence_refs": []
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:case-analysis"
+              ],
+              "evidence_refs": []
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "case-summary:v1"
+              ],
+              "evidence_refs": []
+            },
+            "conditions": []
+          },
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": []
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": []
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "persist_write"
+              ],
+              "evidence_refs": []
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:handoff-memory"
+              ],
+              "evidence_refs": []
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "store:case-handoff"
+              ],
+              "evidence_refs": []
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "support_case_resolution"
+              ],
+              "evidence_refs": []
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:case-analysis"
+              ],
+              "evidence_refs": []
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "case-summary:v1"
+              ],
+              "evidence_refs": []
+            },
+            "conditions": []
+          },
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": []
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": []
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "persist_read"
+              ],
+              "evidence_refs": []
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:handoff-memory"
+              ],
+              "evidence_refs": []
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": []
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "support_case_resolution"
+              ],
+              "evidence_refs": []
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:customer-update"
+              ],
+              "evidence_refs": []
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "case-summary:v1"
+              ],
+              "evidence_refs": []
+            },
+            "conditions": []
+          },
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": []
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": []
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "publish"
+              ],
+              "evidence_refs": []
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:customer-publish"
+              ],
+              "evidence_refs": []
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "recipient:customer-portal"
+              ],
+              "evidence_refs": []
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "customer_case_update"
+              ],
+              "evidence_refs": []
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:customer-update"
+              ],
+              "evidence_refs": []
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "case-summary:v1"
+              ],
+              "evidence_refs": []
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      {
+        "id": "approval:case-owner-release",
+        "holder": "principal:support-operations",
+        "rights": [
+          "release_restriction"
+        ],
+        "restriction_ids": {
+          "state": "known",
+          "value": [
+            "restriction:crm-confidentiality"
+          ],
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "clauses": [
+          {
+            "tasks": {
+              "state": "known",
+              "value": [
+                "task:customer-support-handoff"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "actors": {
+              "state": "known",
+              "value": [
+                "actor:support-agent"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "objects": {
+              "state": "known",
+              "value": [
+                "crm-case:v1",
+                "public-status:v1"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "operations": {
+              "state": "known",
+              "value": [
+                "read",
+                "transfer",
+                "publish"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "interfaces": {
+              "state": "known",
+              "value": [
+                "if:crm-read",
+                "if:handoff-memory",
+                "if:customer-publish"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "recipients": {
+              "state": "known",
+              "value": [
+                "actor:support-agent",
+                "store:case-handoff",
+                "recipient:customer-portal"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "purposes": {
+              "state": "known",
+              "value": [
+                "support_case_resolution",
+                "customer_case_update",
+                "public_service_status"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "workflows": {
+              "state": "known",
+              "value": [
+                "workflow:case-analysis",
+                "workflow:customer-update"
+              ],
+              "evidence_refs": [
+                "ev:template-premises"
+              ]
+            },
+            "conditions": []
+          }
+        ],
+        "validity": {
+          "state": "known",
+          "value": {
+            "not_before": "2000-01-01T00:00:00Z",
+            "expires_at": "2000-01-01T00:02:00Z"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "revocation": {
+          "state": "known",
+          "value": {
+            "revoked": false,
+            "at": "not_applicable"
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        },
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      }
+    ],
+    "release_exceptions": []
+  },
+  "restrictions": [
+    {
+      "id": "restriction:crm-confidentiality",
+      "source_object_id": "crm-case:v1",
+      "applies_to_operations": {
+        "state": "known",
+        "value": [
+          "read",
+          "transfer",
+          "publish",
+          "derive",
+          "persist_write",
+          "persist_read"
+        ],
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "allowed_clauses": [
+        {
+          "operations": {
+            "state": "known",
+            "value": [
+              "read"
+            ],
+            "evidence_refs": [
+              "ev:template-premises"
+            ]
+          },
+          "interfaces": {
+            "state": "known",
+            "value": [
+              "if:crm-read"
+            ],
+            "evidence_refs": [
+              "ev:template-premises"
+            ]
+          },
+          "recipients": {
+            "state": "known",
+            "value": [
+              "actor:support-agent"
+            ],
+            "evidence_refs": [
+              "ev:template-premises"
+            ]
+          },
+          "purposes": {
+            "state": "known",
+            "value": [
+              "support_case_resolution"
+            ],
+            "evidence_refs": [
+              "ev:template-premises"
+            ]
+          },
+          "workflows": {
+            "state": "known",
+            "value": [
+              "workflow:case-analysis"
+            ],
+            "evidence_refs": [
+              "ev:template-premises"
+            ]
+          },
+          "conditions": []
+        },
+        {
+          "operations": {
+            "state": "known",
+            "value": [
+              "transfer"
+            ],
+            "evidence_refs": [
+              "ev:template-premises"
+            ]
+          },
+          "interfaces": {
+            "state": "known",
+            "value": [
+              "if:handoff-memory"
+            ],
+            "evidence_refs": [
+              "ev:template-premises"
+            ]
+          },
+          "recipients": {
+            "state": "known",
+            "value": [
+              "store:case-handoff"
+            ],
+            "evidence_refs": [
+              "ev:template-premises"
+            ]
+          },
+          "purposes": {
+            "state": "known",
+            "value": [
+              "support_case_resolution"
+            ],
+            "evidence_refs": [
+              "ev:template-premises"
+            ]
+          },
+          "workflows": {
+            "state": "known",
+            "value": [
+              "workflow:case-analysis"
+            ],
+            "evidence_refs": [
+              "ev:template-premises"
+            ]
+          },
+          "conditions": []
+        },
+        {
+          "operations": {
+            "state": "known",
+            "value": [
+              "derive"
+            ],
+            "evidence_refs": []
+          },
+          "interfaces": {
+            "state": "known",
+            "value": [
+              "if:handoff-memory"
+            ],
+            "evidence_refs": []
+          },
+          "recipients": {
+            "state": "known",
+            "value": [
+              "actor:support-agent"
+            ],
+            "evidence_refs": []
+          },
+          "purposes": {
+            "state": "known",
+            "value": [
+              "support_case_resolution"
+            ],
+            "evidence_refs": []
+          },
+          "workflows": {
+            "state": "known",
+            "value": [
+              "workflow:case-analysis"
+            ],
+            "evidence_refs": []
+          },
+          "conditions": []
+        },
+        {
+          "operations": {
+            "state": "known",
+            "value": [
+              "persist_write"
+            ],
+            "evidence_refs": []
+          },
+          "interfaces": {
+            "state": "known",
+            "value": [
+              "if:handoff-memory"
+            ],
+            "evidence_refs": []
+          },
+          "recipients": {
+            "state": "known",
+            "value": [
+              "store:case-handoff"
+            ],
+            "evidence_refs": []
+          },
+          "purposes": {
+            "state": "known",
+            "value": [
+              "support_case_resolution"
+            ],
+            "evidence_refs": []
+          },
+          "workflows": {
+            "state": "known",
+            "value": [
+              "workflow:case-analysis"
+            ],
+            "evidence_refs": []
+          },
+          "conditions": []
+        },
+        {
+          "operations": {
+            "state": "known",
+            "value": [
+              "persist_read"
+            ],
+            "evidence_refs": []
+          },
+          "interfaces": {
+            "state": "known",
+            "value": [
+              "if:handoff-memory"
+            ],
+            "evidence_refs": []
+          },
+          "recipients": {
+            "state": "known",
+            "value": [
+              "actor:support-agent"
+            ],
+            "evidence_refs": []
+          },
+          "purposes": {
+            "state": "known",
+            "value": [
+              "support_case_resolution"
+            ],
+            "evidence_refs": []
+          },
+          "workflows": {
+            "state": "known",
+            "value": [
+              "workflow:customer-update"
+            ],
+            "evidence_refs": []
+          },
+          "conditions": []
+        }
+      ],
+      "approval_refs": {
+        "state": "known",
+        "value": [
+          "approval:case-owner-release"
+        ],
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    }
+  ],
+  "controls": [
+    {
+      "id": "gate:customer-portal",
+      "node_id": "node:customer-publish-gate",
+      "property_ids": [
+        "P-CONF-01"
+      ],
+      "initial_policy": {
+        "state": "known",
+        "value": "policy:strict",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "policy_versions": [
+        {
+          "id": "policy:strict",
+          "coverage": {
+            "state": "known",
+            "value": [
+              {
+                "tasks": {
+                  "state": "known",
+                  "value": [
+                    "task:customer-support-handoff"
+                  ],
+                  "evidence_refs": [
+                    "ev:template-premises"
+                  ]
+                },
+                "actors": {
+                  "state": "known",
+                  "value": [
+                    "actor:support-agent"
+                  ],
+                  "evidence_refs": [
+                    "ev:template-premises"
+                  ]
+                },
+                "objects": {
+                  "state": "known",
+                  "value": [
+                    "crm-case:v1",
+                    "public-status:v1",
+                    "case-summary:v1"
+                  ],
+                  "evidence_refs": [
+                    "ev:template-premises"
+                  ]
+                },
+                "operations": {
+                  "state": "known",
+                  "value": [
+                    "publish"
+                  ],
+                  "evidence_refs": [
+                    "ev:template-premises"
+                  ]
+                },
+                "interfaces": {
+                  "state": "known",
+                  "value": [
+                    "if:customer-publish"
+                  ],
+                  "evidence_refs": [
+                    "ev:template-premises"
+                  ]
+                },
+                "recipients": {
+                  "state": "known",
+                  "value": [
+                    "recipient:customer-portal"
+                  ],
+                  "evidence_refs": [
+                    "ev:template-premises"
+                  ]
+                },
+                "purposes": {
+                  "state": "known",
+                  "value": [
+                    "support_case_resolution",
+                    "customer_case_update",
+                    "public_service_status"
+                  ],
+                  "evidence_refs": [
+                    "ev:template-premises"
+                  ]
+                },
+                "workflows": {
+                  "state": "known",
+                  "value": [
+                    "workflow:case-analysis",
+                    "workflow:customer-update"
+                  ],
+                  "evidence_refs": [
+                    "ev:template-premises"
+                  ]
+                },
+                "conditions": []
+              }
+            ],
+            "evidence_refs": [
+              "ev:template-premises"
+            ]
+          },
+          "checked_parameters": {
+            "state": "known",
+            "value": [
+              "task",
+              "actor",
+              "object_version",
+              "operation",
+              "interface",
+              "recipient",
+              "purpose",
+              "effect_time",
+              "workflow_conditions"
+            ],
+            "evidence_refs": [
+              "ev:template-premises"
+            ]
+          },
+          "binding": {
+            "state": "known",
+            "value": "bound",
+            "evidence_refs": [
+              "ev:template-premises"
+            ]
+          },
+          "timing": {
+            "state": "known",
+            "value": "before_effect",
+            "evidence_refs": [
+              "ev:template-premises"
+            ]
+          },
+          "decision_mode": {
+            "state": "known",
+            "value": "authorization",
+            "evidence_refs": [
+              "ev:template-premises"
+            ]
+          },
+          "deny_clauses": {
+            "state": "known",
+            "value": [],
+            "evidence_refs": [
+              "ev:template-premises"
+            ]
+          },
+          "failure_behavior": {
+            "state": "known",
+            "value": "deny",
+            "evidence_refs": [
+              "ev:template-premises"
+            ]
+          },
+          "evidence_refs": [
+            "ev:template-premises"
+          ]
+        }
+      ],
+      "modifiable_fields": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "responsible_principal": {
+        "state": "known",
+        "value": "principal:support-operations",
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "modification_paths_complete": {
+        "state": "known",
+        "value": true,
+        "evidence_refs": [
+          "ev:template-premises"
+        ]
+      },
+      "evidence_refs": [
+        "ev:template-premises"
+      ]
+    }
+  ],
+  "obligations": [],
+  "evidence": [
+    {
+      "id": "ev:template-premises",
+      "source": "Project-authored customer-support memory-handoff starter template.",
+      "acquisition": "supplied_assertion",
+      "claim": "Illustrative finite task, CRM versions, memory handoff, publication route, rights, and timing are supplied model premises.",
+      "scope": [
+        {
+          "collection": "tasks",
+          "id": "task:customer-support-handoff"
+        }
+      ],
+      "snapshot_id": "snapshot:customer-support-handoff",
+      "recorded_at": {
+        "state": "known",
+        "value": "2000-01-01T00:00:00Z",
+        "evidence_refs": []
+      },
+      "model_involvement": {
+        "state": "known",
+        "value": "assisted",
+        "evidence_refs": []
+      },
+      "transformations": [],
+      "lineage_refs": {
+        "state": "known",
+        "value": [],
+        "evidence_refs": []
+      },
+      "applicability": "current",
+      "limits": [
+        "Synthetic authored model premises; no production configuration, execution, or target observation has been verified."
+      ]
+    }
+  ],
+  "limits": {}
+}

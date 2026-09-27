@@ -1,10 +1,34 @@
 # Structural Safety Toolkit
 
-A local Python toolkit for describing AI agent execution topology, task authorization, information flows, control coverage, and intervention conditions.
+Check whether an AI agent workflow can leak restricted data, weaken its own safeguards, or act before a human can intervene, using an explicit model of its permissions and data paths.
 
-**Current release: 0.1.0.** The toolkit validates deployment descriptions and analyzes finite `read`, `transfer`, `derive`, `persist_write`, `persist_read`, `delegate`, `policy_update`, `revoke`, and `stop` actions with SS001 through SS006 diagnostics. It also provides 18 fixed scenarios: 15 local experiments and three analysis-only D contrasts. Analysis reports separate technical feasibility, authorization, modeled control behavior, and evidence limits. Experiment reports retain actual target observations and task outcomes for their specific runs.
+For developers and security reviewers working with tool-using agents, shared memory, and MCP integrations.
 
-The runtime uses the Python standard library, without model API calls, telemetry, or network access. Input strings, links, and commands remain data.
+| Question you can investigate | Starter model |
+|---|---|
+| Can a confidential summary pass through shared memory into a customer-facing response? | `memory-handoff` |
+| Can the agent weaken the policy that checks its own output? | `policy-self-modification` |
+| Does the human reviewer have the authority and time to stop a consequential action? | `human-oversight` |
+
+**Input:** a JSON model of the task, data, permissions, controls, and candidate actions. Start with one of six editable templates, or import Claude Code project MCP declarations and supply explicit scenario-role bindings.
+
+**Output:** JSON or Markdown findings with modeled violation paths when found, permission and control decisions, and unresolved facts or evidence gaps. Compare an exposed model with its controlled counterpart before changing your deployment.
+
+Analysis is local and bounded by the supplied model. Deployment behavior and control effectiveness require separate evidence. The Python runtime uses only the standard library, with no model API calls, telemetry, or network access.
+
+## Try a data-leak scenario
+
+Requires CPython 3.12, 3.13, or 3.14. These starter templates and the Claude Code importer are available in the **0.2.0.dev0 development checkout**. The latest stable release is **0.1.0**.
+
+```sh
+git clone https://github.com/DavidWallstructurallaw/structural-safety-toolkit.git
+cd structural-safety-toolkit
+python -m pip install .
+structural-safety template memory-handoff --output memory-exposed.json
+structural-safety analyze memory-exposed.json --format markdown
+```
+
+The sample reveals a restricted CRM summary reaching customer-facing publication through shared memory. Its report includes the modeled path and returns exit **1** because findings were produced. No CRM, memory service, or publication endpoint is contacted. See [the controlled comparison](#start-with-a-business-scenario) below to check the same workflow with an outbound gate.
 
 ## Install
 
@@ -17,7 +41,7 @@ python -m pip install structural_safety_toolkit-0.1.0-py3-none-any.whl
 structural-safety --version
 ```
 
-Alternatively, from the repository root, install the local checkout:
+The business templates and Claude Code importer require the development checkout. The 0.1.0 release wheel provides the earlier analysis and demo commands. From the repository root, install the checkout:
 
 ```sh
 python -m pip install .
@@ -30,10 +54,53 @@ Build and install a local wheel when build dependencies are available:
 ```sh
 python -m pip install -r requirements-dev.txt
 python -m build
-python -m pip install dist/structural_safety_toolkit-0.1.0-py3-none-any.whl
+python -m pip install dist/structural_safety_toolkit-0.2.0.dev0-py3-none-any.whl
 ```
 
 Release assets include the wheel and source distribution; no PyPI release is assumed. The software is licensed under [Apache-2.0](LICENSE). This license does not extend to the referenced source papers, which are not distributed with the package.
+
+## Start with a business scenario
+
+Each starter listed above has an `exposed` and a `controlled` variant. The memory pair adds an outbound authorization gate while preserving legitimate internal handoff and public content. The policy pair restricts the agent's ability to change its own output policy. The oversight pair compares a 30-second response with a 3-second response inside a 5-second consequence window.
+
+```sh
+structural-safety template memory-handoff --output memory-exposed.json
+structural-safety template memory-handoff --variant controlled --output memory-controlled.json
+structural-safety analyze memory-exposed.json --output memory-exposed-report.json
+structural-safety analyze memory-controlled.json --output memory-controlled-report.json
+```
+
+`template` exports JSON and returns 0 without analysis. Both analyses above return 1: the exposed model contains a disclosure path; the controlled model blocks that path but retains its declaration-only control evidence gap. These are finite model comparisons, not additional runtime experiments. Use `get_template(name, variant="controlled")` in Python for a fresh editable dictionary, then pass `json.dumps(model)` to the existing validation and analysis APIs. See [business scenarios](docs/business-scenarios.md) for all six models, expected findings, and the facts to replace with your deployment information.
+
+## Import a Claude Code project configuration
+
+The first platform adapter reads the `mcpServers` declarations in a project `.mcp.json`. With no role mapping, it returns an inventory and outstanding information, with exit 3 and no model. It never starts MCP servers, runs commands or helpers, connects to URLs, or expands environment variables. Commands, arguments, URLs, and credential values are omitted from reports; server names remain visible.
+
+Copy the packaged illustrative configuration and its role bindings:
+
+```python
+from importlib.resources import files
+from pathlib import Path
+
+for resource, destination in (
+    ("claude-code-example.json", "sample-claude-mcp.json"),
+    ("claude-code-bindings.json", "sample-bindings.json"),
+):
+    text = files("structural_safety").joinpath("integrations", resource).read_text(encoding="utf-8")
+    Path(destination).write_text(text, encoding="utf-8")
+```
+
+```sh
+structural-safety import-claude-code sample-claude-mcp.json --output mcp-inventory.json
+structural-safety import-claude-code sample-claude-mcp.json --bindings sample-bindings.json --output mcp-import.json --model-output imported-memory.json
+structural-safety analyze imported-memory.json --output imported-memory-report.json
+```
+
+For your project, substitute its configuration path and map the three `source`, `memory`, and `publish` roles to your server names. This first adapter binds only the memory-handoff scenario. Model creation returns 0 for successful import, not a safety verdict. The role assignments, task permissions, data restrictions, actions, and control behavior remain supplied scenario assumptions that you must check and edit. Only the presence of a server declaration is configuration-read evidence. The output does not discover tool schemas, prove a connection or permission, inspect other configuration scopes, or cover built-in tools. See [supported fields, mappings, and limits](docs/claude-code-import.md).
+
+## Analysis capabilities
+
+The toolkit validates deployment descriptions and analyzes finite `read`, `transfer`, `derive`, `persist_write`, `persist_read`, `delegate`, `policy_update`, `revoke`, and `stop` actions with SS001 through SS006 diagnostics. It also provides 18 fixed scenarios: 15 local experiments and three analysis-only D contrasts. Analysis reports separate technical feasibility, authorization, modeled control behavior, and evidence limits. Experiment reports retain actual target observations and task outcomes for their specific runs. Input strings, links, and commands remain data.
 
 ## Validate an included example
 
@@ -188,10 +255,10 @@ Known values are submitted model premises. Empty evidence references remain supp
 
 | Exit code | Meaning |
 |---:|---|
-| 0 | `validate`: input structure accepted. `analyze`: supported checks completed without findings, unresolved items, or unchecked scope. `demo`: all required expectations matched. |
+| 0 | `template`: model exported. `import-claude-code`: model created from configuration and bindings, without analysis. `validate`: input structure accepted. `analyze`: supported checks completed without findings, unresolved items, or unchecked scope. `demo`: all required expectations matched. |
 | 1 | `analyze`: findings were produced, with no unresolved or unfinished scope requiring exit 3. |
 | 2 | Usage, input structure, schema version, or hard input limit problem. |
-| 3 | `analyze`: unresolved facts, unsupported or unchecked scope, or incomplete analysis. This takes precedence over exit 1. `demo`: a necessary expectation remains inconclusive. |
+| 3 | `import-claude-code`: inventory only, scenario bindings still needed. `analyze`: unresolved facts, unsupported or unchecked scope, or incomplete analysis. This takes precedence over exit 1. `demo`: a necessary expectation remains inconclusive. |
 | 4 | `demo`: a definite expectation mismatch. This takes precedence over an inconclusive comparison. |
 | 5 | Input/output file operation failed. |
 | 70 | Unexpected internal defect. |
@@ -213,4 +280,4 @@ python -m unittest discover -s tests -v
 
 The runtime uses only the standard library. Build tools are pinned in `requirements-dev.txt` and `pyproject.toml`. Direct tests target specific input, evidence, and resource-limit failure modes.
 
-The four-environment CI matrix also checks the distribution's installed API, both CLI entry points, all 18 demo scenarios, three additional finite-state model examples, and executable README examples. These checks exercise the declared finite scope and fixed local experiments; they do not certify a real deployment. See [CHANGELOG](CHANGELOG.md) for implemented capabilities. The [theory source index](docs/theory-sources.md) distinguishes source ideas from software definitions.
+The four-environment CI matrix also checks the distribution's installed API, both CLI entry points, all 18 demo scenarios, three additional finite-state model examples, six business-template models, the configuration importer, and executable README examples. These checks exercise the declared finite scope and fixed local experiments; they do not certify a real deployment. See [CHANGELOG](CHANGELOG.md) for implemented capabilities. The [theory source index](docs/theory-sources.md) distinguishes source ideas from software definitions.
